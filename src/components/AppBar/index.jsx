@@ -9,61 +9,100 @@ import Starred from './Menu/Starred'
 import Button from '@mui/material/Button'
 import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined'
 import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment'
-import AccountCircle from '@mui/icons-material/AccountCircle'
 import Badge from '@mui/material/Badge'
 import Tooltip from '@mui/material/Tooltip'
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
 import Profile from './Menu/Profile'
+import InputAdornment from '@mui/material/InputAdornment'
+import SearchIcon from '@mui/icons-material/Search'
+import CloseIcon from '@mui/icons-material/Close'
+import { useState } from 'react'
 
 const AppBar = () => {
+  const [searchValue, setSearchValue] = useState('')
   return (
     <Box
-      px={2}
       sx={{
         width: '100%',
         height: (theme) => theme.todolist.appBarHeight,
+        paddingX: 2,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        gap: 2,
+        overflowX: 'auto',
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2c3e50' : '#1565c0')
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <AppsIcon sx={{ color: 'primary.main' }} />
+        <AppsIcon sx={{ color: 'white' }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <SvgIcon component={LogoApp} inheritViewBox sx={{ color: 'primary.main' }} />
+          <SvgIcon component={LogoApp} fontSize='small' inheritViewBox sx={{ color: 'white' }} />
           <Typography
             variant='span'
-            sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'primary.main' }}
+            sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}
           >
             TaskCraft
           </Typography>
         </Box>
-        <WorkSpaces />
-        <Recent />
-        <Starred />
-        <Button variant='outlined' startIcon={<LibraryAddOutlinedIcon />}>
-          Create
-        </Button>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+          <WorkSpaces />
+          <Recent />
+          <Starred />
+          <Button sx={{ color: 'white' }} startIcon={<LibraryAddOutlinedIcon />}>
+            Create
+          </Button>
+        </Box>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <ModeSelect />
         <TextField
           label='Search...'
-          type='search'
+          type='text'
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
           size='small'
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <AccountCircle />
+                <SearchIcon sx={{ color: 'white' }} />
               </InputAdornment>
+            ),
+            endAdornment: (
+              <CloseIcon
+                onClick={() => setSearchValue('')}
+                fontSize='small'
+                sx={{
+                  color: 'white',
+                  cursor: 'pointer',
+                  display: !searchValue ? 'none' : 'block'
+                }}
+              />
             )
           }}
+          sx={{
+            minWidth: 120,
+            maxWidth: 170,
+            '& label': {
+              color: 'white'
+            },
+            '& input': {
+              color: 'white'
+            },
+            '& label.Mui-focused': {
+              color: 'white'
+            },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': { borderColor: 'white' },
+              '&:hover fieldset': { borderColor: 'white' },
+              '&.Mui-focused fieldset': { borderColor: 'white' }
+            }
+          }}
         />
+        <ModeSelect />
         <Tooltip title='Notifications'>
-          <Badge color='secondary' variant='dot'>
-            <NotificationsNoneOutlinedIcon color='action' />
+          <Badge color='warning' variant='dot'>
+            <NotificationsNoneOutlinedIcon sx={{ color: 'white' }} />
           </Badge>
         </Tooltip>
         <Tooltip title='Profiles'>

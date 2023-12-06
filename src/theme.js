@@ -1,22 +1,84 @@
-import { cyan, deepOrange, orange, teal } from '@mui/material/colors'
 import { experimental_extendTheme as extendTheme } from '@mui/material/styles'
+
+const App_Bar_Height = '60px'
+const Board_Bar_Height = '60px'
+const Board_Content_Height = `calc(100vh - ${App_Bar_Height} - ${Board_Bar_Height})`
 
 const theme = extendTheme({
   todolist: {
-    appBarHeight: '60px',
-    boardBarHeight: '60px'
+    appBarHeight: App_Bar_Height,
+    boardBarHeight: Board_Bar_Height,
+    boardContentHeight: Board_Content_Height
   },
-  colorSchemes: {
-    light: {
-      palette: {
-        primary: teal,
-        secondary: deepOrange
+  // colorSchemes: {
+  //   light: {
+  //     palette: {
+  //       primary: teal,
+  //       secondary: deepOrange
+  //     }
+  //   },
+  //   dark: {
+  //     palette: {
+  //       primary: cyan,
+  //       secondary: orange
+  //     }
+  //   }
+  // },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          '*::-webkit-scrollbar': {
+            width: '8px',
+            height: '8px'
+          },
+          '*::-webkit-scrollbar-thumb': {
+            borderRadius: '8px',
+            backgroundColor: '#dcdde1'
+          },
+          '*::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: 'white'
+          }
+        }
       }
     },
-    dark: {
-      palette: {
-        primary: cyan,
-        secondary: orange
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none'
+        }
+      }
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: '0.875rem'
+        }
+      }
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          '&.MuiTypography-body1': {
+            fontSize: '0.875rem'
+          }
+        }
+      }
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          fontsize: '0.875rem',
+          '& fieldset': {
+            borderWidth: '1px !important'
+          },
+          '&:hover fieldset': {
+            borderWidth: '2px !important'
+          },
+          '&.Mui-focused fieldset': {
+            borderWidth: '2px !important'
+          }
+        }
       }
     }
   }
