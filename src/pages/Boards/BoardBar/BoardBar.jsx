@@ -8,6 +8,7 @@ import AvatarGroup from '@mui/material/AvatarGroup'
 import { Tooltip } from '@mui/material'
 import Button from '@mui/material/Button'
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined'
+import { capitalizeFirstLetter } from '@/utils/formatters'
 
 const menuStyle = {
   color: 'white',
@@ -23,7 +24,7 @@ const menuStyle = {
   }
 }
 
-const BoardBar = () => {
+const BoardBar = ({ board }) => {
   return (
     <Box
       sx={{
@@ -35,13 +36,17 @@ const BoardBar = () => {
         justifyContent: 'space-between',
         gap: 2,
         overflowX: 'auto',
-        borderBottom: '1px solid #fff',
         bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2')
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Chip sx={menuStyle} label='Todo List DashBoard' clickable icon={<DashboardIcon />} />
-        <Chip sx={menuStyle} label='Public/Private WorkSpace' clickable icon={<PublicIcon />} />
+        <Chip sx={menuStyle} label={board.title} clickable icon={<DashboardIcon />} />
+        <Chip
+          sx={menuStyle}
+          label={capitalizeFirstLetter(board.type)}
+          clickable
+          icon={<PublicIcon />}
+        />
         <Chip sx={menuStyle} label='Add to Drive' clickable icon={<AddToDriveIcon />} />
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
