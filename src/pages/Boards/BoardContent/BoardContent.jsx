@@ -15,12 +15,13 @@ import {
 } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useState, useEffect } from 'react'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
 import { useCallback } from 'react'
 import { useRef } from 'react'
+import { generatePlaceholderCard } from '@/utils/formatters'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -89,6 +90,12 @@ const BoardContent = ({ board }) => {
       if (nextActiveColumn) {
         // xoa card o column cu luc keo card ra khoi no de sang column khac
         nextActiveColumn.cards = nextActiveColumn.cards.filter((card) => card._id !== activeDragingCardId)
+
+        // them card rong neu column rong
+        if (isEmpty(nextActiveColumn.cards)) {
+          nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)]
+        }
+
         // cap nhat cardOrderIds
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map((card) => card._id)
       }
@@ -96,12 +103,15 @@ const BoardContent = ({ board }) => {
       if (nextOverColumn) {
         // kiem tra card dang keo co ow over column chua, neu co thi xoa di
         nextOverColumn.cards = nextOverColumn.cards.filter((card) => card._id !== activeDragingCardId)
-        // them card dang keo vao over column theo vi tri index moi
+        // cap nhat du lieu
         const rebuild_activeDragingCardData = {
           ...activeDragingCardData,
           columnId: nextOverColumn._id
         }
+        // them card dang keo vao over column theo vi tri index moi
         nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, rebuild_activeDragingCardData)
+        // xoa card bi an
+        nextOverColumn.cards = nextOverColumn.cards.filter((c) => !c.FE_PlaceholderCard)
         // cap nhat cardOrderIds
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map((card) => card._id)
       }
