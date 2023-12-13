@@ -83,6 +83,7 @@ const AppBar = () => {
           sx={{
             minWidth: 120,
             maxWidth: 170,
+            mt: 0.5,
             '& label': {
               color: 'white'
             },

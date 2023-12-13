@@ -36,7 +36,9 @@ const BoardBar = ({ board }) => {
         justifyContent: 'space-between',
         gap: 2,
         overflowX: 'auto',
-        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2')
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2'),
+        borderBottom: 1,
+        borderColor: 'white'
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -50,19 +52,6 @@ const BoardBar = ({ board }) => {
         <Chip sx={menuStyle} label='Add to Drive' clickable icon={<AddToDriveIcon />} />
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Button
-          sx={{
-            color: 'white',
-            borderColor: 'white',
-            '&:hover': {
-              borderColor: 'white'
-            }
-          }}
-          variant='outlined'
-          startIcon={<PersonAddAltOutlinedIcon />}
-        >
-          Invite
-        </Button>
         <AvatarGroup
           max={4}
           sx={{
@@ -116,6 +105,19 @@ const BoardBar = ({ board }) => {
             />
           </Tooltip>
         </AvatarGroup>
+        <Button
+          sx={{
+            color: 'white',
+            borderColor: 'white',
+            '&:hover': {
+              borderColor: 'white'
+            }
+          }}
+          variant='outlined'
+          startIcon={<PersonAddAltOutlinedIcon />}
+        >
+          Invite
+        </Button>
       </Box>
     </Box>
   )

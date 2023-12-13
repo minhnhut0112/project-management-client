@@ -17,7 +17,7 @@ const ModeSelect = () => {
   }
   return (
     <>
-      <FormControl sx={{ minWidth: 130 }} size='small'>
+      <FormControl sx={{ minWidth: 130, mt: 0.5 }} size='small'>
         <InputLabel
           sx={{
             color: 'white',
