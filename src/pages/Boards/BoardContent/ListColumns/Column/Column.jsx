@@ -45,6 +45,7 @@ const Column = ({ column }) => {
       <Box
         {...listeners}
         sx={{
+          cursor: 'pointer',
           minWidth: '300px',
           maxWidth: '300px',
           bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#ebecf0'),

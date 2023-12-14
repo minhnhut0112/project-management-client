@@ -56,7 +56,7 @@ const BoardContent = ({ board }) => {
 
   useEffect(() => {
     setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
-  }, [board])
+  }, [board, lastOverId])
 
   const findColumnByCardId = (cardId) => {
     return orderedColumns.find((column) => column?.cards?.map((card) => card._id)?.includes(cardId))
@@ -257,8 +257,6 @@ const BoardContent = ({ board }) => {
       const pointerIntersections = pointerWithin(args)
 
       if (!pointerIntersections?.length) return
-
-      // const intersection = !!pointerIntersections?.length ? pointerIntersections : rectIntersection(args)
 
       let overId = getFirstCollision(pointerIntersections, 'id')
       if (overId) {
