@@ -192,36 +192,36 @@ const BoardContent = ({ board }) => {
 
       if (!activeColumn || !overColumn) return
 
-      // if (oldColumnDragingCard._id !== overColumn._id) {
-      //   moveCardBetweenDifferentColumns(
-      //     overColumn,
-      //     overCardId,
-      //     active,
-      //     over,
-      //     activeColumn,
-      //     activeDragingCardId,
-      //     activeDragingCardData
-      //   )
-      // } else {
-      // trong cung 1 colmn
-      // lay vi tri cu tu oldColumnDragingCard
-      const oldCardIndex = oldColumnDragingCard?.cards.findIndex((c) => c._id === activeDragItemId)
-      // lay vi tri moi tu over
-      const newCardIndex = overColumn?.cards.findIndex((c) => c._id === overCardId)
-      // dung arrmove de sap xep lai card
-      const dndOrderedCards = arrayMove(oldColumnDragingCard?.cards, oldCardIndex, newCardIndex)
+      if (oldColumnDragingCard._id !== overColumn._id) {
+        // moveCardBetweenDifferentColumns(
+        //   overColumn,
+        //   overCardId,
+        //   active,
+        //   over,
+        //   activeColumn,
+        //   activeDragingCardId,
+        //   activeDragingCardData
+        // )
+      } else {
+        // trong cung 1 colmn
+        // lay vi tri cu tu oldColumnDragingCard
+        const oldCardIndex = oldColumnDragingCard?.cards.findIndex((c) => c._id === activeDragItemId)
+        // lay vi tri moi tu over
+        const newCardIndex = overColumn?.cards.findIndex((c) => c._id === overCardId)
+        // dung arrmove de sap xep lai card
+        const dndOrderedCards = arrayMove(oldColumnDragingCard?.cards, oldCardIndex, newCardIndex)
 
-      setOrderedColumns((prevColumns) => {
-        // clone mang
-        const nextColumns = cloneDeep(prevColumns)
+        setOrderedColumns((prevColumns) => {
+          // clone mang
+          const nextColumns = cloneDeep(prevColumns)
 
-        const targetColumn = nextColumns.find((c) => c._id === overColumn._id)
-        targetColumn.cards = dndOrderedCards
-        targetColumn.cardOrderIds = dndOrderedCards.map((card) => card._id)
+          const targetColumn = nextColumns.find((c) => c._id === overColumn._id)
+          targetColumn.cards = dndOrderedCards
+          targetColumn.cardOrderIds = dndOrderedCards.map((card) => card._id)
 
-        return nextColumns
-      })
-      // }
+          return nextColumns
+        })
+      }
     }
 
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN && active.id !== over.id) {
