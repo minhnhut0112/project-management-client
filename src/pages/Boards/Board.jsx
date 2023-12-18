@@ -4,7 +4,7 @@ import BoardContent from './BoardContent/BoardContent'
 // import { useEffect, useState } from 'react'
 import { fetchBoardDetailsAPI } from '@/apis'
 import { useQuery } from '@tanstack/react-query'
-// import { mockData } from '@/apis/mock-data'
+import { mockData } from '@/apis/mock-data'
 
 const Board = () => {
   const id = '657feca507a8c7d20ab58227'
@@ -17,8 +17,8 @@ const Board = () => {
       maxWidth={false}
       sx={{ height: (theme) => `calc(100vh - ${theme.todolist.appBarHeight}` }}
     >
-      <BoardBar board={board} />
-      <BoardContent board={board} />
+      <BoardBar board={mockData.board} />
+      <BoardContent board={mockData.board} />
     </Container>
   )
 }
