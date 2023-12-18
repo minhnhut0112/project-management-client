@@ -42,13 +42,8 @@ const BoardBar = ({ board }) => {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Chip sx={menuStyle} label={board.title} clickable icon={<DashboardIcon />} />
-        <Chip
-          sx={menuStyle}
-          label={capitalizeFirstLetter(board.type)}
-          clickable
-          icon={<PublicIcon />}
-        />
+        <Chip sx={menuStyle} label={board?.title} clickable icon={<DashboardIcon />} />
+        <Chip sx={menuStyle} label={capitalizeFirstLetter(board?.type)} clickable icon={<PublicIcon />} />
         <Chip sx={menuStyle} label='Add to Drive' clickable icon={<AddToDriveIcon />} />
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

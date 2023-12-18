@@ -1,15 +1,24 @@
 import Container from '@mui/material/Container'
-import AppBar from '@/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
-import { mockData } from '@/apis/mock-data'
+// import { useEffect, useState } from 'react'
+import { fetchBoardDetailsAPI } from '@/apis'
+import { useQuery } from '@tanstack/react-query'
+// import { mockData } from '@/apis/mock-data'
 
 const Board = () => {
+  const id = '657feca507a8c7d20ab58227'
+
+  const { data: board } = useQuery({ queryKey: ['board', id], queryFn: () => fetchBoardDetailsAPI(id) })
+
   return (
-    <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
-      <AppBar />
-      <BoardBar board={mockData?.board} />
-      <BoardContent board={mockData?.board} />
+    <Container
+      disableGutters
+      maxWidth={false}
+      sx={{ height: (theme) => `calc(100vh - ${theme.todolist.appBarHeight}` }}
+    >
+      <BoardBar board={board} />
+      <BoardContent board={board} />
     </Container>
   )
 }

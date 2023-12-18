@@ -3,6 +3,7 @@ import { experimental_extendTheme as extendTheme } from '@mui/material/styles'
 const App_Bar_Height = '60px'
 const Board_Bar_Height = '60px'
 const Board_Content_Height = `calc(100vh - ${App_Bar_Height} - ${Board_Bar_Height})`
+const Board_Height = `calc(100vh - ${App_Bar_Height})`
 const Column_Header_Height = '50px'
 const Column_Footer_Height = '56px'
 
@@ -11,6 +12,7 @@ const theme = extendTheme({
     appBarHeight: App_Bar_Height,
     boardBarHeight: Board_Bar_Height,
     boardContentHeight: Board_Content_Height,
+    boardHeight: Board_Height,
     columnHeaderHeight: Column_Header_Height,
     columnFooterHeight: Column_Footer_Height
   },

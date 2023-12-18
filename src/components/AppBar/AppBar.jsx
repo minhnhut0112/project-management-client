@@ -17,9 +17,11 @@ import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const AppBar = () => {
   const [searchValue, setSearchValue] = useState('')
+  const navigate = useNavigate()
   return (
     <Box
       sx={{
@@ -39,8 +41,9 @@ const AppBar = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <SvgIcon component={LogoApp} fontSize='small' inheritViewBox sx={{ color: 'white' }} />
           <Typography
+            onClick={() => navigate('/')}
             variant='span'
-            sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}
+            sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white', cursor: 'pointer' }}
           >
             TaskCraft
           </Typography>
@@ -107,7 +110,9 @@ const AppBar = () => {
           </Badge>
         </Tooltip>
         <Tooltip title='Profiles'>
-          <Profile />
+          <Box>
+            <Profile />
+          </Box>
         </Tooltip>
       </Box>
     </Box>
