@@ -31,7 +31,8 @@ const Boards = () => {
             height: 100,
             padding: 3,
             cursor: 'pointer',
-            mt: 3
+            mt: 3,
+            borderRadius: '3px'
           }}
           item
           xs={6}
