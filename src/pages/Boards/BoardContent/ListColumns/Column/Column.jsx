@@ -20,8 +20,11 @@ import { mapOrder } from '@/utils/sorts'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import CloseIcon from '@mui/icons-material/Close'
+import { toast } from 'react-toastify'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createNewCardAPI } from '@/apis'
 
-const Column = ({ column }) => {
+const Column = ({ column, columnId, boardId }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data: { ...column }
@@ -40,6 +43,8 @@ const Column = ({ column }) => {
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleClose = () => setAnchorEl(null)
 
+  const queryClient = useQueryClient()
+
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
@@ -49,10 +54,30 @@ const Column = ({ column }) => {
     setNewCardTitle('')
   }
 
+  const mutionAddColumn = useMutation({
+    mutationFn: (data) => createNewCardAPI(data)
+  })
+
   const addNewcard = () => {
     if (!newCardTitle) {
+      toast.error('Please enter card title!')
       return
     }
+
+    mutionAddColumn.mutate(
+      { title: newCardTitle, boardId: boardId, columnId: columnId },
+      {
+        onSuccess: () => {
+          toast.success('Add card is successfully!')
+          queryClient.invalidateQueries({ queryKey: ['board'] })
+        },
+        onError: (e) => {
+          if (e.response.status === 422) {
+            toast.error(`${e.response.data.message}`)
+          }
+        }
+      }
+    )
 
     toggleOpenNewCardForm()
   }

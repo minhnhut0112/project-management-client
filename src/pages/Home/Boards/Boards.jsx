@@ -18,6 +18,7 @@ const Boards = () => {
   const handleCheckboxClick = () => {
     setChecked(!checked)
   }
+
   return (
     <Box sx={{ padding: '10px 0px 10px 0px', width: { xs: 250, md: 1000 }, mx: 3 }}>
       <Typography variant='h6' sx={{ color: 'white' }}>

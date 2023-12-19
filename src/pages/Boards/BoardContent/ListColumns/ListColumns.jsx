@@ -7,8 +7,12 @@ import { useState } from 'react'
 import { TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createNewColumnAPI } from '@/apis'
 
-const ListColumns = ({ columns }) => {
+const ListColumns = ({ columns, boardId }) => {
+  const queryClient = useQueryClient()
+
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const [newColumnTitle, setNewColumnTitle] = useState('')
   const toggleOpenNewColumnForm = () => {
@@ -16,11 +20,30 @@ const ListColumns = ({ columns }) => {
     setNewColumnTitle('')
   }
 
+  const mutionAddColumn = useMutation({
+    mutationFn: (data) => createNewColumnAPI(data)
+  })
+
   const addNewColumn = () => {
     if (!newColumnTitle) {
       toast.error('Please enter Column title!')
       return
     }
+
+    mutionAddColumn.mutate(
+      { title: newColumnTitle, boardId: boardId },
+      {
+        onSuccess: () => {
+          toast.success('Add column is successfully!')
+          queryClient.invalidateQueries({ queryKey: ['board'] })
+        },
+        onError: (e) => {
+          if (e.response.status === 422) {
+            toast.error(`${e.response.data.message}`)
+          }
+        }
+      }
+    )
 
     toggleOpenNewColumnForm()
   }
@@ -41,7 +64,7 @@ const ListColumns = ({ columns }) => {
         }}
       >
         {columns?.map((column) => (
-          <Column key={column._id} column={column} />
+          <Column key={column._id} column={column} columnId={column._id} boardId={boardId} />
         ))}
 
         {!openNewColumnForm ? (
