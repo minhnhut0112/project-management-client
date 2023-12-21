@@ -1,7 +1,7 @@
 import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
 import GroupIcon from '@mui/icons-material/Group'
-import { Box, Button, Modal } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { Card as MuiCard } from '@mui/material'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
@@ -9,7 +9,6 @@ import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useState } from 'react'
 const Card = ({ card }) => {
   const idShowCardActions = () => {
     return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachments?.length

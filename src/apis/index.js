@@ -15,3 +15,13 @@ export const createNewCardAPI = async (newCardData) => {
   const res = await axios.post(`${API_ROOT}/v1/cards`, newCardData)
   return res.data
 }
+
+export const moveColumnAPI = async (id, data) => {
+  const res = await axios.put(`${API_ROOT}/v1/boards/${id}`, data)
+  return res.data
+}
+
+export const moveCardInTheSameColumnAPI = async (id, data) => {
+  const res = await axios.put(`${API_ROOT}/v1/columns/${id}`, data)
+  return res.data
+}

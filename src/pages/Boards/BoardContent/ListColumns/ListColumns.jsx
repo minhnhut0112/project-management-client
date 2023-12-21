@@ -88,6 +88,11 @@ const ListColumns = ({ columns, boardId }) => {
           </Box>
         ) : (
           <Box
+            as='form'
+            onSubmit={(e) => {
+              e.preventDefault()
+              addNewColumn()
+            }}
             sx={{
               minWidth: '250px',
               maxWidth: '250px',
@@ -126,7 +131,7 @@ const ListColumns = ({ columns, boardId }) => {
               }}
             />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Button onClick={addNewColumn} sx={{ boxShadow: 'none' }} variant='contained' size='small'>
+              <Button type='submit' onClick={addNewColumn} sx={{ boxShadow: 'none' }} variant='contained' size='small'>
                 Add Column
               </Button>
               <CloseIcon

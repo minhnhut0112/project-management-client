@@ -1,19 +1,14 @@
 import Box from '@mui/material/Box'
 import ListColumns from './ListColumns/ListColumns'
-import { mapOrder } from '@/utils/sorts'
 import {
   DndContext,
   useSensor,
   useSensors,
-  // MouseSensor,
-  // TouchSensor,
   DragOverlay,
   defaultDropAnimationSideEffects,
   closestCorners,
   pointerWithin,
   getFirstCollision
-  // pointerWithin,
-  // getFirstCollision
 } from '@dnd-kit/core'
 import { MouseSensor, TouchSensor } from '@/customLib/DndKitSensor'
 import { arrayMove } from '@dnd-kit/sortable'
@@ -25,6 +20,8 @@ import Card from './ListColumns/Column/ListCards/Card/Card'
 import { useCallback } from 'react'
 import { useRef } from 'react'
 import { generatePlaceholderCard } from '@/utils/formatters'
+import { useMutation } from '@tanstack/react-query'
+import { moveCardInTheSameColumnAPI, moveColumnAPI } from '@/apis'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -58,8 +55,22 @@ const BoardContent = ({ board, boardId }) => {
   const lastOverId = useRef(null)
 
   useEffect(() => {
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
+    setOrderedColumns(board.columns)
   }, [board])
+
+  const mutionMoveColumn = useMutation({
+    mutationFn: (data) => {
+      const { boardId, columnOrderIds } = data
+      moveColumnAPI(boardId, { columnOrderIds: columnOrderIds })
+    }
+  })
+
+  const mutionMoveCardInTheSameColunmn = useMutation({
+    mutationFn: (data) => {
+      const { oldColumnDragingCard, cardOrderIds } = data
+      moveCardInTheSameColumnAPI(oldColumnDragingCard._id, { cardOrderIds: cardOrderIds })
+    }
+  })
 
   const findColumnByCardId = (cardId) => {
     return orderedColumns.find((column) => column?.cards?.map((card) => card._id)?.includes(cardId))
@@ -210,6 +221,7 @@ const BoardContent = ({ board, boardId }) => {
         const newCardIndex = overColumn?.cards.findIndex((c) => c._id === overCardId)
         // dung arrmove de sap xep lai card
         const dndOrderedCards = arrayMove(oldColumnDragingCard?.cards, oldCardIndex, newCardIndex)
+        const dndOrderedCardIds = dndOrderedCards.map((card) => card._id)
 
         setOrderedColumns((prevColumns) => {
           // clone mang
@@ -221,6 +233,8 @@ const BoardContent = ({ board, boardId }) => {
 
           return nextColumns
         })
+
+        mutionMoveCardInTheSameColunmn.mutate({ oldColumnDragingCard, cardOrderIds: dndOrderedCardIds })
       }
     }
 
@@ -231,8 +245,11 @@ const BoardContent = ({ board, boardId }) => {
       const newColumnIndex = orderedColumns.findIndex((c) => c._id === over.id)
       // dung arrmove de sap xep lai column
       const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
-      // const dndOrderedColumnsIds = orderedColumns.map((c) => c._id)
+      const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id)
+
       setOrderedColumns(dndOrderedColumns)
+
+      mutionMoveColumn.mutate({ boardId, columnOrderIds: dndOrderedColumnsIds })
     }
 
     setActiveDragItemId(null)

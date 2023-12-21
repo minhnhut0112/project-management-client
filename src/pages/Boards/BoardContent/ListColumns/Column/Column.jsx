@@ -16,7 +16,6 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import ListCards from './ListCards/ListCards'
-import { mapOrder } from '@/utils/sorts'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import CloseIcon from '@mui/icons-material/Close'
@@ -45,7 +44,7 @@ const Column = ({ column, columnId, boardId }) => {
 
   const queryClient = useQueryClient()
 
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
+  const orderedCards = column.cards
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const [newCardTitle, setNewCardTitle] = useState('')
@@ -184,6 +183,11 @@ const Column = ({ column, columnId, boardId }) => {
             </Box>
           ) : (
             <Box
+              as='form'
+              onSubmit={(e) => {
+                e.preventDefault()
+                addNewcard()
+              }}
               sx={{ height: '100%', display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'space-between' }}
             >
               <TextField
@@ -216,7 +220,7 @@ const Column = ({ column, columnId, boardId }) => {
                 }}
               />
               <Box data-no-dnd='true' sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Button onClick={addNewcard} sx={{ boxShadow: 'none' }} variant='contained'>
+                <Button type='submit' onClick={addNewcard} sx={{ boxShadow: 'none' }} variant='contained'>
                   Add
                 </Button>
                 <CloseIcon

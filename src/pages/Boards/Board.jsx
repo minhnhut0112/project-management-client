@@ -8,22 +8,30 @@ import { useEffect, useState } from 'react'
 import { isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '@/utils/formatters'
 // import { mockData } from '@/apis/mock-data'
+import { mapOrder } from '@/utils/sorts'
+import { Box, LinearProgress } from '@mui/material'
 
 const Board = () => {
-  const [board, setBoard] = useState([])
+  const [board, setBoard] = useState(null)
   const id = '65819c55f7123f3745874e95'
 
-  const boardQuery = useQuery({ queryKey: ['board', id], queryFn: () => fetchBoardDetailsAPI(id) })
+  const boardQuery = useQuery({ queryKey: ['boarddetails', id], queryFn: () => fetchBoardDetailsAPI(id) })
 
   useEffect(() => {
     if (boardQuery.data) {
       const boardData = boardQuery.data
+
+      boardData.columns = mapOrder(boardData.columns, boardData.columnOrderIds, '_id')
+
       boardData.columns.forEach((column) => {
         if (isEmpty(column.cards)) {
           column.cards = [generatePlaceholderCard(column)]
           column.cardOrderIds = [generatePlaceholderCard(column)._id]
+        } else {
+          column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
         }
       })
+
       setBoard(boardData)
     }
   }, [boardQuery.data])
@@ -32,10 +40,23 @@ const Board = () => {
     <Container
       disableGutters
       maxWidth={false}
-      sx={{ height: (theme) => `calc(100vh - ${theme.todolist.appBarHeight}` }}
+      sx={{
+        height: (theme) => `calc(100vh - ${theme.todolist.appBarHeight}`
+      }}
     >
       <BoardBar board={board} />
-      <BoardContent board={board} boardId={board._id} />
+      {board ? (
+        <BoardContent board={board} boardId={board._id} />
+      ) : (
+        <Box
+          sx={{
+            height: (theme) => theme.todolist.boardContentHeight,
+            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2')
+          }}
+        >
+          <LinearProgress />
+        </Box>
+      )}
     </Container>
   )
 }
