@@ -21,7 +21,8 @@ import { CSS } from '@dnd-kit/utilities'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createNewCardAPI } from '@/apis'
+import { createNewCardAPI, deleteColumnAPI } from '@/apis'
+import { useConfirm } from 'material-ui-confirm'
 
 const Column = ({ column, columnId, boardId }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -53,7 +54,7 @@ const Column = ({ column, columnId, boardId }) => {
     setNewCardTitle('')
   }
 
-  const mutionAddColumn = useMutation({
+  const mutionAddCard = useMutation({
     mutationFn: (data) => createNewCardAPI(data)
   })
 
@@ -63,12 +64,12 @@ const Column = ({ column, columnId, boardId }) => {
       return
     }
 
-    mutionAddColumn.mutate(
+    mutionAddCard.mutate(
       { title: newCardTitle, boardId: boardId, columnId: columnId },
       {
         onSuccess: () => {
-          toast.success('Add card is successfully!')
           queryClient.invalidateQueries({ queryKey: ['board'] })
+          toast.success('Add card is successfully!')
         },
         onError: (e) => {
           if (e.response.status === 422) {
@@ -79,6 +80,38 @@ const Column = ({ column, columnId, boardId }) => {
     )
 
     toggleOpenNewCardForm()
+  }
+
+  const mutionDeleteColumn = useMutation({
+    mutationFn: (id) => {
+      deleteColumnAPI(id)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+      toast.success('Deleted column is successfully')
+    },
+    onError: () => {}
+  })
+
+  const confirm = useConfirm()
+
+  const handleDeleteColumn = () => {
+    confirm({
+      title: 'Delete Column ?',
+      description: 'This action will delete the column and the cards inside! Are you sure!',
+      confirmationText: 'Confirm',
+      dialogProps: { maxWidth: 'xs' },
+      confirmationButtonProps: { color: 'warning' }
+    })
+      .then(() => {
+        mutionDeleteColumn.mutate(column._id, {
+          onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['board'] })
+          },
+          onError: () => {}
+        })
+      })
+      .catch(() => {})
   }
 
   return (
@@ -125,12 +158,23 @@ const Column = ({ column, columnId, boardId }) => {
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
+              onClick={handleClose}
               MenuListProps={{
                 'aria-labelledby': 'basic-column-dropdown'
               }}
             >
-              <MenuItem>
-                <ListItemIcon>
+              <MenuItem
+                sx={{
+                  '&:hover': {
+                    color: 'primary.main',
+                    '& .add-icon': {
+                      color: 'primary.main'
+                    }
+                  }
+                }}
+                onClick={toggleOpenNewCardForm}
+              >
+                <ListItemIcon className='add-icon'>
                   <AddCardOutlinedIcon fontSize='small' />
                 </ListItemIcon>
                 <ListItemText>Add new cart</ListItemText>
@@ -154,8 +198,18 @@ const Column = ({ column, columnId, boardId }) => {
                 <ListItemText>Paste</ListItemText>
               </MenuItem>
               <Divider />
-              <MenuItem>
-                <ListItemIcon>
+              <MenuItem
+                sx={{
+                  '&:hover': {
+                    color: 'error.light',
+                    '& .delete-icon': {
+                      color: 'error.light'
+                    }
+                  }
+                }}
+                onClick={handleDeleteColumn}
+              >
+                <ListItemIcon className='delete-icon'>
                   <DeleteOutlineOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText>Remove this column</ListItemText>

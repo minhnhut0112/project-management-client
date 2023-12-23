@@ -21,7 +21,7 @@ import { useCallback } from 'react'
 import { useRef } from 'react'
 import { generatePlaceholderCard } from '@/utils/formatters'
 import { useMutation } from '@tanstack/react-query'
-import { moveCardInTheSameColumnAPI, moveColumnAPI } from '@/apis'
+import { moveCardInTheSameColumnAPI, moveCardToDifferentColunmnAPI, moveColumnAPI } from '@/apis'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -72,6 +72,12 @@ const BoardContent = ({ board, boardId }) => {
     }
   })
 
+  const mutionMoveCardToDifferentColunmn = useMutation({
+    mutationFn: (data) => {
+      moveCardToDifferentColunmnAPI(data)
+    }
+  })
+
   const findColumnByCardId = (cardId) => {
     return orderedColumns.find((column) => column?.cards?.map((card) => card._id)?.includes(cardId))
   }
@@ -83,7 +89,8 @@ const BoardContent = ({ board, boardId }) => {
     over,
     activeColumn,
     activeDragingCardId,
-    activeDragingCardData
+    activeDragingCardData,
+    triggerfrom
   ) => {
     setOrderedColumns((prevColumns) => {
       //tim noi card sap duoc tha trong column dich
@@ -128,6 +135,19 @@ const BoardContent = ({ board, boardId }) => {
         nextOverColumn.cards = nextOverColumn.cards.filter((c) => !c.FE_PlaceholderCard)
         // cap nhat cardOrderIds
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map((card) => card._id)
+      }
+
+      if (triggerfrom === 'handeDragEnd') {
+        let prevCardOrderIds = nextColumns.find((c) => c._id === oldColumnDragingCard._id)?.cardOrderIds || []
+        if (prevCardOrderIds[0].includes('placeholder-card')) prevCardOrderIds = []
+
+        mutionMoveCardToDifferentColunmn.mutate({
+          currentCardId: activeDragingCardId,
+          prevColumnId: oldColumnDragingCard._id,
+          prevCardOrderIds: prevCardOrderIds,
+          nextColumnId: nextOverColumn._id,
+          nextCardOrderIds: nextColumns.find((c) => c._id === nextOverColumn._id)?.cardOrderIds
+        })
       }
 
       return nextColumns
@@ -177,7 +197,8 @@ const BoardContent = ({ board, boardId }) => {
         over,
         activeColumn,
         activeDragingCardId,
-        activeDragingCardData
+        activeDragingCardData,
+        'handeDragOver'
       )
     }
   }
@@ -211,7 +232,8 @@ const BoardContent = ({ board, boardId }) => {
           over,
           activeColumn,
           activeDragingCardId,
-          activeDragingCardData
+          activeDragingCardData,
+          'handeDragEnd'
         )
       } else {
         // trong cung 1 colmn

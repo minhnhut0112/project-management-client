@@ -13,9 +13,9 @@ import { Box, LinearProgress } from '@mui/material'
 
 const Board = () => {
   const [board, setBoard] = useState(null)
-  const id = '65819c55f7123f3745874e95'
+  const id = '65851ae2e5781a3e40500907'
 
-  const boardQuery = useQuery({ queryKey: ['boarddetails', id], queryFn: () => fetchBoardDetailsAPI(id) })
+  const boardQuery = useQuery({ queryKey: ['board', id], queryFn: () => fetchBoardDetailsAPI(id) })
 
   useEffect(() => {
     if (boardQuery.data) {

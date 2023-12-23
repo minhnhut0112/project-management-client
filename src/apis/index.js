@@ -21,7 +21,17 @@ export const moveColumnAPI = async (id, data) => {
   return res.data
 }
 
+export const deleteColumnAPI = async (id) => {
+  const res = await axios.delete(`${API_ROOT}/v1/columns/${id}`)
+  return res
+}
+
 export const moveCardInTheSameColumnAPI = async (id, data) => {
   const res = await axios.put(`${API_ROOT}/v1/columns/${id}`, data)
+  return res.data
+}
+
+export const moveCardToDifferentColunmnAPI = async (data) => {
+  const res = await axios.put(`${API_ROOT}/v1/boards/support/moving_card`, data)
   return res.data
 }

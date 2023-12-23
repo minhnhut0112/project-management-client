@@ -72,7 +72,7 @@ const BoardBar = ({ board }) => {
           <Tooltip title='datmap'>
             <Avatar
               alt='datmap'
-              src='https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/323626590_880990436513026_6674864588010330093_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=efb6e6&_nc_ohc=fPT8bvhDfO8AX8NxK2z&_nc_ht=scontent.fsgn5-9.fna&oh=00_AfAG31IBQRzMkfLb8V5-iL8qbelihNXp2q2WRGaD8PkRVw&oe=6573D551'
+              // src='https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/323626590_880990436513026_6674864588010330093_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=efb6e6&_nc_ohc=fPT8bvhDfO8AX8NxK2z&_nc_ht=scontent.fsgn5-9.fna&oh=00_AfAG31IBQRzMkfLb8V5-iL8qbelihNXp2q2WRGaD8PkRVw&oe=6573D551'
             />
           </Tooltip>
           <Tooltip title='minhnhut'>
