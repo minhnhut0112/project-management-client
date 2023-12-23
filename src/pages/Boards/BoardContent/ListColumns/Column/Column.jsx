@@ -274,7 +274,7 @@ const Column = ({ column, columnId, boardId }) => {
                 }}
               />
               <Box data-no-dnd='true' sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Button type='submit' onClick={addNewcard} sx={{ boxShadow: 'none' }} variant='contained'>
+                <Button type='submit' sx={{ boxShadow: 'none' }} variant='contained'>
                   Add
                 </Button>
                 <CloseIcon

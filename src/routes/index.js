@@ -5,7 +5,7 @@ import Home from '@/pages/Home/Home'
 
 const routes = [
   { path: '/', component: Home },
-  { path: '/board', component: Board },
+  { path: '/board/:id', component: Board },
   { path: '/sign-in', component: SignIn, layout: null },
   { path: '/sign-up', component: SignUp, layout: null }
 ]

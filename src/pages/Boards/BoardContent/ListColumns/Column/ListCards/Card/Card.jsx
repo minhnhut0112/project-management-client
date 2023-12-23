@@ -44,7 +44,19 @@ const Card = ({ card }) => {
           }
         }}
       >
-        {card?.cover && <CardMedia sx={{ height: 140 }} image={card.cover} />}
+        {card?.cover && (
+          <CardMedia
+            component='img'
+            height='140'
+            image={card.cover}
+            alt={card.title}
+            sx={{
+              objectFit: 'cover',
+              height: '100%',
+              width: '100%'
+            }}
+          />
+        )}
 
         <CardContent
           sx={{

@@ -10,10 +10,11 @@ import { generatePlaceholderCard } from '@/utils/formatters'
 // import { mockData } from '@/apis/mock-data'
 import { mapOrder } from '@/utils/sorts'
 import { Box, LinearProgress } from '@mui/material'
+import { useParams } from 'react-router-dom'
 
 const Board = () => {
   const [board, setBoard] = useState(null)
-  const id = '65851ae2e5781a3e40500907'
+  const { id } = useParams()
 
   const boardQuery = useQuery({ queryKey: ['board', id], queryFn: () => fetchBoardDetailsAPI(id) })
 

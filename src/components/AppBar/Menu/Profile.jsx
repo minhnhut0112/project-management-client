@@ -8,7 +8,6 @@ import IconButton from '@mui/material/IconButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import Tooltip from '@mui/material/Tooltip'
 import { useState } from 'react'
 
 const Profile = () => {
@@ -22,24 +21,22 @@ const Profile = () => {
   }
   return (
     <Box>
-      <Tooltip title='Account settings'>
-        <IconButton
-          onClick={handleClick}
-          size='small'
-          sx={{ padding: 0 }}
-          aria-controls={open ? 'basic-menu-profile' : undefined}
-          aria-haspopup='true'
-          aria-expanded={open ? 'true' : undefined}
+      <IconButton
+        onClick={handleClick}
+        size='small'
+        sx={{ padding: 0 }}
+        aria-controls={open ? 'basic-menu-profile' : undefined}
+        aria-haspopup='true'
+        aria-expanded={open ? 'true' : undefined}
+      >
+        <Avatar
+          sx={{ width: 32, height: 32 }}
+          alt='avatar'
+          src='https://yt3.ggpht.com/yti/ADpuP3NEF178kiCGdCsoST-0Adr2zq0FhKaeG5_Fm0G90g=s88-c-k-c0x00ffffff-no-rj-mo'
         >
-          <Avatar
-            sx={{ width: 32, height: 32 }}
-            alt='avatar'
-            src='https://yt3.ggpht.com/yti/ADpuP3NEF178kiCGdCsoST-0Adr2zq0FhKaeG5_Fm0G90g=s88-c-k-c0x00ffffff-no-rj-mo'
-          >
-            M
-          </Avatar>
-        </IconButton>
-      </Tooltip>
+          M
+        </Avatar>
+      </IconButton>
       <Menu
         id='basic-menu-profile'
         anchorEl={anchorEl}

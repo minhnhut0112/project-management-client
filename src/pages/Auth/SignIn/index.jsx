@@ -1,5 +1,7 @@
+import { Box } from '@mui/material'
+
 const SignIn = () => {
-  return <>Sign In Page</>
+  return <Box></Box>
 }
 
 export default SignIn
