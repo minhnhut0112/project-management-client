@@ -60,6 +60,11 @@ const Boards = () => {
   })
 
   const createNewBoard = () => {
+    if (!newBoardTitle) {
+      handleClose()
+      toast.error('Please Enter Board Title!')
+      return
+    }
     mutionCreateBoard.mutate(
       { title: newBoardTitle, type: visibility },
       {
@@ -84,13 +89,12 @@ const Boards = () => {
       </Typography>
 
       <Grid container sx={{ gap: 2 }}>
-        {boards?.map((board, index) => (
+        {boards?.map((board) => (
           <>
             <Grid
               sx={{
                 bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#ebecf0'),
                 height: 100,
-                padding: 3,
                 cursor: 'pointer',
                 mt: 3,
                 borderRadius: '3px'
@@ -100,7 +104,7 @@ const Boards = () => {
               md={3}
               onClick={(event) => !event.target.closest('input[type="checkbox"]') && navigate(`/board/${board._id}`)}
             >
-              <Typography>{board.title}</Typography>
+              <Typography sx={{ padding: 2 }}>{board.title}</Typography>
               <Box sx={{ display: 'flex', justifyContent: 'end' }}>
                 <Checkbox
                   icon={<StarBorderIcon />}
@@ -127,6 +131,7 @@ const Boards = () => {
           <Button
             aria-describedby={id}
             onClick={handleClick}
+            onTouchStart={handleClick}
             sx={{ color: 'white', width: '100%', '&:focus': { display: 'none' } }}
           >
             Add new board
