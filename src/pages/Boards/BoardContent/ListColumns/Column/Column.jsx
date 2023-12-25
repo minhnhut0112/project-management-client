@@ -14,17 +14,18 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ListCards from './ListCards/ListCards'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createNewCardAPI, deleteColumnAPI } from '@/apis'
+import { createNewCardAPI } from '@/apis/cards.api'
 import { useConfirm } from 'material-ui-confirm'
+import { deleteColumnAPI, updateColumnAPI } from '@/apis/columns.api'
 
-const Column = ({ column, columnId, boardId }) => {
+const Column = ({ column }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data: { ...column }
@@ -45,10 +46,9 @@ const Column = ({ column, columnId, boardId }) => {
 
   const queryClient = useQueryClient()
 
-  const orderedCards = column.cards
-
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const [newCardTitle, setNewCardTitle] = useState('')
+
   const toggleOpenNewCardForm = () => {
     setOpenNewCardForm(!openNewCardForm)
     setNewCardTitle('')
@@ -60,12 +60,12 @@ const Column = ({ column, columnId, boardId }) => {
 
   const addNewcard = () => {
     if (!newCardTitle) {
-      toast.error('Please enter card title!')
+      toggleOpenNewCardForm()
       return
     }
 
     mutionAddCard.mutate(
-      { title: newCardTitle, boardId: boardId, columnId: columnId },
+      { title: newCardTitle, boardId: column.boardId, columnId: column._id },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['board'] })
@@ -83,14 +83,7 @@ const Column = ({ column, columnId, boardId }) => {
   }
 
   const mutionDeleteColumn = useMutation({
-    mutationFn: (id) => {
-      deleteColumnAPI(id)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['board'] })
-      toast.success('Deleted column is successfully')
-    },
-    onError: () => {}
+    mutationFn: (id) => deleteColumnAPI(id)
   })
 
   const confirm = useConfirm()
@@ -105,13 +98,57 @@ const Column = ({ column, columnId, boardId }) => {
     })
       .then(() => {
         mutionDeleteColumn.mutate(column._id, {
-          onSettled: () => {
+          onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['board'] })
+            toast.success('Deleted column is successfully')
           },
           onError: () => {}
         })
       })
       .catch(() => {})
+  }
+
+  const [newColumnTitle, setNewColumnTitle] = useState('')
+  const [openNewColumnTitleForm, setOpenNewColumnTitleForm] = useState(false)
+
+  useEffect(() => {
+    if (column) {
+      setNewColumnTitle(column.title)
+    }
+  }, [column])
+
+  const toggleOpenNewColumnTitleForm = () => {
+    setOpenNewColumnTitleForm(!openNewColumnTitleForm)
+  }
+
+  const mutionEditColumnTitle = useMutation({
+    mutationFn: (data) => updateColumnAPI(column._id, data)
+  })
+
+  const editColumnTitle = () => {
+    if (!newColumnTitle) {
+      toggleOpenNewColumnTitleForm()
+      return
+    }
+
+    mutionEditColumnTitle.mutate(
+      {
+        title: newColumnTitle
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['board'] })
+          toast.success('Edit Column Title is successfully!')
+        },
+        onError: (e) => {
+          if (e.response.status === 422) {
+            toast.error(`${e.response.data.message}`)
+          }
+        }
+      }
+    )
+
+    toggleOpenNewColumnTitleForm()
   }
 
   return (
@@ -139,9 +176,51 @@ const Column = ({ column, columnId, boardId }) => {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant='h6' sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>
-            {column.title}
-          </Typography>
+          {!openNewColumnTitleForm ? (
+            <Typography
+              onClick={toggleOpenNewColumnTitleForm}
+              variant='h6'
+              sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}
+            >
+              {newColumnTitle}
+            </Typography>
+          ) : (
+            <Box
+              as='form'
+              onSubmit={(e) => {
+                e.preventDefault()
+                editColumnTitle()
+              }}
+              sx={{ height: '100%', display: 'flex', alignItems: 'center', color: 'black', width: '100%' }}
+            >
+              <TextField
+                type='text'
+                value={newColumnTitle}
+                onBlur={toggleOpenNewColumnTitleForm}
+                autoFocus
+                data-no-dnd='true'
+                onChange={(e) => setNewColumnTitle(e.target.value)}
+                size='small'
+                sx={{
+                  '& label': {
+                    color: 'text.primary'
+                  },
+
+                  '& label.Mui-focused': {
+                    color: (theme) => theme.palette.primary.main
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                    '&:hover fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                    '&.Mui-focused fieldset': { borderColor: (theme) => theme.palette.primary.main }
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    borderRadius: 1
+                  }
+                }}
+              />
+            </Box>
+          )}
           <Box>
             <Tooltip title='More Options'>
               <MoreHorizIcon
@@ -218,7 +297,7 @@ const Column = ({ column, columnId, boardId }) => {
           </Box>
         </Box>
 
-        <ListCards cards={orderedCards} />
+        <ListCards cards={column?.cards} columnTitle={column?.title} />
 
         <Box
           sx={{
@@ -247,6 +326,7 @@ const Column = ({ column, columnId, boardId }) => {
               <TextField
                 label='Enter card title...'
                 type='text'
+                onBlur={addNewcard}
                 autoFocus
                 data-no-dnd='true'
                 value={newCardTitle}

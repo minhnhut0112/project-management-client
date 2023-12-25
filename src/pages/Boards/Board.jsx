@@ -2,7 +2,7 @@ import Container from '@mui/material/Container'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 // import { useEffect, useState } from 'react'
-import { fetchBoardDetailsAPI } from '@/apis'
+
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { isEmpty } from 'lodash'
@@ -11,6 +11,7 @@ import { generatePlaceholderCard } from '@/utils/formatters'
 import { mapOrder } from '@/utils/sorts'
 import { Box, LinearProgress } from '@mui/material'
 import { useParams } from 'react-router-dom'
+import { fetchBoardDetailsAPI } from '@/apis/boards.api'
 
 const Board = () => {
   const [board, setBoard] = useState(null)

@@ -1,15 +1,16 @@
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
 import GroupIcon from '@mui/icons-material/Group'
-import { Box, Button } from '@mui/material'
-import { Card as MuiCard } from '@mui/material'
+import { Box, Button, Card as MuiCard } from '@mui/material'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-const Card = ({ card }) => {
+import { useState } from 'react'
+import ModalCardDetails from './CardDetails/CardDetails'
+const Card = ({ card, columnTitle }) => {
   const idShowCardActions = () => {
     return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachments?.length
   }
@@ -26,9 +27,16 @@ const Card = ({ card }) => {
     opacity: isDragging ? 0.5 : undefined
   }
 
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const handleModalClose = () => {
+    setModalOpen(false)
+  }
+
   return (
     <Box>
       <MuiCard
+        onClick={() => setModalOpen(true)}
         ref={setNodeRef}
         style={dndKitCardStyle}
         {...attributes}
@@ -89,6 +97,9 @@ const Card = ({ card }) => {
           </CardActions>
         )}
       </MuiCard>
+      {modalOpen && (
+        <ModalCardDetails card={card} open={modalOpen} columnTitle={columnTitle} onClose={handleModalClose} />
+      )}
     </Box>
   )
 }

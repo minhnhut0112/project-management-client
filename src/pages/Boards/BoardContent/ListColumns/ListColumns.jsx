@@ -8,7 +8,7 @@ import { TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createNewColumnAPI } from '@/apis'
+import { createNewColumnAPI } from '@/apis/columns.api'
 
 const ListColumns = ({ columns, boardId }) => {
   const queryClient = useQueryClient()
@@ -26,7 +26,7 @@ const ListColumns = ({ columns, boardId }) => {
 
   const addNewColumn = () => {
     if (!newColumnTitle) {
-      toast.error('Please enter Column title!')
+      toggleOpenNewColumnForm()
       return
     }
 
@@ -64,7 +64,7 @@ const ListColumns = ({ columns, boardId }) => {
         }}
       >
         {columns?.map((column) => (
-          <Column key={column._id} column={column} columnId={column._id} boardId={boardId} />
+          <Column key={column._id} column={column} />
         ))}
 
         {!openNewColumnForm ? (
@@ -110,6 +110,7 @@ const ListColumns = ({ columns, boardId }) => {
               label='Enter column title...'
               type='text'
               autoFocus
+              onBlur={addNewColumn}
               value={newColumnTitle}
               onChange={(e) => setNewColumnTitle(e.target.value)}
               size='small'

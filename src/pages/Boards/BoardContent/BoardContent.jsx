@@ -21,14 +21,16 @@ import { useCallback } from 'react'
 import { useRef } from 'react'
 import { generatePlaceholderCard } from '@/utils/formatters'
 import { useMutation } from '@tanstack/react-query'
-import { moveCardInTheSameColumnAPI, moveCardToDifferentColunmnAPI, moveColumnAPI } from '@/apis'
+
+import { moveCardToDifferentColunmnAPI, moveColumnAPI } from '@/apis/boards.api'
+import { updateColumnAPI } from '@/apis/columns.api'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-const BoardContent = ({ board, boardId }) => {
+const BoardContent = ({ board }) => {
   // Di chuyen chuot 10px moi kich hoat event
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -60,15 +62,15 @@ const BoardContent = ({ board, boardId }) => {
 
   const mutionMoveColumn = useMutation({
     mutationFn: (data) => {
-      const { boardId, columnOrderIds } = data
-      moveColumnAPI(boardId, { columnOrderIds: columnOrderIds })
+      const { columnOrderIds } = data
+      moveColumnAPI(board._id, { columnOrderIds: columnOrderIds })
     }
   })
 
   const mutionMoveCardInTheSameColunmn = useMutation({
     mutationFn: (data) => {
       const { oldColumnDragingCard, cardOrderIds } = data
-      moveCardInTheSameColumnAPI(oldColumnDragingCard._id, { cardOrderIds: cardOrderIds })
+      updateColumnAPI(oldColumnDragingCard._id, { cardOrderIds: cardOrderIds })
     }
   })
 
@@ -271,7 +273,7 @@ const BoardContent = ({ board, boardId }) => {
 
       setOrderedColumns(dndOrderedColumns)
 
-      mutionMoveColumn.mutate({ boardId, columnOrderIds: dndOrderedColumnsIds })
+      mutionMoveColumn.mutate({ columnOrderIds: dndOrderedColumnsIds })
     }
 
     setActiveDragItemId(null)
@@ -336,7 +338,7 @@ const BoardContent = ({ board, boardId }) => {
           p: '10px 0'
         }}
       >
-        <ListColumns columns={orderedColumns} boardId={boardId} />
+        <ListColumns columns={orderedColumns} boardId={board._id} />
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN && <Column column={activeDragItemData} />}
