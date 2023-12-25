@@ -1,11 +1,16 @@
-import { Box, Checkbox, Grid, Typography } from '@mui/material'
+import { Box, Checkbox, Grid, Popover, TextField, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useNavigate } from 'react-router-dom'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarRateIcon from '@mui/icons-material/StarRate'
 import { useEffect, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { fetchAllBoardsAPI } from '@/apis'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createBoardAPI, fetchAllBoardsAPI } from '@/apis/boards.api'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
+import { toast } from 'react-toastify'
 
 const Boards = () => {
   const navigate = useNavigate()
@@ -21,8 +26,56 @@ const Boards = () => {
   useEffect(() => {
     if (boardsQuery.data) {
       setBoards(boardsQuery.data)
+      setChecked(boardsQuery.data.starred)
     }
   }, [boardsQuery.data])
+
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const [newBoardTitle, setNewBoardTitle] = useState('')
+  const [visibility, setVisibility] = useState('public')
+
+  const handleClose = () => {
+    setAnchorEl(null)
+    setNewBoardTitle('')
+    setVisibility('public')
+    document.body.focus()
+  }
+
+  const open = Boolean(anchorEl)
+  const id = open ? 'simple-popover' : undefined
+
+  const handleChange = (event) => {
+    setVisibility(event.target.value)
+  }
+
+  const queryClient = useQueryClient()
+
+  const mutionCreateBoard = useMutation({
+    mutationFn: (data) => createBoardAPI(data)
+  })
+
+  const createNewBoard = () => {
+    mutionCreateBoard.mutate(
+      { title: newBoardTitle, type: visibility },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['boards'] })
+          toast.success('Create board is successfully!')
+        },
+        onError: (e) => {
+          if (e.response.status === 422) {
+            toast.error(`${e.response.data.message}`)
+          }
+        }
+      }
+    )
+    handleClose()
+  }
 
   return (
     <Box sx={{ padding: '10px 0px 10px 0px', width: { xs: 250, md: 1000 }, mx: 3 }}>
@@ -31,7 +84,7 @@ const Boards = () => {
       </Typography>
 
       <Grid container sx={{ gap: 2 }}>
-        {boards?.map((board) => (
+        {boards?.map((board, index) => (
           <>
             <Grid
               sx={{
@@ -71,7 +124,68 @@ const Boards = () => {
           xs={6}
           md={3}
         >
-          <Button sx={{ color: 'white', width: '100%' }}>Add new board</Button>
+          <Button
+            aria-describedby={id}
+            onClick={handleClick}
+            sx={{ color: 'white', width: '100%', '&:focus': { display: 'none' } }}
+          >
+            Add new board
+          </Button>
+          <Box>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
+              sx={{ mx: 2 }}
+            >
+              <Box
+                as='form'
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  createNewBoard()
+                }}
+                sx={{ width: 300, height: 240, p: 2 }}
+              >
+                <Typography sx={{ textAlign: 'center' }} variant='h6'>
+                  Create board
+                </Typography>
+                <TextField
+                  autoFocus
+                  value={newBoardTitle}
+                  onChange={(e) => setNewBoardTitle(e.target.value)}
+                  sx={{ width: '100%', mt: 2 }}
+                  label='Enter board title'
+                  size='small'
+                ></TextField>
+                <Box sx={{ width: '100%', mt: 2, mb: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel defaultValue='Public' size='small' id='demo-simple-select-label'>
+                      Visibility
+                    </InputLabel>
+                    <Select
+                      size='small'
+                      labelId='demo-simple-select-label'
+                      id='demo-simple-select'
+                      value={visibility}
+                      label='Visibility'
+                      onChange={handleChange}
+                    >
+                      <MenuItem value='public'>Public</MenuItem>
+                      <MenuItem value='private'>Private</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <Button sx={{ width: '100%', mt: 2 }} type='submit' variant='outlined'>
+                    Create Board
+                  </Button>
+                </Box>
+              </Box>
+            </Popover>
+          </Box>
         </Grid>
       </Grid>
     </Box>
