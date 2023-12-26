@@ -15,7 +15,6 @@ import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { useEffect, useState } from 'react'
-import ListCards from './ListCards/ListCards'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import CloseIcon from '@mui/icons-material/Close'
@@ -24,6 +23,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createNewCardAPI } from '@/apis/cards.api'
 import { useConfirm } from 'material-ui-confirm'
 import { deleteColumnAPI, updateColumnAPI } from '@/apis/columns.api'
+import ListCards from '../../ListCards/ListCards'
 
 const Column = ({ column }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({

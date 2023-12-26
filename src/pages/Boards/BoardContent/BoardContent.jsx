@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react'
 import { cloneDeep, isEmpty } from 'lodash'
 
 import Column from './ListColumns/Column/Column'
-import Card from './ListColumns/Column/ListCards/Card/Card'
+import Card from './ListCards/Card/Card'
 import { useCallback } from 'react'
 import { useRef } from 'react'
 import { generatePlaceholderCard } from '@/utils/formatters'
