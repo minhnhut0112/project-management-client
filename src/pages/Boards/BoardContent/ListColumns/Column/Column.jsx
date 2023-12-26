@@ -120,8 +120,9 @@ const Column = ({ column }) => {
   })
 
   const editColumnTitle = () => {
-    if (!newColumnTitle) {
+    if (newColumnTitle === column.title || !newColumnTitle) {
       toggleOpenNewColumnTitleForm()
+      setNewColumnTitle(column.title)
       return
     }
 
@@ -185,7 +186,7 @@ const Column = ({ column }) => {
               <TextField
                 type='text'
                 value={newColumnTitle}
-                onBlur={toggleOpenNewColumnTitleForm}
+                onBlur={editColumnTitle}
                 autoFocus
                 data-no-dnd='true'
                 onChange={(e) => setNewColumnTitle(e.target.value)}
