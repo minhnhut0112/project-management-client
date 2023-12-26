@@ -71,11 +71,6 @@ const Boards = () => {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['boards'] })
           toast.success('Create board is successfully!')
-        },
-        onError: (e) => {
-          if (e.response.status === 422) {
-            toast.error(`${e.response.data.message}`)
-          }
         }
       }
     )

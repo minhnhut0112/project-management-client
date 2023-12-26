@@ -70,11 +70,6 @@ const Column = ({ column }) => {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['board'] })
           toast.success('Add card is successfully!')
-        },
-        onError: (e) => {
-          if (e.response.status === 422) {
-            toast.error(`${e.response.data.message}`)
-          }
         }
       }
     )
@@ -101,8 +96,7 @@ const Column = ({ column }) => {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['board'] })
             toast.success('Deleted column is successfully')
-          },
-          onError: () => {}
+          }
         })
       })
       .catch(() => {})
@@ -139,11 +133,6 @@ const Column = ({ column }) => {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['board'] })
           toast.success('Edit Column Title is successfully!')
-        },
-        onError: (e) => {
-          if (e.response.status === 422) {
-            toast.error(`${e.response.data.message}`)
-          }
         }
       }
     )

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_ROOT } from './constants'
+import { toast } from 'react-toastify'
 
 class Http {
   constructor() {
@@ -10,6 +11,23 @@ class Http {
         'Content-Type': 'application/json'
       }
     })
+
+    this.instance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response) {
+          if (error.response.status) {
+            toast.error(error.response.data.message)
+          } else {
+            toast.error('Something wrong!')
+          }
+        } else {
+          toast.error('Something wrong!')
+        }
+
+        return Promise.reject(error)
+      }
+    )
   }
 }
 

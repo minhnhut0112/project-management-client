@@ -36,11 +36,6 @@ const ListColumns = ({ columns, boardId }) => {
         onSuccess: () => {
           toast.success('Add column is successfully!')
           queryClient.invalidateQueries({ queryKey: ['board'] })
-        },
-        onError: (e) => {
-          if (e.response.status === 422) {
-            toast.error(`${e.response.data.message}`)
-          }
         }
       }
     )
