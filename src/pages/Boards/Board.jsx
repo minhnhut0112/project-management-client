@@ -46,19 +46,28 @@ const Board = () => {
         height: (theme) => `calc(100vh - ${theme.todolist.appBarHeight}`
       }}
     >
-      <BoardBar board={board} />
-      {board ? (
-        <BoardContent board={board} boardId={board._id} />
-      ) : (
-        <Box
-          sx={{
-            height: (theme) => theme.todolist.boardContentHeight,
-            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2')
-          }}
-        >
-          <LinearProgress />
-        </Box>
-      )}
+      <Box
+        sx={{
+          backgroundImage: `url(${board?.cover})`,
+          width: '100%',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <BoardBar board={board} />
+        {board ? (
+          <BoardContent board={board} boardId={board._id} />
+        ) : (
+          <Box
+            sx={{
+              height: (theme) => theme.todolist.boardContentHeight,
+              bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2')
+            }}
+          >
+            <LinearProgress />
+          </Box>
+        )}
+      </Box>
     </Container>
   )
 }

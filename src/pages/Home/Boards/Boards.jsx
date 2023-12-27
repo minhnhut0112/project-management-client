@@ -1,4 +1,4 @@
-import { Box, Checkbox, Grid, Popover, TextField, Typography } from '@mui/material'
+import { Box, Checkbox, Grid, Popover, SvgIcon, TextField, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useNavigate } from 'react-router-dom'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
@@ -11,11 +11,42 @@ import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import { toast } from 'react-toastify'
+import ImageList from '@mui/material/ImageList'
+import ImageListItem from '@mui/material/ImageListItem'
+import { ReactComponent as boardbg } from '@/assets/trello.board.bg.svg'
+
+const itemData = [
+  {
+    img: 'https://1.bp.blogspot.com/--8hF_fSPDWM/YTa5yJ5NxEI/AAAAAAAAHgI/FCKkttVZaBUeUN_fIJC1ny444vu4QRCxwCLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-61.jpg',
+    title: 'Coffee'
+  },
+  {
+    img: 'https://1.bp.blogspot.com/-Lw-Jbz0M05c/YTa5ZHqdr-I/AAAAAAAAHaY/XivGTHyBt5UWtqMDjiAsx_DyKTZ1T-ZYQCLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-4.jpg',
+    title: 'Hats'
+  },
+  {
+    img: 'https://1.bp.blogspot.com/-wHNc1eq9fpo/YTa4O0iiK3I/AAAAAAAAHJw/1kRgEYPGak8-bnCl8c0BqiNJUqrFCpg9ACLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-16.jpg',
+    title: 'Honey'
+  },
+  {
+    img: 'https://1.bp.blogspot.com/-n4Krw0YS-Uk/YTa4fIbzUzI/AAAAAAAAHNM/83TOiGwJ4HIP-oh54_LtZNgDFLQi05jvwCLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-21.jpg',
+    title: 'Basketball'
+  },
+  {
+    img: 'https://1.bp.blogspot.com/-3cWMJKowm6c/YTa41Q-SF1I/AAAAAAAAHSE/V6Ibuh23MHQoD961d5ahPPJfpKjqUYpZACLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-28.jpg',
+    title: 'Fern'
+  },
+  {
+    img: 'https://1.bp.blogspot.com/-G1Z1e6rHNgc/YTa5r4yB3fI/AAAAAAAAHek/GoCreu5YihwjbBr3XGMMoqHkULSLYFpMgCLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-46.jpg',
+    title: 'Mushrooms'
+  }
+]
 
 const Boards = () => {
   const navigate = useNavigate()
   const [checked, setChecked] = useState(false)
   const [boards, setBoards] = useState(null)
+  const [imageSrc, setImageSrc] = useState(itemData[0].img)
 
   const handleCheckboxClick = () => {
     setChecked(!checked)
@@ -43,6 +74,7 @@ const Boards = () => {
     setAnchorEl(null)
     setNewBoardTitle('')
     setVisibility('public')
+    setImageSrc(itemData[0].img)
     document.body.focus()
   }
 
@@ -60,13 +92,13 @@ const Boards = () => {
   })
 
   const createNewBoard = () => {
-    if (!newBoardTitle) {
+    if (!newBoardTitle || !imageSrc) {
       handleClose()
       toast.error('Please Enter Board Title!')
       return
     }
     mutionCreateBoard.mutate(
-      { title: newBoardTitle, type: visibility },
+      { title: newBoardTitle, type: visibility, cover: imageSrc },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['boards'] })
@@ -88,20 +120,26 @@ const Boards = () => {
           <>
             <Grid
               sx={{
-                bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#ebecf0'),
+                backgroundImage: `url(${board?.cover})`,
                 height: 100,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                width: '100%',
                 cursor: 'pointer',
                 mt: 3,
-                borderRadius: '3px'
+                borderRadius: '2px'
               }}
               item
               xs={6}
-              md={3}
+              md={2.5}
               onClick={(event) => !event.target.closest('input[type="checkbox"]') && navigate(`/board/${board._id}`)}
             >
-              <Typography sx={{ padding: 2 }}>{board.title}</Typography>
+              <Typography sx={{ padding: 2, color: '#fff', fontWeight: 'bold', fontSize: '16px' }}>
+                {board.title}
+              </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'end' }}>
                 <Checkbox
+                  sx={{ color: 'white' }}
                   icon={<StarBorderIcon />}
                   checked={board?.starred}
                   onClick={handleCheckboxClick}
@@ -115,19 +153,24 @@ const Boards = () => {
           sx={{
             display: 'flex',
             justifyContent: 'center',
-            bgcolor: '#ffffff3d',
+            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#091e420f'),
             mt: 3,
-            height: 100
+            height: 100,
+            borderRadius: '2px'
           }}
           item
           xs={6}
-          md={3}
+          md={2.5}
         >
           <Button
             aria-describedby={id}
             onClick={handleClick}
             onTouchStart={handleClick}
-            sx={{ color: 'white', width: '100%', '&:focus': { display: 'none' } }}
+            sx={{
+              color: (theme) => (theme.palette.mode === 'dark' ? '#ffffff' : '#172B4D'),
+              width: '100%',
+              '&:focus': { display: 'none' }
+            }}
           >
             Add new board
           </Button>
@@ -149,11 +192,46 @@ const Boards = () => {
                   e.preventDefault()
                   createNewBoard()
                 }}
-                sx={{ width: 300, height: 240, p: 2 }}
+                sx={{ width: 300, height: 580, p: 2 }}
               >
-                <Typography sx={{ textAlign: 'center' }} variant='h6'>
+                <Typography sx={{ textAlign: 'center', mb: 1 }} variant='h6'>
+                  Cover
+                </Typography>
+                <Box
+                  sx={{
+                    backgroundImage: `url(${imageSrc})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    width: '100%'
+                  }}
+                >
+                  <SvgIcon
+                    component={boardbg}
+                    fontSize='small'
+                    inheritViewBox
+                    sx={{
+                      color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
+                      width: '100%',
+                      height: '100%',
+                      p: 1
+                    }}
+                  />
+                </Box>
+                <Typography sx={{ fontSize: '16px' }} variant='h6'>
                   Create board
                 </Typography>
+                <ImageList sx={{ width: '100%', mt: '5px', mb: '5px' }} cols={3} rowHeight={60}>
+                  {itemData.map((item) => (
+                    <ImageListItem key={item.img}>
+                      <img
+                        srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                        onClick={() => setImageSrc(item?.img)}
+                        src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+                        alt={item.title}
+                      />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
                 <TextField
                   autoFocus
                   value={newBoardTitle}
@@ -179,7 +257,12 @@ const Boards = () => {
                       <MenuItem value='private'>Private</MenuItem>
                     </Select>
                   </FormControl>
-                  <Button sx={{ width: '100%', mt: 2 }} type='submit' variant='outlined'>
+                  <Button
+                    disabled={!imageSrc || !newBoardTitle}
+                    sx={{ width: '100%', mt: 2 }}
+                    type='submit'
+                    variant='outlined'
+                  >
                     Create Board
                   </Button>
                 </Box>

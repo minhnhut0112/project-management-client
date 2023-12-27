@@ -50,9 +50,10 @@ const Home = () => {
       disableGutters
       maxWidth={false}
       sx={{
-        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2'),
         width: '100%',
-        height: (theme) => theme.todolist.boardHeight
+        height: (theme) => theme.todolist.boardHeight,
+        borderTop: 1,
+        borderColor: 'black'
       }}
     >
       <Box
@@ -68,25 +69,6 @@ const Home = () => {
           value={value}
           onChange={handleChange}
           aria-label='Vertical tabs example'
-          sx={{
-            width: { xs: 100, md: 300 },
-            '& .MuiTabs-indicator': {
-              bgcolor: 'white'
-            },
-            '& .MuiTab-textColorPrimary': {
-              color: 'white'
-            },
-            '& .Mui-selected': {
-              color: 'white'
-            },
-            '& .css-1gkccsc-MuiButtonBase-root-MuiTab-root.Mui-selected': {
-              color: 'white',
-              textTransform: 'none'
-            },
-            '&  .css-1gkccsc-MuiButtonBase-root-MuiTab-root': {
-              textTransform: 'none'
-            }
-          }}
         >
           <Tab label='Boards' {...a11yProps(0)} />
           <Tab label='Starred' {...a11yProps(1)} />

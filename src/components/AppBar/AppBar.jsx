@@ -33,17 +33,27 @@ const AppBar = () => {
         justifyContent: 'space-between',
         gap: 2,
         overflowX: 'auto',
-        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2c3e50' : '#1565c0')
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#fff')
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <AppsIcon sx={{ color: 'white' }} />
+        <AppsIcon sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <SvgIcon component={LogoApp} fontSize='small' inheritViewBox sx={{ color: 'white' }} />
+          <SvgIcon
+            component={LogoApp}
+            fontSize='small'
+            inheritViewBox
+            sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }}
+          />
           <Typography
             onClick={() => navigate('/')}
             variant='span'
-            sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white', cursor: 'pointer' }}
+            sx={{
+              fontSize: '1.2rem',
+              fontWeight: 'bold',
+              color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
+              cursor: 'pointer'
+            }}
           >
             TaskCraft
           </Typography>
@@ -52,7 +62,10 @@ const AppBar = () => {
           <WorkSpaces />
           <Recent />
           <Starred />
-          <Button sx={{ color: 'white' }} startIcon={<LibraryAddOutlinedIcon />}>
+          <Button
+            sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }}
+            startIcon={<LibraryAddOutlinedIcon />}
+          >
             Create
           </Button>
         </Box>
@@ -68,7 +81,7 @@ const AppBar = () => {
           InputProps={{
             startAdornment: (
               <InputAdornment position='start'>
-                <SearchIcon sx={{ color: 'white' }} />
+                <SearchIcon sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }} />
               </InputAdornment>
             ),
             endAdornment: (
@@ -76,7 +89,7 @@ const AppBar = () => {
                 onClick={() => setSearchValue('')}
                 fontSize='small'
                 sx={{
-                  color: 'white',
+                  color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
                   cursor: 'pointer',
                   display: !searchValue ? 'none' : 'block'
                 }}
@@ -88,25 +101,27 @@ const AppBar = () => {
             maxWidth: 170,
             mt: 0.5,
             '& label': {
-              color: 'white'
+              color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
             },
             '& input': {
-              color: 'white'
+              color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
             },
             '& label.Mui-focused': {
-              color: 'white'
+              color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
             },
             '& .MuiOutlinedInput-root': {
-              '& fieldset': { borderColor: 'white' },
-              '&:hover fieldset': { borderColor: 'white' },
-              '&.Mui-focused fieldset': { borderColor: 'white' }
+              '& fieldset': { borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') },
+              '&:hover fieldset': { borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') },
+              '&.Mui-focused fieldset': { borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }
             }
           }}
         />
         <ModeSelect />
         <Tooltip title='Notifications'>
           <Badge color='warning' variant='dot'>
-            <NotificationsNoneOutlinedIcon sx={{ color: 'white' }} />
+            <NotificationsNoneOutlinedIcon
+              sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }}
+            />
           </Badge>
         </Tooltip>
         <Tooltip title='Profiles'>

@@ -20,9 +20,9 @@ const ModeSelect = () => {
       <FormControl sx={{ minWidth: 130, mt: 0.5 }} size='small'>
         <InputLabel
           sx={{
-            color: 'white',
+            color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
             '&.Mui-focused': {
-              color: 'white'
+              color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
             }
           }}
           id='lable-select-mode'
@@ -35,18 +35,18 @@ const ModeSelect = () => {
           value={mode}
           onChange={handleChange}
           sx={{
-            color: 'white',
+            color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
             '.MuiOutlinedInput-notchedOutline': {
-              borderColor: 'white'
+              borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
             },
             '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'white'
+              borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
             },
             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'white'
+              borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
             },
             '.MuiSvgIcon-root': {
-              color: 'white'
+              color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
             }
           }}
           autoWidth

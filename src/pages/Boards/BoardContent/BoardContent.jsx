@@ -332,8 +332,9 @@ const BoardContent = ({ board }) => {
     >
       <Box
         sx={{
-          bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2'),
           width: '100%',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           height: (theme) => theme.todolist.boardContentHeight,
           p: '10px 0'
         }}

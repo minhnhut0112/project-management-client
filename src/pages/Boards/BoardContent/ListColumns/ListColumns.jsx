@@ -75,7 +75,7 @@ const ListColumns = ({ columns, boardId }) => {
             onClick={toggleOpenNewColumnForm}
           >
             <Button
-              sx={{ color: 'white', width: '100%', justifyContent: 'flex-start', pl: 2, py: 1 }}
+              sx={{ color: '#172B4D', width: '100%', justifyContent: 'flex-start', pl: 2, py: 1 }}
               startIcon={<AddIcon />}
             >
               Add new column
