@@ -314,7 +314,7 @@ const Column = ({ column }) => {
               sx={{ height: '100%', display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'space-between' }}
             >
               <TextField
-                label='Enter card title...'
+                placeholder='Enter card title...'
                 type='text'
                 onBlur={addNewcard}
                 autoFocus

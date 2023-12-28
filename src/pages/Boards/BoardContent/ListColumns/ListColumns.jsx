@@ -70,12 +70,18 @@ const ListColumns = ({ columns, boardId }) => {
               mx: 2,
               borderRadius: '6px',
               height: 'fit-content',
-              bgcolor: '#ffffff3d'
+              bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#576574' : '#dfe6e9')
             }}
             onClick={toggleOpenNewColumnForm}
           >
             <Button
-              sx={{ color: '#172B4D', width: '100%', justifyContent: 'flex-start', pl: 2, py: 1 }}
+              sx={{
+                color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
+                width: '100%',
+                justifyContent: 'flex-start',
+                pl: 2,
+                py: 1
+              }}
               startIcon={<AddIcon />}
             >
               Add new column
@@ -95,36 +101,20 @@ const ListColumns = ({ columns, boardId }) => {
               p: 1,
               borderRadius: '6px',
               height: 'fit-content',
-              bgcolor: '#ffffff3d',
+              bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#576574' : '#dfe6e9'),
               display: 'flex',
               flexDirection: 'column',
               gap: 1
             }}
           >
             <TextField
-              label='Enter column title...'
+              placeholder='Enter column title...'
               type='text'
               autoFocus
               onBlur={addNewColumn}
               value={newColumnTitle}
               onChange={(e) => setNewColumnTitle(e.target.value)}
               size='small'
-              sx={{
-                '& label': {
-                  color: 'white'
-                },
-                '& input': {
-                  color: 'white'
-                },
-                '& label.Mui-focused': {
-                  color: 'white'
-                },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'white' },
-                  '&:hover fieldset': { borderColor: 'white' },
-                  '&.Mui-focused fieldset': { borderColor: 'white' }
-                }
-              }}
             />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Button type='submit' sx={{ boxShadow: 'none' }} variant='contained' size='small'>
@@ -134,7 +124,7 @@ const ListColumns = ({ columns, boardId }) => {
                 fontSize='small'
                 onClick={toggleOpenNewColumnForm}
                 sx={{
-                  color: 'white',
+                  color: 'black',
                   cursor: 'pointer'
                 }}
               />

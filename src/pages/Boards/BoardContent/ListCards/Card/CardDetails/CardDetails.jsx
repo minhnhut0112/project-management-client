@@ -13,6 +13,17 @@ import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined'
 import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
+
+const chipStyle = {
+  fontSize: '15px',
+  justifyContent: 'start',
+  borderRadius: '4px',
+  width: '100%',
+  bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
+  border: 'none'
+}
 
 export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
   const [openDesciptionForm, setOpenDesciptionForm] = useState(false)
@@ -45,10 +56,21 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                 display: 'flex',
                 justifyContent: 'center',
                 bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#b2bec3' : '#dfe6e9'),
-                borderRadius: '5px 5px 0 0'
+                borderRadius: '5px 5px 0 0',
+                position: 'relative'
               }}
             >
-              <img height={170} src={card?.cover} />
+              <IconButton
+                sx={{
+                  position: 'absolute',
+                  top: 5,
+                  right: 5
+                }}
+                onClick={onClose}
+              >
+                <CloseIcon />
+              </IconButton>
+              <img height={170} src={card?.cover} alt='Card Cover' />
             </Box>
           )}
           <Grid container>
@@ -123,108 +145,42 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
               </Box>
             </Grid>
             <Grid item xs={6} md={3}>
+              {!card?.cover && (
+                <Box
+                  sx={{
+                    textAlign: 'end',
+                    mx: 1,
+                    mb: 3
+                  }}
+                >
+                  <IconButton onClick={onClose}>
+                    <CloseIcon />
+                  </IconButton>
+                </Box>
+              )}
               <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 <Typography>Suggested</Typography>
-                <Chip
-                  icon={<PersonOutlineOutlinedIcon />}
-                  sx={{
-                    fontSize: '15px',
-                    justifyContent: 'start',
-                    borderRadius: '4px',
-                    width: '100%',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
-                    border: 'none'
-                  }}
-                  label='Join'
-                  clickable
-                  variant='outlined'
-                />
+                <Chip icon={<PersonOutlineOutlinedIcon />} sx={chipStyle} label='Join' clickable variant='outlined' />
                 <Typography>Add to card</Typography>
-                <Chip
-                  icon={<GroupAddOutlinedIcon />}
-                  sx={{
-                    fontSize: '15px',
-                    justifyContent: 'start',
-                    borderRadius: '4px',
-                    width: '100%',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
-                    border: 'none'
-                  }}
-                  label='Members'
-                  clickable
-                  variant='outlined'
-                />
-                <Chip
-                  icon={<LocalOfferOutlinedIcon />}
-                  sx={{
-                    fontSize: '15px',
-                    justifyContent: 'start',
-                    borderRadius: '4px',
-                    width: '100%',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
-                    border: 'none'
-                  }}
-                  label='Labels'
-                  clickable
-                  variant='outlined'
-                />
-                <Chip
-                  icon={<QueryBuilderOutlinedIcon />}
-                  sx={{
-                    fontSize: '15px',
-                    justifyContent: 'start',
-                    borderRadius: '4px',
-                    width: '100%',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
-                    border: 'none'
-                  }}
-                  label='Dates'
-                  clickable
-                  variant='outlined'
-                />
+                <Chip icon={<GroupAddOutlinedIcon />} sx={chipStyle} label='Members' clickable variant='outlined' />
+                <Chip icon={<LocalOfferOutlinedIcon />} sx={chipStyle} label='Labels' clickable variant='outlined' />
+                <Chip icon={<QueryBuilderOutlinedIcon />} sx={chipStyle} label='Dates' clickable variant='outlined' />
                 <Chip
                   icon={<AttachmentOutlinedIcon />}
-                  sx={{
-                    fontSize: '15px',
-                    justifyContent: 'start',
-                    borderRadius: '4px',
-                    width: '100%',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
-                    border: 'none'
-                  }}
+                  sx={chipStyle}
                   label='Attachment'
                   clickable
                   variant='outlined'
                 />
                 <Chip
                   icon={<LibraryAddCheckOutlinedIcon />}
-                  sx={{
-                    fontSize: '15px',
-                    justifyContent: 'start',
-                    borderRadius: '4px',
-                    width: '100%',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
-                    border: 'none'
-                  }}
+                  sx={chipStyle}
                   label='Checklist'
                   clickable
                   variant='outlined'
                 />
                 <Typography>Actions</Typography>
-                <Chip
-                  icon={<DeleteOutlineOutlinedIcon />}
-                  sx={{
-                    fontSize: '15px',
-                    justifyContent: 'start',
-                    borderRadius: '4px',
-                    width: '100%',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
-                    border: 'none'
-                  }}
-                  label='Delete'
-                  clickable
-                  variant='outlined'
-                />
+                <Chip icon={<DeleteOutlineOutlinedIcon />} sx={chipStyle} label='Delete' clickable variant='outlined' />
               </Box>
             </Grid>
           </Grid>

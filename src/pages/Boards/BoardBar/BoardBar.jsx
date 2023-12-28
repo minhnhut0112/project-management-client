@@ -11,17 +11,10 @@ import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined'
 import { capitalizeFirstLetter } from '@/utils/formatters'
 
 const menuStyle = {
-  color: 'white',
   bgcolor: 'transparent',
   border: 'none',
   paddingX: '5px',
-  borderRadius: '4px',
-  '.MuiSvgIcon-root': {
-    color: 'white'
-  },
-  '&:hover': {
-    bgcolor: 'primary.50'
-  }
+  borderRadius: '4px'
 }
 
 const BoardBar = ({ board }) => {
@@ -36,8 +29,7 @@ const BoardBar = ({ board }) => {
         justifyContent: 'space-between',
         gap: 2,
         overflowX: 'auto',
-        borderBottom: 1,
-        borderColor: '#fff'
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#576574' : '#dfe6e9')
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -101,10 +93,10 @@ const BoardBar = ({ board }) => {
         </AvatarGroup>
         <Button
           sx={{
-            color: 'white',
-            borderColor: 'white',
+            color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
+            borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
             '&:hover': {
-              borderColor: 'white'
+              borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
             }
           }}
           variant='outlined'

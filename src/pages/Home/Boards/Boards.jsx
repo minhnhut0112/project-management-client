@@ -14,6 +14,8 @@ import { toast } from 'react-toastify'
 import ImageList from '@mui/material/ImageList'
 import ImageListItem from '@mui/material/ImageListItem'
 import { ReactComponent as boardbg } from '@/assets/trello.board.bg.svg'
+import IconButton from '@mui/material/IconButton'
+import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 
 const itemData = [
   {
@@ -85,11 +87,17 @@ const Boards = () => {
     setVisibility(event.target.value)
   }
 
-  const queryClient = useQueryClient()
+  // const queryClient = useQueryClient()
 
   const mutionCreateBoard = useMutation({
     mutationFn: (data) => createBoardAPI(data)
   })
+
+  useEffect(() => {
+    if (mutionCreateBoard.data) {
+      navigate(`/board/${mutionCreateBoard.data._id}`)
+    }
+  }, [mutionCreateBoard.data, navigate])
 
   const createNewBoard = () => {
     if (!newBoardTitle || !imageSrc) {
@@ -98,13 +106,14 @@ const Boards = () => {
       return
     }
     mutionCreateBoard.mutate(
-      { title: newBoardTitle, type: visibility, cover: imageSrc },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['boards'] })
-          toast.success('Create board is successfully!')
-        }
-      }
+      { title: newBoardTitle, type: visibility, cover: imageSrc }
+      // {
+      //   onSuccess: () => {
+      //     navigate(`/board/${mutionCreateBoard?.data?._id}`)
+      //     queryClient.invalidateQueries({ queryKey: ['boards'] })
+      //     toast.success('Create board is successfully!')
+      //   }
+      // }
     )
     handleClose()
   }
@@ -172,7 +181,7 @@ const Boards = () => {
               '&:focus': { display: 'none' }
             }}
           >
-            Add new board
+            Create new board
           </Button>
           <Box>
             <Popover
@@ -192,11 +201,17 @@ const Boards = () => {
                   e.preventDefault()
                   createNewBoard()
                 }}
-                sx={{ width: 300, height: 580, p: 2 }}
+                sx={{ width: 300, height: 565, p: 2 }}
               >
-                <Typography sx={{ textAlign: 'center', mb: 1 }} variant='h6'>
-                  Cover
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                  <Box sx={{ marginLeft: '35px' }}></Box>
+                  <Typography sx={{ fontSize: '18px' }} variant='h6'>
+                    Create new board
+                  </Typography>
+                  <IconButton sx={{ p: 0 }} onClick={handleClose} aria-label='delete'>
+                    <ClearOutlinedIcon fontSize='small' />
+                  </IconButton>
+                </Box>
                 <Box
                   sx={{
                     backgroundImage: `url(${imageSrc})`,
@@ -217,8 +232,8 @@ const Boards = () => {
                     }}
                   />
                 </Box>
-                <Typography sx={{ fontSize: '16px' }} variant='h6'>
-                  Create board
+                <Typography sx={{ fontSize: '16px', m: '5px 0 5px 0' }} variant='h6'>
+                  Choose background
                 </Typography>
                 <ImageList sx={{ width: '100%', mt: '5px', mb: '5px' }} cols={3} rowHeight={60}>
                   {itemData.map((item) => (
@@ -263,7 +278,7 @@ const Boards = () => {
                     type='submit'
                     variant='outlined'
                   >
-                    Create Board
+                    Create
                   </Button>
                 </Box>
               </Box>
