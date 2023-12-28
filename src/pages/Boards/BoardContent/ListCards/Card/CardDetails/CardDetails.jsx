@@ -5,7 +5,7 @@ import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import Chip from '@mui/material/Chip'
 import { Button, Grid, TextField } from '@mui/material'
 import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
@@ -15,6 +15,9 @@ import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutl
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { updateCardAPI } from '@/apis/cards.api'
+import { toast } from 'react-toastify'
 
 const chipStyle = {
   fontSize: '15px',
@@ -27,6 +30,42 @@ const chipStyle = {
 
 export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
   const [openDesciptionForm, setOpenDesciptionForm] = useState(false)
+
+  const [openNewCardTitleForm, setOpenNewCardTitleForm] = useState(false)
+  const [newCardTitle, setNewCardTitle] = useState('')
+
+  useEffect(() => {
+    if (card) {
+      setNewCardTitle(card.title)
+    }
+  }, [card])
+
+  const queryClient = useQueryClient()
+
+  const mutionEditCardTitle = useMutation({
+    mutationFn: (data) => updateCardAPI(card._id, data)
+  })
+
+  const editCardTitle = () => {
+    if (newCardTitle === card.title || !newCardTitle) {
+      setOpenNewCardTitleForm(false)
+      setNewCardTitle(card.title)
+      return
+    }
+
+    mutionEditCardTitle.mutate(
+      {
+        title: newCardTitle
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['board'] })
+          toast.success('Edit Column Title is successfully!')
+        }
+      }
+    )
+    setOpenNewCardTitleForm(false)
+  }
   return (
     <div>
       <Modal
@@ -47,7 +86,8 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
             maxWidth: { xs: 350, md: 800 },
             height: { xs: 700, md: 700 },
             maxHeight: { xs: 700, md: 800 },
-            borderRadius: '5px'
+            borderRadius: '5px',
+            '&:focus': { outline: 'none' }
           }}
         >
           {card.cover && (
@@ -76,17 +116,59 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
           <Grid container>
             <Grid item xs={7} md={9}>
               <Box sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box
+                  sx={{ display: 'flex', alignItems: 'center', gap: 2, height: '40px' }}
+                  onClick={() => setOpenNewCardTitleForm(true)}
+                >
                   <SubtitlesOutlinedIcon />
-                  <Typography
-                    variant='h6'
-                    sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}
-                    id='modal-modal-title'
-                  >
-                    {card?.title}
-                  </Typography>
-                </Box>
+                  <Box sx={{ width: '100%' }}>
+                    {openNewCardTitleForm ? (
+                      <Box
+                        as='form'
+                        onSubmit={(e) => {
+                          e.preventDefault()
+                          editCardTitle()
+                        }}
+                      >
+                        <TextField
+                          fullWidth
+                          type='text'
+                          value={newCardTitle}
+                          onBlur={editCardTitle}
+                          autoFocus
+                          data-no-dnd='true'
+                          onChange={(e) => setNewCardTitle(e.target.value)}
+                          size='small'
+                          sx={{
+                            '& label': {
+                              color: 'text.primary'
+                            },
 
+                            '& label.Mui-focused': {
+                              color: (theme) => theme.palette.primary.main
+                            },
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                              '&:hover fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                              '&.Mui-focused fieldset': { borderColor: (theme) => theme.palette.primary.main }
+                            },
+                            '& .MuiOutlinedInput-input': {
+                              borderRadius: 1
+                            }
+                          }}
+                        />
+                      </Box>
+                    ) : (
+                      <Typography
+                        variant='h6'
+                        sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}
+                        id='modal-modal-title'
+                      >
+                        {newCardTitle}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                   <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} /> <Typography>In list {columnTitle}</Typography>
                 </Box>

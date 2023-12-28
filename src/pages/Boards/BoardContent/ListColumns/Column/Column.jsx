@@ -181,7 +181,6 @@ const Column = ({ column }) => {
                 e.preventDefault()
                 editColumnTitle()
               }}
-              sx={{ height: '100%', display: 'flex', alignItems: 'center', color: 'black', width: '100%' }}
             >
               <TextField
                 type='text'

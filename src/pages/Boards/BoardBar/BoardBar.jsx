@@ -5,10 +5,17 @@ import AddToDriveIcon from '@mui/icons-material/AddToDrive'
 import PublicIcon from '@mui/icons-material/Public'
 import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
-import { Tooltip } from '@mui/material'
+import { TextField, Tooltip } from '@mui/material'
 import Button from '@mui/material/Button'
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined'
 import { capitalizeFirstLetter } from '@/utils/formatters'
+import { useEffect, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { moveColumnAPI } from '@/apis/boards.api'
+import { toast } from 'react-toastify'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import Drawer from '@mui/material/Drawer'
+import IconButton from '@mui/material/IconButton'
 
 const menuStyle = {
   bgcolor: 'transparent',
@@ -18,6 +25,56 @@ const menuStyle = {
 }
 
 const BoardBar = ({ board }) => {
+  const [openNewBoardTitleForm, setOpenNewBoardTitleForm] = useState(false)
+  const [newBoardTitle, setNewBoardTitle] = useState('')
+  const [chipWidth, setChipWidth] = useState(null)
+
+  useEffect(() => {
+    const chipElement = document.getElementById('boardChip')
+    if (chipElement) {
+      setChipWidth(chipElement.clientWidth)
+    }
+  }, [board?.title, openNewBoardTitleForm, newBoardTitle])
+
+  useEffect(() => {
+    if (board) {
+      setNewBoardTitle(board.title)
+    }
+  }, [board])
+
+  const queryClient = useQueryClient()
+
+  const mutionEditBoardTitle = useMutation({
+    mutationFn: (data) => moveColumnAPI(board._id, data)
+  })
+
+  const editBoardTitle = () => {
+    if (newBoardTitle === board.title || !newBoardTitle) {
+      setOpenNewBoardTitleForm(false)
+      setNewBoardTitle(board.title)
+      return
+    }
+
+    mutionEditBoardTitle.mutate(
+      {
+        title: newBoardTitle
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['board'] })
+          toast.success('Edit Board Title is successfully!')
+        }
+      }
+    )
+    setOpenNewBoardTitleForm(false)
+  }
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  const handleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen)
+  }
+
   return (
     <Box
       sx={{
@@ -33,7 +90,52 @@ const BoardBar = ({ board }) => {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Chip sx={menuStyle} label={board?.title} clickable icon={<DashboardIcon />} />
+        {openNewBoardTitleForm ? (
+          <Box
+            as='form'
+            onSubmit={(e) => {
+              e.preventDefault()
+              editBoardTitle()
+            }}
+          >
+            <TextField
+              type='text'
+              value={newBoardTitle}
+              onBlur={editBoardTitle}
+              autoFocus
+              data-no-dnd='true'
+              onChange={(e) => setNewBoardTitle(e.target.value)}
+              size='small'
+              sx={{
+                width: `${chipWidth}px`,
+                '& label': {
+                  color: 'text.primary'
+                },
+
+                '& label.Mui-focused': {
+                  color: (theme) => theme.palette.primary.main
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                  '&:hover fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                  '&.Mui-focused fieldset': { borderColor: (theme) => theme.palette.primary.main }
+                },
+                '& .MuiOutlinedInput-input': {
+                  borderRadius: 1
+                }
+              }}
+            />
+          </Box>
+        ) : (
+          <Chip
+            id='boardChip'
+            sx={menuStyle}
+            label={newBoardTitle}
+            clickable
+            icon={<DashboardIcon fontSize='small' />}
+            onClick={() => setOpenNewBoardTitleForm(true)}
+          />
+        )}
         <Chip sx={menuStyle} label={capitalizeFirstLetter(board?.type)} clickable icon={<PublicIcon />} />
         <Chip sx={menuStyle} label='Add to Drive' clickable icon={<AddToDriveIcon />} />
       </Box>
@@ -104,6 +206,15 @@ const BoardBar = ({ board }) => {
         >
           Invite
         </Button>
+        <IconButton onClick={handleDrawer}>
+          <MoreHorizIcon />
+        </IconButton>
+
+        <Drawer anchor='right' open={isDrawerOpen} onClose={handleDrawer}>
+          <div style={{ width: 250, padding: '20px' }}>
+            <h2>Drawer Content</h2>
+          </div>
+        </Drawer>
       </Box>
     </Box>
   )
