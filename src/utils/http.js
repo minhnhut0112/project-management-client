@@ -6,10 +6,10 @@ class Http {
   constructor() {
     this.instance = axios.create({
       baseURL: `${API_ROOT}/`,
-      timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      timeout: 10000
+      // headers: {
+      //   'Content-Type': 'application/json'
+      // }
     })
 
     this.instance.interceptors.response.use(

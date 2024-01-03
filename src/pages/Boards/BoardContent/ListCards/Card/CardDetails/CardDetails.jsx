@@ -1,23 +1,26 @@
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import Modal from '@mui/material/Modal'
-import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
-import Chip from '@mui/material/Chip'
-import { Button, Grid, TextField } from '@mui/material'
-import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined'
-import { useEffect, useState } from 'react'
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
-import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
-import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined'
+import { deleteCardAPI, updateCardAPI } from '@/apis/cards.api'
 import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
-import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
-import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
+import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
+import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined'
+import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
+import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined'
+import { Button, Grid, TextField } from '@mui/material'
+import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
+import IconButton from '@mui/material/IconButton'
+import Modal from '@mui/material/Modal'
+import Typography from '@mui/material/Typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { updateCardAPI } from '@/apis/cards.api'
+import { useConfirm } from 'material-ui-confirm'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import CoverPopover from './CoverPopover/CoverPopover'
+import Attachments from './Attachments/Attachments'
 
 const chipStyle = {
   fontSize: '15px',
@@ -66,6 +69,33 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
     )
     setOpenNewCardTitleForm(false)
   }
+
+  const mutionDeleteColumn = useMutation({
+    mutationFn: (id) => deleteCardAPI(id)
+  })
+
+  const confirm = useConfirm()
+
+  const handleDeleteCard = () => {
+    confirm({
+      title: 'Delete Card ?',
+      description:
+        'All actions will be removed from the activity feed and you wont be able to re-open the card. There is no undo.',
+      confirmationText: 'Confirm',
+      dialogProps: { maxWidth: 'xs' },
+      confirmationButtonProps: { color: 'warning' }
+    })
+      .then(() => {
+        mutionDeleteColumn.mutate(card._id, {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['board'] })
+            toast.success('Deleted card is successfully')
+          }
+        })
+      })
+      .catch(() => {})
+  }
+
   return (
     <div>
       <Modal
@@ -110,12 +140,22 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
               >
                 <CloseIcon />
               </IconButton>
-              <img height={170} src={card?.cover} alt='Card Cover' />
+              <img height={170} src={card.cover} alt='Card Cover' />
             </Box>
           )}
+
           <Grid container>
-            <Grid item xs={7} md={9}>
-              <Box sx={{ p: 2 }}>
+            <Grid item xs={7} md={9} sx={{ overflowY: 'auto' }}>
+              <Box
+                sx={{
+                  p: 2,
+                  overflowY: 'auto',
+                  maxHeight: '500px',
+                  '&::-webkit-scrollbar-track': {
+                    mt: 3
+                  }
+                }}
+              >
                 <Box
                   sx={{ display: 'flex', alignItems: 'center', gap: 2, height: '40px' }}
                   onClick={() => setOpenNewCardTitleForm(true)}
@@ -149,8 +189,12 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                             },
                             '& .MuiOutlinedInput-root': {
                               '& fieldset': { borderColor: (theme) => theme.palette.primary.main },
-                              '&:hover fieldset': { borderColor: (theme) => theme.palette.primary.main },
-                              '&.Mui-focused fieldset': { borderColor: (theme) => theme.palette.primary.main }
+                              '&:hover fieldset': {
+                                borderColor: (theme) => theme.palette.primary.main
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: (theme) => theme.palette.primary.main
+                              }
                             },
                             '& .MuiOutlinedInput-input': {
                               borderRadius: 1
@@ -172,14 +216,12 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                   <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} /> <Typography>In list {columnTitle}</Typography>
                 </Box>
-
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <ViewHeadlineOutlinedIcon />
                   <Typography variant='h6' sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>
                     Desciption
                   </Typography>
                 </Box>
-
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                   <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
                   {!openDesciptionForm ? (
@@ -217,15 +259,10 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     </Box>
                   )}
                 </Box>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <AttachmentOutlinedIcon />
-                  <Typography variant='h6' sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>
-                    Attachment
-                  </Typography>
-                </Box>
+                <Attachments attachment={card.attachment} />
               </Box>
             </Grid>
+
             <Grid item xs={6} md={3}>
               {!card?.cover && (
                 <Box
@@ -242,10 +279,17 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
               )}
               <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 <Typography>Suggested</Typography>
-                <Chip icon={<PersonOutlineOutlinedIcon />} sx={chipStyle} label='Join' clickable variant='outlined' />
+                <Chip
+                  icon={<PersonOutlineOutlinedIcon fontSize='small' />}
+                  sx={chipStyle}
+                  label='Join'
+                  clickable
+                  variant='outlined'
+                />
                 <Typography>Add to card</Typography>
                 <Chip icon={<GroupAddOutlinedIcon />} sx={chipStyle} label='Members' clickable variant='outlined' />
                 <Chip icon={<LocalOfferOutlinedIcon />} sx={chipStyle} label='Labels' clickable variant='outlined' />
+                <CoverPopover card={card} />
                 <Chip icon={<QueryBuilderOutlinedIcon />} sx={chipStyle} label='Dates' clickable variant='outlined' />
                 <Chip
                   icon={<AttachmentOutlinedIcon />}
@@ -262,7 +306,22 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                   variant='outlined'
                 />
                 <Typography>Actions</Typography>
-                <Chip icon={<DeleteOutlineOutlinedIcon />} sx={chipStyle} label='Delete' clickable variant='outlined' />
+                <Chip
+                  onClick={handleDeleteCard}
+                  icon={<DeleteOutlineOutlinedIcon />}
+                  sx={{
+                    ...chipStyle,
+                    '&:hover': {
+                      color: 'error.light',
+                      '& .MuiChip-iconColorDefault': {
+                        color: 'error.light'
+                      }
+                    }
+                  }}
+                  label='Delete'
+                  clickable
+                  variant='outlined'
+                />
               </Box>
             </Grid>
           </Grid>

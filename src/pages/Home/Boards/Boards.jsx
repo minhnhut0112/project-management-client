@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarRateIcon from '@mui/icons-material/StarRate'
 import { useEffect, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { createBoardAPI, fetchAllBoardsAPI } from '@/apis/boards.api'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
@@ -143,7 +143,15 @@ const Boards = () => {
               md={2.5}
               onClick={(event) => !event.target.closest('input[type="checkbox"]') && navigate(`/board/${board._id}`)}
             >
-              <Typography sx={{ padding: 2, color: '#fff', fontWeight: 'bold', fontSize: '16px' }}>
+              <Typography
+                sx={{
+                  padding: 2,
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  textShadow: '2px 2px 5px black'
+                }}
+              >
                 {board.title}
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'end' }}>

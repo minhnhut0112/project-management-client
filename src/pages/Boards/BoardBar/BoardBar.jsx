@@ -24,6 +24,15 @@ const menuStyle = {
   borderRadius: '4px'
 }
 
+function getRandomColor() {
+  const letters = '0123456789ABCDEF'
+  let color = '#'
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)]
+  }
+  return color
+}
+
 const BoardBar = ({ board }) => {
   const [openNewBoardTitleForm, setOpenNewBoardTitleForm] = useState(false)
   const [newBoardTitle, setNewBoardTitle] = useState('')
@@ -49,7 +58,7 @@ const BoardBar = ({ board }) => {
   })
 
   const editBoardTitle = () => {
-    if (newBoardTitle === board.title || !newBoardTitle) {
+    if (newBoardTitle.trim() === board.title || !newBoardTitle) {
       setOpenNewBoardTitleForm(false)
       setNewBoardTitle(board.title)
       return
@@ -87,6 +96,7 @@ const BoardBar = ({ board }) => {
         gap: 2,
         overflowX: 'auto',
         bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#576574' : '#dfe6e9')
+        // backdropFilter: 'blur(20px)'
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -150,6 +160,7 @@ const BoardBar = ({ board }) => {
               border: 'none',
               color: 'white',
               cursor: 'pointer',
+
               '&:first-of-type': {
                 bgcolor: '#a4b0be'
               }
@@ -157,16 +168,14 @@ const BoardBar = ({ board }) => {
           }}
         >
           <Tooltip title='minhnhut'>
-            <Avatar
-              alt='minhnhut'
-              src='https://yt3.ggpht.com/yti/ADpuP3NEF178kiCGdCsoST-0Adr2zq0FhKaeG5_Fm0G90g=s88-c-k-c0x00ffffff-no-rj-mo'
-            />
+            <Avatar sx={{ backgroundColor: getRandomColor() }} alt='minhnhut' src=''>
+              N
+            </Avatar>
           </Tooltip>
-          <Tooltip title='datmap'>
-            <Avatar
-              alt='datmap'
-              // src='https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/323626590_880990436513026_6674864588010330093_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=efb6e6&_nc_ohc=fPT8bvhDfO8AX8NxK2z&_nc_ht=scontent.fsgn5-9.fna&oh=00_AfAG31IBQRzMkfLb8V5-iL8qbelihNXp2q2WRGaD8PkRVw&oe=6573D551'
-            />
+          <Tooltip title='minhnhut'>
+            <Avatar sx={{ backgroundColor: getRandomColor() }} alt='datmap'>
+              D
+            </Avatar>
           </Tooltip>
           <Tooltip title='minhnhut'>
             <Avatar
@@ -181,10 +190,7 @@ const BoardBar = ({ board }) => {
             />
           </Tooltip>
           <Tooltip title='minhnhut'>
-            <Avatar
-              alt='minhnhut'
-              src='https://yt3.ggpht.com/yti/ADpuP3NEF178kiCGdCsoST-0Adr2zq0FhKaeG5_Fm0G90g=s88-c-k-c0x00ffffff-no-rj-mo'
-            />
+            <Avatar alt='minhnhut' />
           </Tooltip>
           <Tooltip title='minhnhut'>
             <Avatar

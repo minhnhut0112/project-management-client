@@ -120,7 +120,7 @@ const Column = ({ column }) => {
   })
 
   const editColumnTitle = () => {
-    if (newColumnTitle === column.title || !newColumnTitle) {
+    if (newColumnTitle.trim() === column.title || !newColumnTitle) {
       toggleOpenNewColumnTitleForm()
       setNewColumnTitle(column.title)
       return

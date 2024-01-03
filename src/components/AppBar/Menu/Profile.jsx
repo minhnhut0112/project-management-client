@@ -1,5 +1,4 @@
 import Logout from '@mui/icons-material/Logout'
-import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -45,20 +44,16 @@ const Profile = () => {
         MenuListProps={{
           'aria-labelledby': 'basic-button-profile'
         }}
+        sx={{ mt: 1 }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
+        <MenuItem sx={{ gap: 1 }} onClick={handleClose}>
+          <Avatar size='small' /> Profile
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> My account
+        <MenuItem sx={{ gap: 1 }} onClick={handleClose}>
+          <Avatar size='small' /> My account
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize='small' />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
+
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize='small' />

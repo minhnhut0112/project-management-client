@@ -124,11 +124,10 @@ const AppBar = () => {
             />
           </Badge>
         </Tooltip>
-        <Tooltip title='Profiles'>
-          <Box>
-            <Profile />
-          </Box>
-        </Tooltip>
+
+        <Box>
+          <Profile />
+        </Box>
       </Box>
     </Box>
   )

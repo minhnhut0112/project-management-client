@@ -12,7 +12,7 @@ import { useState } from 'react'
 import ModalCardDetails from './CardDetails/CardDetails'
 const Card = ({ card, columnTitle }) => {
   const idShowCardActions = () => {
-    return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachments?.length
+    return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachment?.length
   }
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -55,13 +55,13 @@ const Card = ({ card, columnTitle }) => {
         {card?.cover && (
           <CardMedia
             component='img'
-            height='140'
             image={card.cover}
             alt={card.title}
             sx={{
               objectFit: 'cover',
               height: '100%',
-              width: '100%'
+              width: '100%',
+              borderRadius: '3px 3px 0 0'
             }}
           />
         )}
@@ -89,9 +89,9 @@ const Card = ({ card, columnTitle }) => {
                 {card?.comments?.length}
               </Button>
             )}
-            {!!card?.attachments?.length && (
+            {!!card?.attachment?.length && (
               <Button size='small' startIcon={<AttachmentOutlinedIcon />}>
-                {card?.attachments?.length}
+                {card?.attachment?.length}
               </Button>
             )}
           </CardActions>
