@@ -1,5 +1,4 @@
 import { deleteCardAPI, updateCardAPI } from '@/apis/cards.api'
-import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
@@ -21,6 +20,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import CoverPopover from './CoverPopover/CoverPopover'
 import Attachments from './Attachments/Attachments'
+import AttachmentsPopover from './AttachmentsPopover/AttachmentsPopover'
 
 const chipStyle = {
   fontSize: '15px',
@@ -97,7 +97,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
   }
 
   return (
-    <div>
+    <Box>
       <Modal
         data-no-dnd
         open={open}
@@ -148,12 +148,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
             <Grid item xs={7} md={9} sx={{ overflowY: 'auto' }}>
               <Box
                 sx={{
-                  p: 2,
-                  overflowY: 'auto',
-                  maxHeight: '500px',
-                  '&::-webkit-scrollbar-track': {
-                    mt: 3
-                  }
+                  p: 2
                 }}
               >
                 <Box
@@ -291,13 +286,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                 <Chip icon={<LocalOfferOutlinedIcon />} sx={chipStyle} label='Labels' clickable variant='outlined' />
                 <CoverPopover card={card} />
                 <Chip icon={<QueryBuilderOutlinedIcon />} sx={chipStyle} label='Dates' clickable variant='outlined' />
-                <Chip
-                  icon={<AttachmentOutlinedIcon />}
-                  sx={chipStyle}
-                  label='Attachment'
-                  clickable
-                  variant='outlined'
-                />
+                <AttachmentsPopover card={card} />
                 <Chip
                   icon={<LibraryAddCheckOutlinedIcon />}
                   sx={chipStyle}
@@ -327,6 +316,6 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
           </Grid>
         </Box>
       </Modal>
-    </div>
+    </Box>
   )
 }
