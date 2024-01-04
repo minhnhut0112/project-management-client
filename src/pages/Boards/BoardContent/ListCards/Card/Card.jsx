@@ -68,7 +68,7 @@ const Card = ({ card, columnTitle }) => {
 
         <CardContent
           sx={{
-            p: 1.5,
+            p: 1,
             '&:last-child': {
               p: 1.5
             }
@@ -78,7 +78,7 @@ const Card = ({ card, columnTitle }) => {
         </CardContent>
 
         {idShowCardActions() && (
-          <CardActions sx={{ p: '0 4px 8px 4px' }}>
+          <CardActions sx={{ p: '0 4px 5px 4px' }}>
             {!!card?.memberIds?.length && (
               <Button size='small' startIcon={<GroupIcon />}>
                 {card?.memberIds?.length}
