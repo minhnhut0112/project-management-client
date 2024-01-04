@@ -7,8 +7,7 @@ import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
-import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined'
-import { Button, Grid, TextField } from '@mui/material'
+import { Grid, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
@@ -18,9 +17,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useConfirm } from 'material-ui-confirm'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import CoverPopover from './CoverPopover/CoverPopover'
 import Attachments from './Attachments/Attachments'
 import AttachmentsPopover from './AttachmentsPopover/AttachmentsPopover'
+import CoverPopover from './CoverPopover/CoverPopover'
+import Description from './Description/Description'
 
 const chipStyle = {
   fontSize: '15px',
@@ -32,8 +32,6 @@ const chipStyle = {
 }
 
 export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
-  const [openDesciptionForm, setOpenDesciptionForm] = useState(false)
-
   const [openNewCardTitleForm, setOpenNewCardTitleForm] = useState(false)
   const [newCardTitle, setNewCardTitle] = useState('')
 
@@ -117,7 +115,8 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
             height: { xs: 700, md: 700 },
             maxHeight: { xs: 700, md: 800 },
             borderRadius: '5px',
-            '&:focus': { outline: 'none' }
+            '&:focus': { outline: 'none' },
+            overflow: 'auto'
           }}
         >
           {card.cover && (
@@ -211,49 +210,9 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                   <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} /> <Typography>In list {columnTitle}</Typography>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <ViewHeadlineOutlinedIcon />
-                  <Typography variant='h6' sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>
-                    Desciption
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                  <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
-                  {!openDesciptionForm ? (
-                    <Chip
-                      onClick={() => setOpenDesciptionForm(true)}
-                      sx={{
-                        borderRadius: '4px',
-                        width: '100%',
-                        justifyContent: 'start',
-                        alignItems: 'start',
-                        p: '5px 5px 0 0',
-                        height: '50px',
-                        mt: 1
-                      }}
-                      label='Add a more detailed description…'
-                      clickable
-                      variant='outlined'
-                    />
-                  ) : (
-                    <Box sx={{ mt: 1, width: '100%' }}>
-                      <TextField
-                        autoFocus
-                        sx={{ mt: 1, width: '100%', mb: 1 }}
-                        id='outlined-multiline-static'
-                        multiline
-                        rows={4}
-                        placeholder='Add a more detailed description…'
-                      />
-                      <Button variant='contained' sx={{ mx: 1 }}>
-                        Save
-                      </Button>
-                      <Button onClick={() => setOpenDesciptionForm(false)} variant='text'>
-                        Cancel
-                      </Button>
-                    </Box>
-                  )}
-                </Box>
+
+                <Description card={card} />
+
                 <Attachments attachment={card.attachment} />
               </Box>
             </Grid>

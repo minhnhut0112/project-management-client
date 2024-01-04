@@ -4,6 +4,7 @@ import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import moment from 'moment'
 import axios from 'axios'
+import { getFileExtension } from '@/utils/formatters'
 
 const Attachments = ({ attachment }) => {
   const [fileTimes, setFileTimes] = useState({})
@@ -102,7 +103,7 @@ const Attachments = ({ attachment }) => {
                     </div>
                   </Box>
                 )
-              } else if (att.type.includes('pdf')) {
+              } else {
                 return (
                   <Box
                     key={att._id}
@@ -125,7 +126,7 @@ const Attachments = ({ attachment }) => {
                       src={att.path}
                       variant='square'
                     >
-                      pdf
+                      {getFileExtension(att.fileName)}
                     </Avatar>
                     <div>
                       <Typography>{decodeURIComponent(att.fileName)}</Typography>
@@ -134,7 +135,6 @@ const Attachments = ({ attachment }) => {
                   </Box>
                 )
               }
-              return null
             })}
           </Box>
         </Box>

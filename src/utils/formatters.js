@@ -12,3 +12,8 @@ export const generatePlaceholderCard = (column) => {
     FE_PlaceholderCard: true
   }
 }
+
+export const getFileExtension = (filename) => {
+  const parts = filename.split('.')
+  return parts.length > 1 ? parts[parts.length - 1] : ''
+}

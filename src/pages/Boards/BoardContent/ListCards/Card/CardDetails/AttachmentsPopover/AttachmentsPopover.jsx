@@ -88,7 +88,14 @@ const AttachmentsPopover = ({ card }) => {
         }}
         sx={{ mx: 2 }}
       >
-        <Box sx={{ width: 300, height: 350, p: 2 }}>
+        <Box
+          sx={{
+            width: 300,
+            height: 350,
+            p: 2,
+            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2f3542' : '#ebecf0')
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
             <Box sx={{ marginLeft: '35px' }}></Box>
             <Typography sx={{ fontSize: '16px' }} variant='h6'>
@@ -106,7 +113,16 @@ const AttachmentsPopover = ({ card }) => {
           <Button
             component='label'
             variant='contained'
-            sx={{ width: '100%', color: 'black', bgcolor: '#f5f5f5', boxShadow: 'none' }}
+            sx={{
+              width: '100%',
+              color: 'black',
+              bgcolor: '#f5f5f5',
+              boxShadow: 'none',
+              mt: 1,
+              '&:hover': {
+                bgcolor: '#f5f5f5'
+              }
+            }}
             startIcon={<CloudUploadIcon />}
           >
             Upload file

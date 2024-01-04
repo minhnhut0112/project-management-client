@@ -2,7 +2,7 @@ import { changeCoverAPI, removeCoverAPI } from '@/apis/cards.api'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import WallpaperIcon from '@mui/icons-material/Wallpaper'
-import { Button, IconButton, Typography } from '@mui/material'
+import { Button, IconButton, ImageList, ImageListItem, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Popover from '@mui/material/Popover'
@@ -39,7 +39,6 @@ const CoverPopover = ({ card }) => {
   }
   const handleClose = () => {
     setAnchorEl(null)
-    setCover(null)
   }
 
   const open = Boolean(anchorEl)
@@ -106,7 +105,7 @@ const CoverPopover = ({ card }) => {
         }}
         sx={{ mx: 2 }}
       >
-        <Box sx={{ width: 300, height: 350, p: 2 }}>
+        <Box sx={{ width: 300, p: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
             <Box sx={{ marginLeft: '35px' }}></Box>
             <Typography sx={{ fontSize: '16px' }} variant='h6'>
@@ -135,12 +134,37 @@ const CoverPopover = ({ card }) => {
             </>
           )}
 
-          <Typography>Attachments</Typography>
+          <Typography variant='caption'>Attachments</Typography>
+
+          <ImageList sx={{ width: '100%', mt: '5px', mb: '5px' }} cols={3} rowHeight={60}>
+            {card?.attachment?.map((item) => {
+              if (item?.type?.includes('image')) {
+                return (
+                  <ImageListItem key={item._id}>
+                    <img
+                      srcSet={`${item.path}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                      src={`${item.path}?w=164&h=164&fit=crop&auto=format`}
+                      alt={item.fileName}
+                    />
+                  </ImageListItem>
+                )
+              }
+            })}
+          </ImageList>
 
           <Button
             component='label'
             variant='contained'
-            sx={{ width: '100%', color: 'black', bgcolor: '#f5f5f5', boxShadow: 'none' }}
+            sx={{
+              width: '100%',
+              color: 'black',
+              bgcolor: '#f5f5f5',
+              boxShadow: 'none',
+              mt: 1,
+              '&:hover': {
+                bgcolor: '#f5f5f5'
+              }
+            }}
             startIcon={<CloudUploadIcon />}
           >
             Upload file
