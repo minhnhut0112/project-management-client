@@ -60,8 +60,7 @@ const Board = () => {
         ) : (
           <Box
             sx={{
-              height: (theme) => theme.todolist.boardContentHeight,
-              bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2')
+              height: (theme) => theme.todolist.boardContentHeight
             }}
           >
             <LinearProgress />
