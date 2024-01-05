@@ -1,42 +1,57 @@
-import { updateCardAPI } from '@/apis/cards.api'
-import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
-import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined'
-import { Button, TextField, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
+import Typography from '@mui/material/Typography'
+import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
+import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined'
 import { useMutation } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { updateCardAPI } from '@/apis/cards.api'
 
 const Description = ({ card }) => {
-  const [openDesciptionForm, setOpenDesciptionForm] = useState(false)
+  const [openDescriptionForm, setOpenDescriptionForm] = useState(false)
   const [description, setDescription] = useState('')
 
   useEffect(() => {
     setDescription(card.description)
   }, [card.description])
 
-  const mutionUpdateDescription = useMutation({
+  const handleChange = (e) => {
+    setDescription(e.target.value)
+  }
+
+  useEffect(() => {
+    const length = description?.length
+    const input = document.getElementById('outlined-multiline-static')
+
+    if (input) {
+      input.setSelectionRange(length, length)
+    }
+  }, [description, openDescriptionForm])
+
+  const mutationUpdateDescription = useMutation({
     mutationFn: (data) => updateCardAPI(card._id, data)
   })
 
   const handleUpdateDescription = () => {
     if (!description) {
-      setOpenDesciptionForm(false)
+      setOpenDescriptionForm(false)
       return
     }
 
-    mutionUpdateDescription.mutate(
+    mutationUpdateDescription.mutate(
       {
         description: description
       },
       {
         onSuccess: () => {
-          toast.success('Updated desciption is successfully!')
+          toast.success('Updated description is successful!')
         }
       }
     )
-    setOpenDesciptionForm(false)
+    setOpenDescriptionForm(false)
   }
 
   return (
@@ -45,10 +60,10 @@ const Description = ({ card }) => {
         <Box sx={{ display: 'flex', gap: 2 }}>
           <ViewHeadlineOutlinedIcon />
           <Typography variant='h6' sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>
-            Desciption
+            Description
           </Typography>
         </Box>
-        {!openDesciptionForm && description && (
+        {!openDescriptionForm && description && (
           <Chip
             sx={{
               fontSize: '15px',
@@ -57,18 +72,18 @@ const Description = ({ card }) => {
               bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
               border: 'none'
             }}
-            onClick={() => setOpenDesciptionForm(true)}
+            onClick={() => setOpenDescriptionForm(true)}
             label='Edit'
           />
         )}
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
         <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
-        {!description || openDesciptionForm ? (
+        {!description || openDescriptionForm ? (
           <Box sx={{ width: '100%' }}>
-            {!openDesciptionForm ? (
+            {!openDescriptionForm ? (
               <Chip
-                onClick={() => setOpenDesciptionForm(true)}
+                onClick={() => setOpenDescriptionForm(true)}
                 sx={{
                   borderRadius: '4px',
                   width: '100%',
@@ -88,17 +103,19 @@ const Description = ({ card }) => {
                   autoComplete='false'
                   id='outlined-multiline-static'
                   autoFocus
-                  defaultValue={description}
+                  value={description}
                   sx={{ mt: 1, width: '100%', mb: 1 }}
+                  placeholder='Add a more detailed description…'
+                  onChange={handleChange}
                   multiline
                   rows={4}
-                  placeholder='Add a more detailed description…'
-                  onChange={(e) => setDescription(e.target.value)}
+                  maxRows={4}
+                  inputProps={{ style: { cursor: 'auto' } }}
                 />
                 <Button onClick={handleUpdateDescription} variant='contained' sx={{ mx: 1 }}>
                   Save
                 </Button>
-                <Button onClick={() => setOpenDesciptionForm(false)} variant='text'>
+                <Button onClick={() => setOpenDescriptionForm(false)} variant='text'>
                   Cancel
                 </Button>
               </Box>
