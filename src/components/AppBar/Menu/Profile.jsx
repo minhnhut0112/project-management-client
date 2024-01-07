@@ -8,6 +8,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { useState } from 'react'
+import { Link, NavLink } from 'react-router-dom'
 
 const Profile = () => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -46,9 +47,11 @@ const Profile = () => {
         }}
         sx={{ mt: 1 }}
       >
-        <MenuItem sx={{ gap: 1 }} onClick={handleClose}>
-          <Avatar size='small' /> Profile
-        </MenuItem>
+        <NavLink to='/sign-in' style={{ textDecoration: 'none', color: 'black' }} onClick={handleClose}>
+          <MenuItem sx={{ gap: 1 }}>
+            <Avatar size='small' /> Profile
+          </MenuItem>
+        </NavLink>
         <MenuItem sx={{ gap: 1 }} onClick={handleClose}>
           <Avatar size='small' /> My account
         </MenuItem>
