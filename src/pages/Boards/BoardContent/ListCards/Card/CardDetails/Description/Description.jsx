@@ -6,7 +6,7 @@ import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 import { updateCardAPI } from '@/apis/cards.api'
 
@@ -31,6 +31,8 @@ const Description = ({ card }) => {
     }
   }, [description, openDescriptionForm])
 
+  const queryClient = useQueryClient()
+
   const mutationUpdateDescription = useMutation({
     mutationFn: (data) => updateCardAPI(card._id, data)
   })
@@ -47,6 +49,7 @@ const Description = ({ card }) => {
       },
       {
         onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['board'] })
           toast.success('Updated description is successful!')
         }
       }
@@ -57,7 +60,7 @@ const Description = ({ card }) => {
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, mb: 0.75 }}>
           <ViewHeadlineOutlinedIcon />
           <Typography variant='h6' sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>
             Description
@@ -122,7 +125,9 @@ const Description = ({ card }) => {
             )}
           </Box>
         ) : (
-          <Typography sx={{ fontSize: '16px' }}>{description}</Typography>
+          <Typography onClick={() => setOpenDescriptionForm(true)} sx={{ fontSize: '16px' }}>
+            {description}
+          </Typography>
         )}
       </Box>
     </>
