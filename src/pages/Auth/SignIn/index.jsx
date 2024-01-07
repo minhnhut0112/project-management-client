@@ -1,16 +1,11 @@
-import { Grid, IconButton, SvgIcon, Typography } from '@mui/material'
+import { ReactComponent as LogoApp } from '@/assets/trello.svg'
+import { Grid, SvgIcon, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import { Link } from 'react-router-dom'
-import Button from '@mui/material/Button'
-import { ReactComponent as LogoApp } from '@/assets/trello.svg'
-import InputAdornment from '@mui/material/InputAdornment'
-import Visibility from '@mui/icons-material/Visibility'
-import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import { useState } from 'react'
-const SignIn = () => {
-  const [showPassword, setShowPassword] = useState(false)
 
+const SignIn = () => {
   return (
     <Box sx={{ p: 10 }}>
       <Grid container sx={{ border: 0.5, borderRadius: '5px', borderColor: '#e5e7eb', height: 'calc(100vh - 160px)' }}>
@@ -48,21 +43,7 @@ const SignIn = () => {
             <Typography variant='subtitle1' sx={{ mt: 2, mb: 0.5 }}>
               Password
             </Typography>
-            <TextField
-              type={showPassword ? 'text' : 'password'}
-              variant='outlined'
-              size='small'
-              sx={{ width: '100%', mb: 0.5 }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <IconButton onClick={() => setShowPassword((prevShowPassword) => !prevShowPassword)} edge='end'>
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            />
+            <TextField type='password' variant='outlined' size='small' sx={{ width: '100%', mb: 0.5 }} />
             <Typography sx={{ mt: 1, mb: 2, color: '#3742fa', textAlign: 'end' }}>Forgot password?</Typography>
             <Button
               sx={{
