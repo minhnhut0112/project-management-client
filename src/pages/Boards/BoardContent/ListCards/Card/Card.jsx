@@ -2,17 +2,26 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
-import GroupIcon from '@mui/icons-material/Group'
-import { Box, Button, Card as MuiCard } from '@mui/material'
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
+import { Box, Card as MuiCard, Tooltip } from '@mui/material'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ModalCardDetails from './CardDetails/CardDetails'
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
+import dayjs from 'dayjs'
+
 const Card = ({ card, columnTitle }) => {
   const idShowCardActions = () => {
-    return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachment?.length
+    return (
+      !!card?.memberIds?.length ||
+      !!card?.comments?.length ||
+      !!card?.description ||
+      !!card?.attachment?.length ||
+      !!card?.dateTime
+    )
   }
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -32,6 +41,16 @@ const Card = ({ card, columnTitle }) => {
   const handleModalClose = () => {
     setModalOpen(false)
   }
+
+  const [startDateTime, setStartDateTime] = useState(null)
+  const [dueDateTime, setDueDateTime] = useState(null)
+
+  useEffect(() => {
+    if (card?.dateTime) {
+      setStartDateTime(dayjs(card?.dateTime?.startDateTime))
+      setDueDateTime(dayjs(card?.dateTime?.dueDateTime))
+    }
+  }, [card.dateTime])
 
   return (
     <Box>
@@ -78,21 +97,43 @@ const Card = ({ card, columnTitle }) => {
         </CardContent>
 
         {idShowCardActions() && (
-          <CardActions sx={{ p: '0 4px 5px 4px' }}>
-            {!!card?.memberIds?.length && (
-              <Button size='small' startIcon={<GroupIcon />}>
-                {card?.memberIds?.length}
-              </Button>
+          <CardActions sx={{ p: '0 4px 5px 4px', display: 'flex', gap: 1, marginLeft: 1 }}>
+            {!!card?.description && (
+              <Tooltip title='Card has description'>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <DescriptionOutlinedIcon sx={{ fontSize: '18px' }} />
+                </Box>
+              </Tooltip>
+            )}
+            {!!card?.dateTime && (
+              <Tooltip title='Estimated completion time'>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <AccessTimeOutlinedIcon sx={{ fontSize: '18px', mr: 0.5 }} />
+                  <Box>
+                    {dayjs(startDateTime).format('MMM D')} - {dayjs(dueDateTime).format('MMM D')}
+                  </Box>
+                </Box>
+              </Tooltip>
             )}
             {!!card?.comments?.length && (
-              <Button size='small' startIcon={<CommentOutlinedIcon />}>
-                {card?.comments?.length}
-              </Button>
+              <Tooltip title='Coments'>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CommentOutlinedIcon fontSize='small' />
+                  <Typography variant='caption' sx={{ fontSize: '12px' }}>
+                    {card?.attachment?.length}
+                  </Typography>
+                </Box>
+              </Tooltip>
             )}
             {!!card?.attachment?.length && (
-              <Button size='small' startIcon={<AttachmentOutlinedIcon />}>
-                {card?.attachment?.length}
-              </Button>
+              <Tooltip title='Attachments'>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AttachmentOutlinedIcon fontSize='small' />
+                  <Typography variant='caption' sx={{ fontSize: '12px' }}>
+                    {card?.attachment?.length}
+                  </Typography>
+                </Box>
+              </Tooltip>
             )}
           </CardActions>
         )}
