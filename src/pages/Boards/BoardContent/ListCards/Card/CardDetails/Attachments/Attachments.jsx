@@ -52,9 +52,15 @@ const Attachments = ({ attachment }) => {
     const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
-    link.setAttribute('download', fileName)
+    link.setAttribute('download', decodeURIComponent(fileName))
     document.body.appendChild(link)
     link.click()
+  }
+
+  const [displayedAttachments, setDisplayedAttachments] = useState(4)
+
+  const showMore = () => {
+    setDisplayedAttachments(attachment.length)
   }
 
   return (
@@ -75,7 +81,7 @@ const Attachments = ({ attachment }) => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
           <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
-            {attachment.map((att) => {
+            {attachment.slice(0, displayedAttachments).map((att) => {
               if (att.type.includes('image')) {
                 return (
                   <Box
@@ -87,14 +93,19 @@ const Attachments = ({ attachment }) => {
                       '&:hover': {
                         bgcolor: '#091e420f'
                       },
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      borderRadius: '5px'
                     }}
                     onClick={(e) => {
                       e.preventDefault()
                       handleDownload(att.path, att.fileName)
                     }}
                   >
-                    <Avatar sx={{ width: '120px', height: '80px' }} src={att.path} variant='square'>
+                    <Avatar
+                      sx={{ width: '120px', height: '80px', borderRadius: '3px' }}
+                      src={att.path}
+                      variant='square'
+                    >
                       N
                     </Avatar>
                     <div>
@@ -122,7 +133,7 @@ const Attachments = ({ attachment }) => {
                     }}
                   >
                     <Avatar
-                      sx={{ width: '120px', height: '80px', bgcolor: '#091e420f' }}
+                      sx={{ width: '120px', height: '80px', bgcolor: '#091e420f', borderRadius: '3px' }}
                       src={att.path}
                       variant='square'
                     >
@@ -136,6 +147,7 @@ const Attachments = ({ attachment }) => {
                 )
               }
             })}
+            <Box onClick={showMore}>View All</Box>
           </Box>
         </Box>
       )}
