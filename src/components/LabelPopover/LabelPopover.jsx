@@ -4,32 +4,62 @@ import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import Checkbox from '@mui/material/Checkbox'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { updateCardAPI } from '@/apis/cards.api'
+import { toast } from 'react-toastify'
 
 const LabelPopover = ({ anchorEl, handleClose, card, id, open }) => {
   const checkboxesData = [
-    { bgColor: '#4BCE97', value: 'Okk1' },
-    { bgColor: '#f5cd47', value: 'Okk2' },
-    { bgColor: '#f87168', value: 'Okk3' },
-    { bgColor: '#9f8fef', value: 'Okk4' },
-    { bgColor: '#ea4787', value: 'Okk5' }
+    { bgColor: '#4BCE97', labelTitle: 'Okk1adasdasdasdasdas' },
+    { bgColor: '#f5cd47', labelTitle: 'Okk2' },
+    { bgColor: '#f87168', labelTitle: 'Okk3' },
+    { bgColor: '#9f8fef', labelTitle: 'Okk4' },
+    { bgColor: '#ea4787', labelTitle: 'Okk5' }
   ]
 
-  const [checkedCheckboxes, setCheckedCheckboxes] = useState([])
+  const [label, setLabel] = useState([])
+  const [hasChanges, setHasChanges] = useState(false)
+
+  useEffect(() => {
+    setLabel(card.label || [])
+  }, [card.label])
+
+  const queryClient = useQueryClient()
+
+  const mutiionUpdateLable = useMutation({
+    mutationFn: async (data) => {
+      const label = { label: data }
+      await updateCardAPI(card._id, label.label)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries('board')
+      // toast.success('Update Label is successfully!')
+    }
+  })
 
   const handleCheckboxChange = (index) => (event) => {
     const isChecked = event.target.checked
 
     if (isChecked) {
-      setCheckedCheckboxes((prevCheckedCheckboxes) => [...prevCheckedCheckboxes, checkboxesData[index]])
+      setLabel((prevCheckedCheckboxes) => [...prevCheckedCheckboxes, checkboxesData[index]])
     } else {
-      setCheckedCheckboxes((prevCheckedCheckboxes) =>
+      setLabel((prevCheckedCheckboxes) =>
         prevCheckedCheckboxes.filter(
-          (item) => item.bgColor !== checkboxesData[index].bgColor || item.value !== checkboxesData[index].value
+          (item) =>
+            item.bgColor !== checkboxesData[index].bgColor || item.labelTitle !== checkboxesData[index].labelTitle
         )
       )
     }
+    setHasChanges(true)
   }
+
+  useEffect(() => {
+    if (hasChanges) {
+      mutiionUpdateLable.mutate({ label })
+      setHasChanges(false)
+    }
+  }, [label, hasChanges, mutiionUpdateLable])
 
   return (
     <Popover
@@ -72,8 +102,8 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open }) => {
           {checkboxesData.map((checkbox, index) => (
             <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
               <Checkbox
-                checked={checkedCheckboxes.some(
-                  (item) => item.bgColor === checkbox.bgColor && item.value === checkbox.value
+                checked={label.some(
+                  (item) => item.bgColor === checkbox.bgColor && item.labelTitle === checkbox.labelTitle
                 )}
                 onChange={handleCheckboxChange(index)}
               />
@@ -89,7 +119,7 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open }) => {
                   mr: 1
                 }}
               >
-                {checkbox.value}
+                {checkbox.labelTitle}
               </Box>
               <EditOutlinedIcon fontSize='small' />
             </Box>

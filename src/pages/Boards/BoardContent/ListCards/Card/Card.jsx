@@ -52,6 +52,15 @@ const Card = ({ card, columnTitle }) => {
     }
   }, [card.dateTime])
 
+  const isColorLight = (color) => {
+    const hexColor = color.substring(1) // Remove the '#' from the color
+    const r = parseInt(hexColor.slice(0, 2), 16)
+    const g = parseInt(hexColor.slice(2, 4), 16)
+    const b = parseInt(hexColor.slice(4, 6), 16)
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000
+    return brightness > 128 // Adjust this threshold as needed
+  }
+
   return (
     <Box>
       <MuiCard
@@ -93,31 +102,25 @@ const Card = ({ card, columnTitle }) => {
             }
           }}
         >
-          <Box sx={{ display: 'flex', gap: 0.75 }}>
-            <Box
-              sx={{
-                height: '20px',
-                borderRadius: '3px',
-                bgcolor: '#60c6d2',
-                width: 'fit-content',
-                p: '1px 5px',
-                mb: 0.5
-              }}
-            >
-              <Typography sx={{ fontSize: '12px' }}>Govrenment </Typography>
-            </Box>
-            <Box
-              sx={{
-                height: '20px',
-                borderRadius: '3px',
-                bgcolor: '#4bce97',
-                width: 'fit-content',
-                p: '1px 5px',
-                mb: 0.5
-              }}
-            >
-              <Typography sx={{ fontSize: '12px' }}>Planning </Typography>
-            </Box>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            {card?.label?.map((label, index) => (
+              <Box
+                key={index}
+                sx={{
+                  height: '20px',
+                  borderRadius: '3px',
+                  bgcolor: `${label?.bgColor}`,
+                  color: label?.bgColor ? (isColorLight(label.bgColor) ? 'black' : 'white') : 'inherit',
+                  p: '1px 5px',
+                  mb: 0.5,
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '12px'
+                }}
+              >
+                {label.labelTitle}
+              </Box>
+            ))}
           </Box>
           <Typography>{card?.title} </Typography>
         </CardContent>
@@ -137,7 +140,7 @@ const Card = ({ card, columnTitle }) => {
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#1f845a'),
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#4bce97' : '#1f845a'),
                     color: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#ffffff'),
                     borderRadius: '3px',
                     p: 0.5,
