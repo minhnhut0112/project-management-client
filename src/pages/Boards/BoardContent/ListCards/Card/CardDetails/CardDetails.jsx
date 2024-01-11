@@ -22,6 +22,7 @@ import Description from './Description/Description'
 import DateTimes from './DateTimes/DateTimes'
 import DateChip from './DateChip/DateChip'
 import LabelChip from './LabelChip/LabelChip'
+import Labels from './Labels/Labels'
 
 const chipStyle = {
   fontSize: '15px',
@@ -152,6 +153,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                 <img height={170} src={card.cover} alt='Card Cover' />
               </Box>
             )}
+
             <Grid container>
               <Grid item xs={7} md={9} sx={{ overflowY: 'auto' }}>
                 <Box
@@ -220,6 +222,8 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />{' '}
                     <Typography>In list {columnTitle}</Typography>
                   </Box>
+
+                  {card.label && <Labels card={card} />}
 
                   {card?.dateTime && <DateTimes card={card} />}
 

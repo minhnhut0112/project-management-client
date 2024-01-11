@@ -3,19 +3,12 @@ import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 const DateTimes = ({ card }) => {
-  const [startDateTime, setStartDateTime] = useState(null)
-  const [dueDateTime, setDueDateTime] = useState(null)
-
-  useEffect(() => {
-    if (card?.dateTime) {
-      setStartDateTime(dayjs(card?.dateTime?.startDateTime))
-      setDueDateTime(dayjs(card?.dateTime?.dueDateTime))
-    }
-  }, [card?.dateTime])
+  const startDateTime = dayjs(card?.dateTime?.startDateTime)
+  const dueDateTime = dayjs(card?.dateTime?.dueDateTime)
 
   const [anchorEl, setAnchorEl] = useState(null)
   const handleClick = (event) => {
