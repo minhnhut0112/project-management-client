@@ -93,11 +93,37 @@ const Card = ({ card, columnTitle }) => {
             }
           }}
         >
+          <Box sx={{ display: 'flex', gap: 0.75 }}>
+            <Box
+              sx={{
+                height: '20px',
+                borderRadius: '3px',
+                bgcolor: '#60c6d2',
+                width: 'fit-content',
+                p: '1px 5px',
+                mb: 0.5
+              }}
+            >
+              <Typography sx={{ fontSize: '12px' }}>Govrenment </Typography>
+            </Box>
+            <Box
+              sx={{
+                height: '20px',
+                borderRadius: '3px',
+                bgcolor: '#4bce97',
+                width: 'fit-content',
+                p: '1px 5px',
+                mb: 0.5
+              }}
+            >
+              <Typography sx={{ fontSize: '12px' }}>Planning </Typography>
+            </Box>
+          </Box>
           <Typography>{card?.title} </Typography>
         </CardContent>
 
         {idShowCardActions() && (
-          <CardActions sx={{ p: '0 4px 5px 4px', display: 'flex', gap: 1, marginLeft: 1 }}>
+          <CardActions sx={{ p: '0 4px 5px 4px', display: 'flex', gap: 0.5, ml: 0.5 }}>
             {!!card?.description && (
               <Tooltip title='Card has description'>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -107,8 +133,19 @@ const Card = ({ card, columnTitle }) => {
             )}
             {!!card?.dateTime && (
               <Tooltip title='Estimated completion time'>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <AccessTimeOutlinedIcon sx={{ fontSize: '18px', mr: 0.5 }} />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#1f845a'),
+                    color: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#ffffff'),
+                    borderRadius: '3px',
+                    p: 0.5,
+                    height: '20px',
+                    fontSize: '12px'
+                  }}
+                >
+                  <AccessTimeOutlinedIcon sx={{ fontSize: '16px', mr: 0.5 }} />
                   <Box>
                     {dayjs(startDateTime).format('MMM D')} - {dayjs(dueDateTime).format('MMM D')}
                   </Box>

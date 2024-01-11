@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react'
-import { Box, Avatar, Typography } from '@mui/material'
+import { Box, Avatar, Typography, Chip, Skeleton } from '@mui/material'
 import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import moment from 'moment'
 import axios from 'axios'
 import { getFileExtension } from '@/utils/formatters'
+
+const SkeletonBox = () => (
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+    <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
+    <Skeleton variant='rectangular' width='100%' height={80} />
+  </Box>
+)
 
 const Attachments = ({ attachment }) => {
   const [fileTimes, setFileTimes] = useState({})
@@ -57,10 +64,10 @@ const Attachments = ({ attachment }) => {
     link.click()
   }
 
-  const [displayedAttachments, setDisplayedAttachments] = useState(4)
+  const [showAll, setShowAll] = useState(false)
 
-  const showMore = () => {
-    setDisplayedAttachments(attachment.length)
+  const toggleShowAll = () => {
+    setShowAll(!showAll)
   }
 
   return (
@@ -69,19 +76,33 @@ const Attachments = ({ attachment }) => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          gap: 2
+          gap: 2,
+          justifyContent: 'space-between',
+          mb: 1
         }}
       >
-        <AttachmentOutlinedIcon />
-        <Typography variant='h6' sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>
-          Attachment
-        </Typography>
+        <Box sx={{ display: 'flex', gap: 2, mb: 0.75 }}>
+          <AttachmentOutlinedIcon />
+          <Typography variant='h6' sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>
+            Attachment
+          </Typography>
+        </Box>
+        <Chip
+          sx={{
+            fontSize: '15px',
+            justifyContent: 'start',
+            borderRadius: '4px',
+            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
+            border: 'none'
+          }}
+          label='Add'
+        />
       </Box>
-      {isTimeCalculated && (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+      {isTimeCalculated ? (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
-            {attachment.slice(0, displayedAttachments).map((att) => {
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, width: '100%' }}>
+            {attachment.slice(0, showAll ? attachment.length : 4).map((att) => {
               if (att.type.includes('image')) {
                 return (
                   <Box
@@ -147,8 +168,30 @@ const Attachments = ({ attachment }) => {
                 )
               }
             })}
-            <Box onClick={showMore}>View All</Box>
+            {attachment.length > 4 && (
+              <Chip
+                onClick={toggleShowAll}
+                label={showAll ? 'Show Fewer' : `Show All ( ${attachment.length - 4} hidden)`}
+                clickable
+                variant='outlined'
+                sx={{
+                  ml: 0.5,
+                  fontSize: '15px',
+                  justifyContent: 'start',
+                  borderRadius: '4px',
+                  width: 'fit-content',
+                  bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
+                  border: 'none'
+                }}
+              />
+            )}
           </Box>
+        </Box>
+      ) : (
+        <Box>
+          {Array.from({ length: Math.min(4, attachment.length) }, (_, index) => (
+            <SkeletonBox key={index} />
+          ))}
         </Box>
       )}
     </>

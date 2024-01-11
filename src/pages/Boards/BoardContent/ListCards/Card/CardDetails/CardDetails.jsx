@@ -3,7 +3,6 @@ import CloseIcon from '@mui/icons-material/Close'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import { Grid, TextField } from '@mui/material'
@@ -20,8 +19,9 @@ import Attachments from './Attachments/Attachments'
 import AttachmentsPopover from './AttachmentsPopover/AttachmentsPopover'
 import CoverPopover from './CoverPopover/CoverPopover'
 import Description from './Description/Description'
-import DatePopover from './DatePopover/DatePopover'
 import DateTimes from './DateTimes/DateTimes'
+import DateChip from './DateChip/DateChip'
+import LabelChip from './LabelChip/LabelChip'
 
 const chipStyle = {
   fontSize: '15px',
@@ -221,7 +221,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     <Typography>In list {columnTitle}</Typography>
                   </Box>
 
-                  <DateTimes card={card} />
+                  {card?.dateTime && <DateTimes card={card} />}
 
                   <Description card={card} />
 
@@ -253,9 +253,9 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     variant='outlined'
                   />
                   <Typography>Add to card</Typography>
-                  <DatePopover card={card} />
+                  <DateChip card={card} />
                   <Chip icon={<GroupAddOutlinedIcon />} sx={chipStyle} label='Members' clickable variant='outlined' />
-                  <Chip icon={<LocalOfferOutlinedIcon />} sx={chipStyle} label='Labels' clickable variant='outlined' />
+                  <LabelChip card={card} />
                   <CoverPopover card={card} />
 
                   <AttachmentsPopover card={card} />

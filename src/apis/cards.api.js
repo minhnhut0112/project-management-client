@@ -17,8 +17,8 @@ export const changeCoverAPI = async (id, data) => {
   return res.data
 }
 
-export const removeCoverAPI = async (id) => {
-  const res = await http.delete(`v1/cards/removeItem/${id}`)
+export const unsetFieldAPI = async (id, field) => {
+  const res = await http.post(`v1/cards/removeItem/${id}`, { field })
   return res.data
 }
 

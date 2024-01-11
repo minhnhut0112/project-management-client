@@ -1,4 +1,4 @@
-import { changeCoverAPI, removeCoverAPI } from '@/apis/cards.api'
+import { changeCoverAPI, unsetFieldAPI } from '@/apis/cards.api'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import WallpaperIcon from '@mui/icons-material/Wallpaper'
@@ -70,7 +70,7 @@ const CoverPopover = ({ card }) => {
   }
 
   const handleRemoveCover = async () => {
-    const res = await removeCoverAPI(card._id)
+    const res = await unsetFieldAPI(card._id, 'cover')
 
     if (res) {
       setCover(res.cover)
