@@ -103,24 +103,29 @@ const Card = ({ card, columnTitle }) => {
           }}
         >
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-            {card?.label?.map((label, index) => (
-              <Box
-                key={index}
-                sx={{
-                  height: '20px',
-                  borderRadius: '3px',
-                  bgcolor: `${label?.bgColor}`,
-                  color: label?.bgColor ? (isColorLight(label.bgColor) ? 'black' : 'white') : 'inherit',
-                  p: '1px 5px',
-                  mb: 0.5,
-                  display: 'flex',
-                  alignItems: 'center',
-                  fontSize: '12px'
-                }}
-              >
-                {label.labelTitle}
-              </Box>
-            ))}
+            {card?.label?.map((label, index) => {
+              if (label.checked) {
+                return (
+                  <Box
+                    key={index}
+                    sx={{
+                      minWidth: '50px',
+                      height: '20px',
+                      borderRadius: '3px',
+                      bgcolor: `${label?.bgColor}`,
+                      color: label?.bgColor ? (isColorLight(label.bgColor) ? 'black' : 'white') : 'inherit',
+                      p: '1px 5px',
+                      mb: 0.5,
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: '12px'
+                    }}
+                  >
+                    {label.labelTitle}
+                  </Box>
+                )
+              }
+            })}
           </Box>
           <Typography>{card?.title} </Typography>
         </CardContent>

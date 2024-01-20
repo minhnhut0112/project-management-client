@@ -1,4 +1,4 @@
-import { changeCoverAPI, unsetFieldAPI } from '@/apis/cards.api'
+import { removeCoverAPI, updateCardAPI, updateCoverAPI } from '@/apis/cards.api'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import WallpaperIcon from '@mui/icons-material/Wallpaper'
@@ -7,9 +7,9 @@ import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Popover from '@mui/material/Popover'
 import { styled } from '@mui/material/styles'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
+// import { toast } from 'react-toastify'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -48,7 +48,7 @@ const CoverPopover = ({ card }) => {
 
   useEffect(() => {
     setCover(card?.cover)
-  }, [card])
+  }, [card?.cover])
 
   const queryClient = useQueryClient()
 
@@ -60,23 +60,45 @@ const CoverPopover = ({ card }) => {
 
     if (!newFile) return
 
-    const res = await changeCoverAPI(card._id, formData)
+    const res = await updateCoverAPI(card._id, formData)
 
     if (res) {
       setCover(res.cover)
-      toast.success('Update Cover is successfully!')
+      // toast.success('Update Cover is successfully!')
       queryClient.invalidateQueries({ queryKey: ['board'] })
     }
   }
 
   const handleRemoveCover = async () => {
-    const res = await unsetFieldAPI(card._id, 'cover')
+    const res = await removeCoverAPI(card._id)
 
     if (res) {
-      setCover(res.cover)
-      toast.success('Remove Cover is successfully!')
+      // toast.success('Remove Cover is successfully!')
       queryClient.invalidateQueries({ queryKey: ['board'] })
     }
+  }
+
+  const [selectedImage, setSelectedImage] = useState(null)
+
+  useEffect(() => {
+    const selectedImageId = card?.attachment?.find((item) => item.path === cover)?._id
+    setSelectedImage(selectedImageId)
+  }, [cover, card?.attachment])
+
+  const mutionUpdateCover = useMutation({
+    mutationFn: async (data) => await updateCardAPI(card._id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries('board')
+      // toast.success('Update Cover is successfully!')
+    }
+  })
+
+  const handleImageClick = (item) => {
+    setSelectedImage(item._id)
+
+    mutionUpdateCover.mutate({
+      cover: item.path
+    })
   }
 
   return (
@@ -138,10 +160,25 @@ const CoverPopover = ({ card }) => {
 
           <ImageList sx={{ width: '100%', mt: '5px', mb: '5px' }} cols={3} rowHeight={60}>
             {card?.attachment?.map((item) => {
+              const isImageSelected = selectedImage === item._id
+
               if (item?.type?.includes('image')) {
                 return (
-                  <ImageListItem key={item._id}>
+                  <ImageListItem
+                    key={item._id}
+                    sx={{
+                      bgcolor: isImageSelected ? 'black' : 'transparent',
+                      borderRadius: '3px',
+                      cursor: 'pointer',
+                      border: isImageSelected ? '2px solid #388BFF' : 'none'
+                    }}
+                    onClick={() => handleImageClick(item)}
+                  >
                     <img
+                      style={{
+                        padding: 2,
+                        borderRadius: '3px'
+                      }}
                       srcSet={`${item.path}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                       src={`${item.path}?w=164&h=164&fit=crop&auto=format`}
                       alt={item.fileName}

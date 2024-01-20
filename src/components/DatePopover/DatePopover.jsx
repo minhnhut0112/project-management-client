@@ -1,4 +1,4 @@
-import { unsetFieldAPI, updateCardAPI } from '@/apis/cards.api'
+import { removeDatesAPI, updateDatesAPI } from '@/apis/cards.api'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 import { Button, IconButton, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
@@ -49,10 +49,7 @@ const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
 
   const mutiionUpdateDate = useMutation({
     mutationFn: async (data) => {
-      const dateTime = {
-        dateTime: { ...data }
-      }
-      await updateCardAPI(card._id, dateTime)
+      await updateDatesAPI(card._id, data)
     },
     onSuccess: () => {
       queryClient.invalidateQueries('board')
@@ -69,7 +66,7 @@ const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
   }
 
   const mutiionRemoveDate = useMutation({
-    mutationFn: (id) => unsetFieldAPI(id, 'dateTime'),
+    mutationFn: (id) => removeDatesAPI(id),
     onSuccess: () => {
       queryClient.invalidateQueries('board')
       toast.success('Update Date Time is successfully!')

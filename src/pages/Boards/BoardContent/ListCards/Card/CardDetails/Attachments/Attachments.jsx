@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react'
-import { Box, Avatar, Typography, Chip, Skeleton } from '@mui/material'
+import { removeAttachmentsAPI } from '@/apis/cards.api'
+import { getFileExtension } from '@/utils/formatters'
 import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
-import moment from 'moment'
+import { Avatar, Box, Chip, Skeleton, Typography } from '@mui/material'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { getFileExtension } from '@/utils/formatters'
+import { useConfirm } from 'material-ui-confirm'
+import moment from 'moment'
+import { useEffect, useState } from 'react'
 
 const SkeletonBox = () => (
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
@@ -13,7 +16,7 @@ const SkeletonBox = () => (
   </Box>
 )
 
-const Attachments = ({ attachment }) => {
+const Attachments = ({ attachment, cardId }) => {
   const [fileTimes, setFileTimes] = useState({})
   const [isTimeCalculated, setIsTimeCalculated] = useState(false)
 
@@ -70,6 +73,34 @@ const Attachments = ({ attachment }) => {
     setShowAll(!showAll)
   }
 
+  const queryClient = useQueryClient()
+
+  const mutionRemoveFile = useMutation({
+    mutationFn: (data) => removeAttachmentsAPI(cardId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+      // toast.success('Edit Column Title is successfully!')
+    }
+  })
+
+  const confirm = useConfirm()
+
+  const handleRemoveFile = (att) => {
+    confirm({
+      title: 'Remove attachment?',
+      description: 'Deleting an attachment is permanent. There is no undo.',
+      confirmationText: 'Confirm',
+      dialogProps: { maxWidth: 'xs' },
+      confirmationButtonProps: { color: 'warning' }
+    })
+      .then(() => {
+        mutionRemoveFile.mutate({
+          attachment: att
+        })
+      })
+      .catch(() => {})
+  }
+
   return (
     <>
       <Box
@@ -88,6 +119,7 @@ const Attachments = ({ attachment }) => {
           </Typography>
         </Box>
         <Chip
+          clickable
           sx={{
             fontSize: '15px',
             justifyContent: 'start',
@@ -117,12 +149,12 @@ const Attachments = ({ attachment }) => {
                       cursor: 'pointer',
                       borderRadius: '5px'
                     }}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      handleDownload(att.path, att.fileName)
-                    }}
                   >
                     <Avatar
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleDownload(att.path, att.fileName)
+                      }}
                       sx={{ width: '120px', height: '80px', borderRadius: '3px' }}
                       src={att.path}
                       variant='square'
@@ -131,7 +163,14 @@ const Attachments = ({ attachment }) => {
                     </Avatar>
                     <div>
                       <Typography>{decodeURIComponent(att.fileName)}</Typography>
-                      <Typography variant='caption'>{fileTimes[att._id]}</Typography>
+                      <Box>
+                        <Typography variant='caption' sx={{ mr: 1 }}>
+                          {fileTimes[att._id]}
+                        </Typography>
+                      </Box>
+                      <Box variant='caption' onClick={() => handleRemoveFile(att)}>
+                        Remove
+                      </Box>
                     </div>
                   </Box>
                 )
@@ -148,12 +187,12 @@ const Attachments = ({ attachment }) => {
                       },
                       cursor: 'pointer'
                     }}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      handleDownload(att.path, att.fileName)
-                    }}
                   >
                     <Avatar
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleDownload(att.path, att.fileName)
+                      }}
                       sx={{ width: '120px', height: '80px', bgcolor: '#091e420f', borderRadius: '3px' }}
                       src={att.path}
                       variant='square'
@@ -163,6 +202,9 @@ const Attachments = ({ attachment }) => {
                     <div>
                       <Typography>{decodeURIComponent(att.fileName)}</Typography>
                       <Typography variant='caption'>{fileTimes[att._id]}</Typography>
+                      <Box variant='caption' onClick={() => handleRemoveFile(att)}>
+                        Remove
+                      </Box>
                     </div>
                   </Box>
                 )

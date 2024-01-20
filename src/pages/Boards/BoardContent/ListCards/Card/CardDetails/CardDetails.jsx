@@ -2,7 +2,6 @@ import { deleteCardAPI, updateCardAPI } from '@/apis/cards.api'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
-import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import { Grid, TextField } from '@mui/material'
@@ -23,6 +22,8 @@ import DateTimes from './DateTimes/DateTimes'
 import DateChip from './DateChip/DateChip'
 import LabelChip from './LabelChip/LabelChip'
 import Labels from './Labels/Labels'
+import CheckListChip from './CheckListChip/CheckListChip'
+import CheckList from './CheckList/CheckList'
 
 const chipStyle = {
   fontSize: '15px',
@@ -223,13 +224,15 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     <Typography>In list {columnTitle}</Typography>
                   </Box>
 
-                  {card.label && <Labels card={card} />}
+                  {card?.label.some((label) => label.checked === true) && <Labels card={card} />}
 
                   {card?.dateTime && <DateTimes card={card} />}
 
                   <Description card={card} />
 
-                  <Attachments attachment={card.attachment} />
+                  {!!card?.attachment?.length && <Attachments attachment={card.attachment} cardId={card._id} />}
+
+                  {card?.checklist && <CheckList checklist={card.checklist} cardId={card._id} />}
                 </Box>
               </Grid>
 
@@ -263,14 +266,9 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                   <CoverPopover card={card} />
 
                   <AttachmentsPopover card={card} />
-                  <Chip
-                    icon={<LibraryAddCheckOutlinedIcon />}
-                    sx={chipStyle}
-                    label='Checklist'
-                    clickable
-                    variant='outlined'
-                  />
+                  <CheckListChip card={card} />
                   <Typography>Actions</Typography>
+
                   <Chip
                     onClick={handleDeleteCard}
                     icon={<DeleteOutlineOutlinedIcon />}

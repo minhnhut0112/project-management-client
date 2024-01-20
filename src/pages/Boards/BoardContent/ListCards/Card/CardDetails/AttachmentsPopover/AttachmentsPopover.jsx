@@ -1,15 +1,15 @@
-import { cardUploadFileAPI } from '@/apis/cards.api'
+import { uploadAttachmentsAPI } from '@/apis/cards.api'
+import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import { Button, IconButton, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Popover from '@mui/material/Popover'
 import { styled } from '@mui/material/styles'
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'react-toastify'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -54,7 +54,7 @@ const AttachmentsPopover = ({ card }) => {
 
     if (!newFile) return
 
-    const res = await cardUploadFileAPI(card._id, formData)
+    const res = await uploadAttachmentsAPI(card._id, formData)
 
     if (res) {
       toast.success('Upload attachment is successfully!')

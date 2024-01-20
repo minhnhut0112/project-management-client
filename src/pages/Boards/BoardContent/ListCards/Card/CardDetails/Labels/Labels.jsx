@@ -15,6 +15,7 @@ const Labels = ({ card }) => {
   }
   const open = Boolean(anchorEl)
   const id = open ? 'dates-popover' : undefined
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
       <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
@@ -23,21 +24,26 @@ const Labels = ({ card }) => {
           Labels
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          {card?.label.map((label, index) => (
-            <Box
-              key={index}
-              sx={{
-                bgcolor: `${label?.bgColor}`,
-                height: '32px',
-                p: '0 12px',
-                borderRadius: ' 3px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              {label.labelTitle}
-            </Box>
-          ))}
+          {card?.label.map((label, index) => {
+            if (label.checked) {
+              return (
+                <Box
+                  key={index}
+                  sx={{
+                    minWidth: '70px',
+                    bgcolor: `${label?.bgColor}`,
+                    height: '32px',
+                    p: '0 12px',
+                    borderRadius: ' 3px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  {label.labelTitle}
+                </Box>
+              )
+            }
+          })}
           <Box
             onClick={handleClick}
             sx={{
