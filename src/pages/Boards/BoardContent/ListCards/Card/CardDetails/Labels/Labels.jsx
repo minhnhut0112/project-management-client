@@ -3,16 +3,28 @@ import AddIcon from '@mui/icons-material/Add'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const Labels = ({ card }) => {
   const [anchorEl, setAnchorEl] = useState(null)
+  const [labels, setLabels] = useState([])
+
+  useEffect(() => {
+    setLabels(card.label)
+  }, [card])
+
+  const handlePopoverChange = (updatedLabels) => {
+    setLabels(updatedLabels)
+  }
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
+
   const handleClose = () => {
     setAnchorEl(null)
   }
+
   const open = Boolean(anchorEl)
   const id = open ? 'dates-popover' : undefined
 
@@ -24,7 +36,7 @@ const Labels = ({ card }) => {
           Labels
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          {card?.label.map((label, index) => {
+          {labels.map((label, index) => {
             if (label.checked) {
               return (
                 <Box
@@ -59,7 +71,15 @@ const Labels = ({ card }) => {
           </Box>
         </Box>
       </Box>
-      <LabelPopover card={card} id={id} open={open} anchorEl={anchorEl} handleClose={handleClose} />
+      <LabelPopover
+        card={card}
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+        labels={labels}
+        onPopoverChange={handlePopoverChange}
+      />
     </Box>
   )
 }

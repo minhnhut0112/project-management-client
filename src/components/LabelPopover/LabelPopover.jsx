@@ -8,12 +8,12 @@ import { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { updateCardAPI } from '@/apis/cards.api'
 
-const LabelPopover = ({ anchorEl, handleClose, card, id, open }) => {
-  const [label, setLabel] = useState([])
+const LabelPopover = ({ anchorEl, handleClose, card, id, open, labels, onPopoverChange }) => {
+  const [label, setLabel] = useState(labels)
 
   useEffect(() => {
-    setLabel(card.label || [])
-  }, [card.label])
+    setLabel(labels)
+  }, [labels])
 
   const queryClient = useQueryClient()
 
@@ -25,7 +25,7 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries('board')
-      // toast.success('Update Label is successfully!');
+      // toast.success('Update Label is successfully!')
     }
   })
 
@@ -38,6 +38,8 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open }) => {
     }
 
     setLabel(updatedLabel)
+
+    onPopoverChange(updatedLabel)
 
     mutationUpdateLabel.mutate(updatedLabel)
   }
@@ -80,7 +82,7 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open }) => {
         <Box sx={{ mt: 0.5 }}>
           <Typography variant='caption'>Labels</Typography>
 
-          {label.map((label, index) => (
+          {label?.map((label, index) => (
             <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
               <Checkbox onChange={() => handleCheckboxChange(index)} checked={label.checked} />
               <Box
@@ -101,10 +103,6 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open }) => {
             </Box>
           ))}
         </Box>
-
-        {/* <Box sx={{ border: '1px solid #579dff', p: '1px', width: '53px', height: '23px' }}>
-          <Box sx={{ bgcolor: '#4BCE97', width: '50px', height: '20px' }}></Box>
-        </Box> */}
       </Box>
     </Popover>
   )
