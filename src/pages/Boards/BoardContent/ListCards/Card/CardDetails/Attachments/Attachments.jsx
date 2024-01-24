@@ -1,11 +1,13 @@
-import { removeAttachmentsAPI } from '@/apis/cards.api'
+import { removeAttachmentsAPI, removeCoverAPI, updateCardAPI } from '@/apis/cards.api'
+import AttachmentsPopover from '@/components/AttachmentsPopover/AttachmentsPopover'
+import ConfirmationPopover from '@/components/ConfirmationPopover/ConfirmationPopover'
 import { getFileExtension } from '@/utils/formatters'
 import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import { Avatar, Box, Chip, Skeleton, Typography } from '@mui/material'
+import WallpaperIcon from '@mui/icons-material/Wallpaper'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { useConfirm } from 'material-ui-confirm'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 
@@ -16,14 +18,24 @@ const SkeletonBox = () => (
   </Box>
 )
 
-const Attachments = ({ attachment, cardId }) => {
+const Attachments = ({ card }) => {
+  const [anchorEl, setAnchorEl] = useState(null)
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+  const open = Boolean(anchorEl)
+  const id = open ? 'attachments-popover' : undefined
+
   const [fileTimes, setFileTimes] = useState({})
   const [isTimeCalculated, setIsTimeCalculated] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
       const newFileTimes = {}
-      attachment.forEach((att) => {
+      card?.attachment.forEach((att) => {
         newFileTimes[att._id] = calculateTimeFromNow(att.createAt)
       })
       setFileTimes(newFileTimes)
@@ -31,7 +43,7 @@ const Attachments = ({ attachment, cardId }) => {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [attachment])
+  }, [card?.attachment])
 
   const calculateTimeFromNow = (createdAt) => {
     const currentTime = moment()
@@ -76,29 +88,50 @@ const Attachments = ({ attachment, cardId }) => {
   const queryClient = useQueryClient()
 
   const mutionRemoveFile = useMutation({
-    mutationFn: (data) => removeAttachmentsAPI(cardId, data),
+    mutationFn: (data) => removeAttachmentsAPI(card?._id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['board'] })
-      // toast.success('Edit Column Title is successfully!')
     }
   })
 
-  const confirm = useConfirm()
+  const [anchorElDelete, setAnchorElDelete] = useState(null)
+  const handleClickDelete = (event) => {
+    setAnchorElDelete(event.currentTarget)
+  }
+  const handleCloseDelete = () => {
+    setAnchorElDelete(null)
+  }
+  const openDelete = Boolean(anchorElDelete)
+  const idDelete = open ? 'attachments-delete' : undefined
 
-  const handleRemoveFile = (att) => {
-    confirm({
-      title: 'Remove attachment?',
-      description: 'Deleting an attachment is permanent. There is no undo.',
-      confirmationText: 'Confirm',
-      dialogProps: { maxWidth: 'xs' },
-      confirmationButtonProps: { color: 'warning' }
+  const handleConfirm = (att) => {
+    mutionRemoveFile.mutate({
+      attachment: att
     })
-      .then(() => {
-        mutionRemoveFile.mutate({
-          attachment: att
-        })
-      })
-      .catch(() => {})
+  }
+
+  const mutionMakeCover = useMutation({
+    mutationFn: async (data) => await updateCardAPI(card._id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries('board')
+    }
+  })
+
+  const handleMakeCover = (path) => {
+    mutionMakeCover.mutate({
+      cover: path
+    })
+  }
+
+  const mutionRemoveCover = useMutation({
+    mutationFn: async () => await removeCoverAPI(card._id),
+    onSuccess: () => {
+      queryClient.invalidateQueries('board')
+    }
+  })
+
+  const handleRemoveCover = () => {
+    mutionRemoveCover.mutate()
   }
 
   return (
@@ -119,6 +152,7 @@ const Attachments = ({ attachment, cardId }) => {
           </Typography>
         </Box>
         <Chip
+          onClick={handleClick}
           clickable
           sx={{
             fontSize: '15px',
@@ -129,12 +163,13 @@ const Attachments = ({ attachment, cardId }) => {
           }}
           label='Add'
         />
+        <AttachmentsPopover card={card} id={id} open={open} anchorEl={anchorEl} handleClose={handleClose} />
       </Box>
       {isTimeCalculated ? (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, width: '100%' }}>
-            {attachment.slice(0, showAll ? attachment.length : 4).map((att) => {
+            {card?.attachment.slice(0, showAll ? card?.attachment.length : 3).map((att) => {
               if (att.type.includes('image')) {
                 return (
                   <Box
@@ -161,17 +196,61 @@ const Attachments = ({ attachment, cardId }) => {
                     >
                       N
                     </Avatar>
-                    <div>
-                      <Typography>{decodeURIComponent(att.fileName)}</Typography>
-                      <Box>
-                        <Typography variant='caption' sx={{ mr: 1 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography
+                        onClick={(e) => {
+                          e.preventDefault()
+                          handleDownload(att.path, att.fileName)
+                        }}
+                        variant='body'
+                        sx={{ fontWeight: 'bold' }}
+                      >
+                        {decodeURIComponent(att.fileName)}
+                      </Typography>
+
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Typography variant='caption' sx={{ fontSize: '14px' }}>
                           {fileTimes[att._id]}
                         </Typography>
+                        <Typography variant='caption' sx={{ fontSize: '14px' }} onClick={handleClickDelete}>
+                          • Delete
+                        </Typography>
+                        <ConfirmationPopover
+                          id={idDelete}
+                          title='Delete attachment?'
+                          description='Deleting an attachment is permanent. There is no undo.'
+                          open={openDelete}
+                          anchorEl={anchorElDelete}
+                          handleClose={handleCloseDelete}
+                          onConfirm={() => handleConfirm(att)}
+                        />
+                        <Typography variant='caption' sx={{ fontSize: '14px' }}>
+                          • Edit
+                        </Typography>
                       </Box>
-                      <Box variant='caption' onClick={() => handleRemoveFile(att)}>
-                        Remove
-                      </Box>
-                    </div>
+
+                      {card?.cover === att.path ? (
+                        <Box
+                          sx={{ display: 'flex', alignItems: 'center', gap: 0.5, width: 'fit-content' }}
+                          onClick={handleRemoveCover}
+                        >
+                          <WallpaperIcon fontSize='16px' />
+                          <Typography variant='caption' sx={{ fontSize: '14px', textDecoration: 'underline' }}>
+                            Remove Cover
+                          </Typography>
+                        </Box>
+                      ) : (
+                        <Box
+                          sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                          onClick={() => handleMakeCover(att?.path)}
+                        >
+                          <WallpaperIcon fontSize='16px' />
+                          <Typography variant='caption' sx={{ fontSize: '14px', textDecoration: 'underline' }}>
+                            Make Cover
+                          </Typography>
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
                 )
               } else {
@@ -199,21 +278,47 @@ const Attachments = ({ attachment, cardId }) => {
                     >
                       {getFileExtension(att.fileName)}
                     </Avatar>
-                    <div>
-                      <Typography>{decodeURIComponent(att.fileName)}</Typography>
-                      <Typography variant='caption'>{fileTimes[att._id]}</Typography>
-                      <Box variant='caption' onClick={() => handleRemoveFile(att)}>
-                        Remove
+                    <Box sx={{ width: '100%' }}>
+                      <Typography
+                        onClick={(e) => {
+                          e.preventDefault()
+                          handleDownload(att.path, att.fileName)
+                        }}
+                        variant='body'
+                        sx={{ fontWeight: 'bold' }}
+                      >
+                        {decodeURIComponent(att.fileName)}
+                      </Typography>
+
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Typography variant='caption' sx={{ fontSize: '14px' }}>
+                          {fileTimes[att._id]}
+                        </Typography>
+                        <Typography variant='caption' sx={{ fontSize: '14px' }} onClick={handleClickDelete}>
+                          • Delete
+                        </Typography>
+                        <ConfirmationPopover
+                          id={idDelete}
+                          title='Delete attachment?'
+                          description='Deleting an attachment is permanent. There is no undo.'
+                          open={openDelete}
+                          anchorEl={anchorElDelete}
+                          handleClose={handleCloseDelete}
+                          onConfirm={() => handleConfirm(att)}
+                        />
+                        <Typography variant='caption' sx={{ fontSize: '14px' }}>
+                          • Edit
+                        </Typography>
                       </Box>
-                    </div>
+                    </Box>
                   </Box>
                 )
               }
             })}
-            {attachment.length > 4 && (
+            {card?.attachment.length > 3 && (
               <Chip
                 onClick={toggleShowAll}
-                label={showAll ? 'Show Fewer' : `Show All ( ${attachment.length - 4} hidden)`}
+                label={showAll ? 'Show Fewer' : `Show All ( ${card?.attachment.length - 3} hidden)`}
                 clickable
                 variant='outlined'
                 sx={{
@@ -231,7 +336,7 @@ const Attachments = ({ attachment, cardId }) => {
         </Box>
       ) : (
         <Box>
-          {Array.from({ length: Math.min(4, attachment.length) }, (_, index) => (
+          {Array.from({ length: Math.min(3, card?.attachment.length) }, (_, index) => (
             <SkeletonBox key={index} />
           ))}
         </Box>

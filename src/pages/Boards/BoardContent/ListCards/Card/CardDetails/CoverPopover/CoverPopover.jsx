@@ -9,7 +9,6 @@ import Popover from '@mui/material/Popover'
 import { styled } from '@mui/material/styles'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-// import { toast } from 'react-toastify'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -64,18 +63,19 @@ const CoverPopover = ({ card }) => {
 
     if (res) {
       setCover(res.cover)
-      // toast.success('Update Cover is successfully!')
       queryClient.invalidateQueries({ queryKey: ['board'] })
     }
   }
 
-  const handleRemoveCover = async () => {
-    const res = await removeCoverAPI(card._id)
-
-    if (res) {
-      // toast.success('Remove Cover is successfully!')
-      queryClient.invalidateQueries({ queryKey: ['board'] })
+  const mutionRemoveCover = useMutation({
+    mutationFn: async () => await removeCoverAPI(card._id),
+    onSuccess: () => {
+      queryClient.invalidateQueries('board')
     }
+  })
+
+  const handleRemoveCover = () => {
+    mutionRemoveCover.mutate()
   }
 
   const [selectedImage, setSelectedImage] = useState(null)
@@ -89,7 +89,6 @@ const CoverPopover = ({ card }) => {
     mutationFn: async (data) => await updateCardAPI(card._id, data),
     onSuccess: () => {
       queryClient.invalidateQueries('board')
-      // toast.success('Update Cover is successfully!')
     }
   })
 
@@ -113,6 +112,7 @@ const CoverPopover = ({ card }) => {
         variant='outlined'
       />
       <Popover
+        data-no-dnd
         id={id}
         open={open}
         anchorEl={anchorEl}
@@ -149,7 +149,15 @@ const CoverPopover = ({ card }) => {
               </Box>
               <Button
                 onClick={handleRemoveCover}
-                sx={{ color: 'black', bgcolor: '#f5f5f5', width: '100%', mt: 1, mb: 1 }}
+                sx={{
+                  color: '#172b4d',
+                  bgcolor: '#091e420f',
+                  width: '100%',
+                  mt: 1,
+                  '&:hover': {
+                    bgcolor: '#091e420f'
+                  }
+                }}
               >
                 Remove Cover
               </Button>
@@ -193,18 +201,13 @@ const CoverPopover = ({ card }) => {
             component='label'
             variant='contained'
             sx={{
+              bgcolor: '#4F46E5',
               width: '100%',
-              color: 'black',
-              bgcolor: '#f5f5f5',
-              boxShadow: 'none',
-              mt: 1,
-              '&:hover': {
-                bgcolor: '#f5f5f5'
-              }
+              mt: 1
             }}
             startIcon={<CloudUploadIcon />}
           >
-            Upload file
+            Upload cover
             <VisuallyHiddenInput accept='image/*' type='file' onChange={handleFileChange} />
           </Button>
         </Box>

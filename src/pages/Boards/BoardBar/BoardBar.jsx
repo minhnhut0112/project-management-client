@@ -12,7 +12,6 @@ import { capitalizeFirstLetter } from '@/utils/formatters'
 import { useEffect, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { moveColumnAPI } from '@/apis/boards.api'
-import { toast } from 'react-toastify'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
@@ -71,7 +70,6 @@ const BoardBar = ({ board }) => {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['board'] })
-          toast.success('Edit Board Title is successfully!')
         }
       }
     )

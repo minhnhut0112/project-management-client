@@ -15,27 +15,32 @@ const chipStyle = {
 
 const LabelChip = ({ card }) => {
   const [anchorEl, setAnchorEl] = useState(null)
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-  const open = Boolean(anchorEl)
-  const id = open ? 'dates-popover' : undefined
 
   return (
     <Box>
       <Chip
         icon={<LocalOfferOutlinedIcon />}
-        onClick={handleClick}
-        onTouchStart={handleClick}
+        onClick={(event) => {
+          setAnchorEl(event.currentTarget)
+        }}
+        onTouchStart={(event) => {
+          setAnchorEl(event.currentTarget)
+        }}
         sx={chipStyle}
         label='Labels'
         clickable
         variant='outlined'
       />
-      <LabelPopover card={card} id={id} open={open} anchorEl={anchorEl} handleClose={handleClose} />
+
+      <LabelPopover
+        card={card}
+        id={Boolean(anchorEl) ? 'dates-popover' : undefined}
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        handleClose={() => {
+          setAnchorEl(null)
+        }}
+      />
     </Box>
   )
 }

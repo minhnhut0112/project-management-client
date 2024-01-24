@@ -11,7 +11,6 @@ import { DateTimePicker } from '@mui/x-date-pickers'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
 
 const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
   const [startDateTime, setStartDateTime] = useState(null)
@@ -53,7 +52,6 @@ const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries('board')
-      toast.success('Update Date Time is successfully!')
     }
   })
 
@@ -69,7 +67,6 @@ const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
     mutationFn: (id) => removeDatesAPI(id),
     onSuccess: () => {
       queryClient.invalidateQueries('board')
-      toast.success('Update Date Time is successfully!')
     }
   })
 

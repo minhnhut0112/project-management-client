@@ -18,7 +18,6 @@ import { useEffect, useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import CloseIcon from '@mui/icons-material/Close'
-import { toast } from 'react-toastify'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createNewCardAPI } from '@/apis/cards.api'
 import { useConfirm } from 'material-ui-confirm'
@@ -69,7 +68,6 @@ const Column = ({ column }) => {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['board'] })
-          toast.success('Add card is successfully!')
         }
       }
     )
@@ -95,7 +93,6 @@ const Column = ({ column }) => {
         mutionDeleteColumn.mutate(column._id, {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['board'] })
-            toast.success('Deleted column is successfully')
           }
         })
       })
@@ -133,7 +130,6 @@ const Column = ({ column }) => {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['board'] })
-          toast.success('Edit Column Title is successfully!')
         }
       }
     )

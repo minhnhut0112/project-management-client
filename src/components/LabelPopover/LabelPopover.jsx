@@ -5,47 +5,57 @@ import Popover from '@mui/material/Popover'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import Checkbox from '@mui/material/Checkbox'
 import { useEffect, useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { updateCardAPI } from '@/apis/cards.api'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { fetchBoardDetailsAPI } from '@/apis/boards.api'
+const LabelPopover = ({ anchorEl, handleClose, card, id, open, onPopoverChange }) => {
+  const [labels, setLabels] = useState([])
+  const [checkedLabels, setCheckedLabels] = useState(card?.labels || [])
 
-const LabelPopover = ({ anchorEl, handleClose, card, id, open, labels, onPopoverChange }) => {
-  const [label, setLabel] = useState(labels)
+  const boardQuery = useQuery({
+    queryKey: ['board', card.boardId],
+    queryFn: async () => await fetchBoardDetailsAPI(card.boardId)
+  })
 
   useEffect(() => {
-    setLabel(labels)
-  }, [labels])
+    if (boardQuery.data) {
+      const boardData = boardQuery.data
+      setLabels(boardData.labels)
+    }
+  }, [boardQuery.data])
 
   const queryClient = useQueryClient()
 
   const mutationUpdateLabel = useMutation({
-    mutationFn: async (data) => {
-      const label = { label: data }
-      const response = await updateCardAPI(card._id, label)
-      return response
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries('board')
-      // toast.success('Update Label is successfully!')
-    }
+    mutationFn: async (data) => await updateCardAPI(card._id, { labels: data }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
   })
 
-  const handleCheckboxChange = (index) => {
-    const updatedLabel = [...label]
+  const handleCheckboxChange = (label) => {
+    setCheckedLabels((prevLabels) => {
+      const isChecked = prevLabels?.some((checkedLabel) => checkedLabel._id === label._id)
 
-    updatedLabel[index] = {
-      ...updatedLabel[index],
-      checked: !updatedLabel[index].checked
-    }
+      if (isChecked) {
+        return prevLabels?.filter((checkedLabel) => checkedLabel._id !== label._id)
+      } else {
+        return [...prevLabels, label]
+      }
+    })
 
-    setLabel(updatedLabel)
-
-    onPopoverChange(updatedLabel)
-
-    mutationUpdateLabel.mutate(updatedLabel)
+    setCheckedLabels((updatedLabels) => {
+      mutationUpdateLabel.mutate(updatedLabels)
+      if (onPopoverChange) {
+        onPopoverChange(updatedLabels)
+      }
+      return updatedLabels
+    })
   }
+
+  const isLabelChecked = (label) => checkedLabels?.some((checkedLabel) => checkedLabel._id === label._id)
 
   return (
     <Popover
+      data-no-dnd
       id={id}
       open={open}
       anchorEl={anchorEl}
@@ -82,9 +92,9 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open, labels, onPopover
         <Box sx={{ mt: 0.5 }}>
           <Typography variant='caption'>Labels</Typography>
 
-          {label?.map((label, index) => (
-            <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Checkbox onChange={() => handleCheckboxChange(index)} checked={label.checked} />
+          {labels?.map((label) => (
+            <Box key={label._id} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Checkbox checked={isLabelChecked(label)} onChange={() => handleCheckboxChange(label)} />
               <Box
                 sx={{
                   bgcolor: label.bgColor,

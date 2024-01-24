@@ -6,7 +6,6 @@ import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortabl
 import { useState } from 'react'
 import { TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { toast } from 'react-toastify'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createNewColumnAPI } from '@/apis/columns.api'
 
@@ -34,7 +33,6 @@ const ListColumns = ({ columns, boardId }) => {
       { title: newColumnTitle, boardId: boardId },
       {
         onSuccess: () => {
-          toast.success('Add column is successfully!')
           queryClient.invalidateQueries({ queryKey: ['board'] })
         }
       }

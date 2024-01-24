@@ -10,7 +10,6 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
-import { toast } from 'react-toastify'
 import ImageList from '@mui/material/ImageList'
 import ImageListItem from '@mui/material/ImageListItem'
 import { ReactComponent as boardbg } from '@/assets/trello.board.bg.svg'
@@ -102,7 +101,6 @@ const Boards = () => {
   const createNewBoard = () => {
     if (!newBoardTitle || !imageSrc) {
       handleClose()
-      toast.error('Please Enter Board Title!')
       return
     }
     mutionCreateBoard.mutate(

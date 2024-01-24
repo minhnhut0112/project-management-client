@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography'
 import { useEffect, useState } from 'react'
 import ModalCardDetails from './CardDetails/CardDetails'
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
+import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
+
 import dayjs from 'dayjs'
 
 const Card = ({ card, columnTitle }) => {
@@ -20,7 +22,8 @@ const Card = ({ card, columnTitle }) => {
       !!card?.comments?.length ||
       !!card?.description ||
       !!card?.attachment?.length ||
-      !!card?.dateTime
+      !!card?.dateTime ||
+      !!card?.checklist
     )
   }
 
@@ -139,6 +142,7 @@ const Card = ({ card, columnTitle }) => {
                 </Box>
               </Tooltip>
             )}
+
             {!!card?.dateTime && (
               <Tooltip title='Estimated completion time'>
                 <Box
@@ -160,6 +164,7 @@ const Card = ({ card, columnTitle }) => {
                 </Box>
               </Tooltip>
             )}
+
             {!!card?.comments?.length && (
               <Tooltip title='Coments'>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -170,12 +175,24 @@ const Card = ({ card, columnTitle }) => {
                 </Box>
               </Tooltip>
             )}
+
             {!!card?.attachment?.length && (
               <Tooltip title='Attachments'>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <AttachmentOutlinedIcon fontSize='small' />
                   <Typography variant='caption' sx={{ fontSize: '12px' }}>
                     {card?.attachment?.length}
+                  </Typography>
+                </Box>
+              </Tooltip>
+            )}
+
+            {!!card?.checklist?.length && (
+              <Tooltip title='Checklist'>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <LibraryAddCheckOutlinedIcon fontSize='small' />
+                  <Typography variant='caption' sx={{ fontSize: '12px' }}>
+                    {card?.checklist?.length}
                   </Typography>
                 </Box>
               </Tooltip>

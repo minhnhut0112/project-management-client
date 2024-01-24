@@ -5,7 +5,6 @@ import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { toast } from 'react-toastify'
 
 const CheckListPopover = ({ anchorEl, handleClose, card, id, open }) => {
   const [checklistTitle, setCheckListTitle] = useState('')
@@ -18,8 +17,8 @@ const CheckListPopover = ({ anchorEl, handleClose, card, id, open }) => {
       return res.data
     },
     onSuccess: () => {
+      handleClose()
       queryClient.invalidateQueries({ queryKey: ['board'] })
-      toast.success('Create checklist is successfully!')
     }
   })
 
@@ -31,6 +30,7 @@ const CheckListPopover = ({ anchorEl, handleClose, card, id, open }) => {
 
   return (
     <Popover
+      data-no-dnd
       id={id}
       open={open}
       anchorEl={anchorEl}

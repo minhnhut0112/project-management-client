@@ -10,23 +10,12 @@ const Labels = ({ card }) => {
   const [labels, setLabels] = useState([])
 
   useEffect(() => {
-    setLabels(card.label)
-  }, [card])
+    setLabels(card.labels)
+  }, [card.labels])
 
   const handlePopoverChange = (updatedLabels) => {
     setLabels(updatedLabels)
   }
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
-  const open = Boolean(anchorEl)
-  const id = open ? 'dates-popover' : undefined
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
@@ -36,28 +25,26 @@ const Labels = ({ card }) => {
           Labels
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          {labels.map((label, index) => {
-            if (label.checked) {
-              return (
-                <Box
-                  key={index}
-                  sx={{
-                    minWidth: '70px',
-                    bgcolor: `${label?.bgColor}`,
-                    height: '32px',
-                    p: '0 12px',
-                    borderRadius: ' 3px',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}
-                >
-                  {label.labelTitle}
-                </Box>
-              )
-            }
-          })}
+          {labels.map((label, index) => (
+            <Box
+              key={index}
+              sx={{
+                minWidth: '70px',
+                bgcolor: `${label?.bgColor}`,
+                height: '32px',
+                p: '0 12px',
+                borderRadius: ' 3px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              {label.labelTitle}
+            </Box>
+          ))}
           <Box
-            onClick={handleClick}
+            onClick={(event) => {
+              setAnchorEl(event.currentTarget)
+            }}
             sx={{
               height: '32px',
               borderRadius: ' 3px',
@@ -73,11 +60,12 @@ const Labels = ({ card }) => {
       </Box>
       <LabelPopover
         card={card}
-        id={id}
-        open={open}
+        id={Boolean(anchorEl) ? 'dates-popover' : undefined}
+        open={Boolean(anchorEl)}
         anchorEl={anchorEl}
-        handleClose={handleClose}
-        labels={labels}
+        handleClose={() => {
+          setAnchorEl(null)
+        }}
         onPopoverChange={handlePopoverChange}
       />
     </Box>

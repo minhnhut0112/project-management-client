@@ -11,11 +11,9 @@ import IconButton from '@mui/material/IconButton'
 import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useConfirm } from 'material-ui-confirm'
 import { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
 import Attachments from './Attachments/Attachments'
-import AttachmentsPopover from './AttachmentsPopover/AttachmentsPopover'
+import AttachmentsPopover from './AttachmentChip/AttachmentChip'
 import CoverPopover from './CoverPopover/CoverPopover'
 import Description from './Description/Description'
 import DateTimes from './DateTimes/DateTimes'
@@ -24,6 +22,7 @@ import LabelChip from './LabelChip/LabelChip'
 import Labels from './Labels/Labels'
 import CheckListChip from './CheckListChip/CheckListChip'
 import CheckList from './CheckList/CheckList'
+import ConfirmationPopover from '@/components/ConfirmationPopover/ConfirmationPopover'
 
 const chipStyle = {
   fontSize: '15px',
@@ -47,7 +46,8 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
   const queryClient = useQueryClient()
 
   const mutionEditCardTitle = useMutation({
-    mutationFn: (data) => updateCardAPI(card._id, data)
+    mutationFn: (data) => updateCardAPI(card._id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
   })
 
   const editCardTitle = () => {
@@ -57,44 +57,21 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
       return
     }
 
-    mutionEditCardTitle.mutate(
-      {
-        title: newCardTitle
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['board'] })
-          toast.success('Edit Column Title is successfully!')
-        }
-      }
-    )
+    mutionEditCardTitle.mutate({
+      title: newCardTitle
+    })
     setOpenNewCardTitleForm(false)
   }
 
-  const mutionDeleteColumn = useMutation({
-    mutationFn: (id) => deleteCardAPI(id)
+  const mutionDeleteCard = useMutation({
+    mutationFn: (id) => deleteCardAPI(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
   })
 
-  const confirm = useConfirm()
+  const [anchorEl, setAnchorEl] = useState(null)
 
-  const handleDeleteCard = () => {
-    confirm({
-      title: 'Delete Card ?',
-      description:
-        'All actions will be removed from the activity feed and you wont be able to re-open the card. There is no undo.',
-      confirmationText: 'Confirm',
-      dialogProps: { maxWidth: 'xs' },
-      confirmationButtonProps: { color: 'warning' }
-    })
-      .then(() => {
-        mutionDeleteColumn.mutate(card._id, {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['board'] })
-            toast.success('Deleted card is successfully')
-          }
-        })
-      })
-      .catch(() => {})
+  const handleConfirm = () => {
+    mutionDeleteCard.mutate(card._id)
   }
 
   return (
@@ -162,12 +139,10 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     p: 2
                   }}
                 >
-                  <Box
-                    sx={{ display: 'flex', alignItems: 'center', gap: 2, height: '40px' }}
-                    onClick={() => setOpenNewCardTitleForm(true)}
-                  >
+                  {/* Title */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, height: '40px' }}>
                     <SubtitlesOutlinedIcon />
-                    <Box sx={{ width: '100%' }}>
+                    <Box sx={{ width: '100%' }} onClick={() => setOpenNewCardTitleForm(true)}>
                       {openNewCardTitleForm ? (
                         <Box
                           as='form'
@@ -219,18 +194,19 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                       )}
                     </Box>
                   </Box>
+
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                    <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />{' '}
+                    <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
                     <Typography>In list {columnTitle}</Typography>
                   </Box>
 
-                  {card?.label.some((label) => label.checked === true) && <Labels card={card} />}
+                  {card?.labels && <Labels card={card} />}
 
                   {card?.dateTime && <DateTimes card={card} />}
 
                   <Description card={card} />
 
-                  {!!card?.attachment?.length && <Attachments attachment={card.attachment} cardId={card._id} />}
+                  {!!card?.attachment?.length && <Attachments card={card} />}
 
                   {card?.checklist && <CheckList checklist={card.checklist} cardId={card._id} />}
                 </Box>
@@ -270,7 +246,9 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                   <Typography>Actions</Typography>
 
                   <Chip
-                    onClick={handleDeleteCard}
+                    onClick={(event) => {
+                      setAnchorEl(event.currentTarget)
+                    }}
                     icon={<DeleteOutlineOutlinedIcon />}
                     sx={{
                       ...chipStyle,
@@ -284,6 +262,17 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     label='Delete'
                     clickable
                     variant='outlined'
+                  />
+                  <ConfirmationPopover
+                    id={Boolean(anchorEl) ? 'attachments-popover' : undefined}
+                    title='Delete card?'
+                    description='All actions will be removed from the activity feed and you won’t be able to re-open the card. There is no undo.'
+                    open={Boolean(anchorEl)}
+                    anchorEl={anchorEl}
+                    handleClose={() => {
+                      setAnchorEl(null)
+                    }}
+                    onConfirm={handleConfirm}
                   />
                 </Box>
               </Grid>

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { API_ROOT } from './constants'
-import { toast } from 'react-toastify'
 
 class Http {
   constructor() {
@@ -17,12 +16,12 @@ class Http {
       (error) => {
         if (error.response) {
           if (error.response.status) {
-            toast.error(error.response.data.message)
+            // toast.error(error.response.data.message)
           } else {
-            toast.error('Something wrong!')
+            // toast.error('Something wrong!')
           }
         } else {
-          toast.error('Something wrong!')
+          // toast.error('Something wrong!')
         }
 
         return Promise.reject(error)

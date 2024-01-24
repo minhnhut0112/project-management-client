@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'react-toastify'
 import { updateCardAPI } from '@/apis/cards.api'
 
 const Description = ({ card }) => {
@@ -50,7 +49,6 @@ const Description = ({ card }) => {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['board'] })
-          toast.success('Updated description is successful!')
         }
       }
     )
@@ -112,7 +110,6 @@ const Description = ({ card }) => {
                   onChange={handleChange}
                   multiline
                   rows={4}
-                  maxRows={4}
                   inputProps={{ style: { cursor: 'auto' } }}
                 />
                 <Button onClick={handleUpdateDescription} variant='contained' sx={{ mx: 1 }}>

@@ -1,5 +1,5 @@
-import CheckListPopover from '@/components/CheckListPopover/CheckListPopover'
-import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
+import AttachmentsPopover from '@/components/AttachmentsPopover/AttachmentsPopover'
+import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import { useState } from 'react'
@@ -13,7 +13,7 @@ const chipStyle = {
   border: 'none'
 }
 
-const CheckListChip = ({ card }) => {
+const AttachmentChip = ({ card }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const handleClick = (event) => {
@@ -25,22 +25,22 @@ const CheckListChip = ({ card }) => {
   }
 
   const open = Boolean(anchorEl)
-  const id = open ? 'dates-popover' : undefined
+  const id = open ? 'attachments-popover' : undefined
 
   return (
     <Box>
       <Chip
-        icon={<LibraryAddCheckOutlinedIcon />}
+        icon={<AttachmentOutlinedIcon />}
         onClick={handleClick}
         onTouchStart={handleClick}
         sx={chipStyle}
-        label='CheckList'
+        label='Attachments'
         clickable
         variant='outlined'
       />
-      <CheckListPopover card={card} id={id} open={open} anchorEl={anchorEl} handleClose={handleClose} />
+      <AttachmentsPopover card={card} id={id} open={open} anchorEl={anchorEl} handleClose={handleClose} />
     </Box>
   )
 }
 
-export default CheckListChip
+export default AttachmentChip
