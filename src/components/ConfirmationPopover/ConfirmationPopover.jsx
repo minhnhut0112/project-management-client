@@ -3,9 +3,9 @@ import { Button, IconButton, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 
-const ConfirmationPopover = ({ anchorEl, handleClose, id, open, onConfirm, title, description }) => {
+const ConfirmationPopover = ({ anchorEl, handleClose, id, open, onConfirm, title, description, confirmArgs }) => {
   const handleConfirm = () => {
-    onConfirm()
+    onConfirm(confirmArgs)
     handleClose()
   }
 

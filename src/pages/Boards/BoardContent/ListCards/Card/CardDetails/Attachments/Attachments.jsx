@@ -95,19 +95,15 @@ const Attachments = ({ card }) => {
   })
 
   const [anchorElDelete, setAnchorElDelete] = useState(null)
-  const handleClickDelete = (event) => {
-    setAnchorElDelete(event.currentTarget)
-  }
-  const handleCloseDelete = () => {
-    setAnchorElDelete(null)
-  }
-  const openDelete = Boolean(anchorElDelete)
-  const idDelete = open ? 'attachments-delete' : undefined
 
   const handleConfirm = (att) => {
+    setOpenCf(false)
     mutionRemoveFile.mutate({
       attachment: att
     })
+    if (card?.cover === att.path) {
+      mutionRemoveCover.mutate()
+    }
   }
 
   const mutionMakeCover = useMutation({
@@ -133,6 +129,8 @@ const Attachments = ({ card }) => {
   const handleRemoveCover = () => {
     mutionRemoveCover.mutate()
   }
+
+  const [opencf, setOpenCf] = useState(false)
 
   return (
     <>
@@ -212,18 +210,30 @@ const Attachments = ({ card }) => {
                         <Typography variant='caption' sx={{ fontSize: '14px' }}>
                           {fileTimes[att._id]}
                         </Typography>
-                        <Typography variant='caption' sx={{ fontSize: '14px' }} onClick={handleClickDelete}>
+                        <Typography
+                          variant='caption'
+                          sx={{ fontSize: '14px' }}
+                          onClick={(event) => {
+                            setAnchorElDelete(event.currentTarget)
+                            setOpenCf(att._id)
+                          }}
+                        >
                           • Delete
                         </Typography>
-                        <ConfirmationPopover
-                          id={idDelete}
-                          title='Delete attachment?'
-                          description='Deleting an attachment is permanent. There is no undo.'
-                          open={openDelete}
-                          anchorEl={anchorElDelete}
-                          handleClose={handleCloseDelete}
-                          onConfirm={() => handleConfirm(att)}
-                        />
+                        {att._id == opencf && (
+                          <ConfirmationPopover
+                            id={Boolean(anchorElDelete) ? 'attachments-delete' : undefined}
+                            title='Delete attachment?'
+                            description='Deleting an attachment is permanent. There is no undo.'
+                            open={Boolean(anchorElDelete)}
+                            anchorEl={anchorElDelete}
+                            handleClose={() => {
+                              setAnchorElDelete(null)
+                            }}
+                            onConfirm={handleConfirm}
+                            confirmArgs={att}
+                          />
+                        )}
                         <Typography variant='caption' sx={{ fontSize: '14px' }}>
                           • Edit
                         </Typography>
@@ -294,18 +304,30 @@ const Attachments = ({ card }) => {
                         <Typography variant='caption' sx={{ fontSize: '14px' }}>
                           {fileTimes[att._id]}
                         </Typography>
-                        <Typography variant='caption' sx={{ fontSize: '14px' }} onClick={handleClickDelete}>
+                        <Typography
+                          variant='caption'
+                          sx={{ fontSize: '14px' }}
+                          onClick={(event) => {
+                            setAnchorElDelete(event.currentTarget)
+                            setOpenCf(att._id)
+                          }}
+                        >
                           • Delete
                         </Typography>
-                        <ConfirmationPopover
-                          id={idDelete}
-                          title='Delete attachment?'
-                          description='Deleting an attachment is permanent. There is no undo.'
-                          open={openDelete}
-                          anchorEl={anchorElDelete}
-                          handleClose={handleCloseDelete}
-                          onConfirm={() => handleConfirm(att)}
-                        />
+                        {att._id == opencf && (
+                          <ConfirmationPopover
+                            id={Boolean(anchorElDelete) ? 'attachments-delete' : undefined}
+                            title='Delete attachment?'
+                            description='Deleting an attachment is permanent. There is no undo.'
+                            open={Boolean(anchorElDelete)}
+                            anchorEl={anchorElDelete}
+                            handleClose={() => {
+                              setAnchorElDelete(null)
+                            }}
+                            onConfirm={handleConfirm}
+                            confirmArgs={att}
+                          />
+                        )}
                         <Typography variant='caption' sx={{ fontSize: '14px' }}>
                           • Edit
                         </Typography>

@@ -14,6 +14,7 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
 import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
 
 import dayjs from 'dayjs'
+import { isColorLight } from '@/utils/formatters'
 
 const Card = ({ card, columnTitle }) => {
   const idShowCardActions = () => {
@@ -54,15 +55,6 @@ const Card = ({ card, columnTitle }) => {
       setDueDateTime(dayjs(card?.dateTime?.dueDateTime))
     }
   }, [card.dateTime])
-
-  const isColorLight = (color) => {
-    const hexColor = color.substring(1) // Remove the '#' from the color
-    const r = parseInt(hexColor.slice(0, 2), 16)
-    const g = parseInt(hexColor.slice(2, 4), 16)
-    const b = parseInt(hexColor.slice(4, 6), 16)
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000
-    return brightness > 128 // Adjust this threshold as needed
-  }
 
   return (
     <Box>
@@ -106,29 +98,25 @@ const Card = ({ card, columnTitle }) => {
           }}
         >
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-            {card?.label?.map((label, index) => {
-              if (label.checked) {
-                return (
-                  <Box
-                    key={index}
-                    sx={{
-                      minWidth: '50px',
-                      height: '20px',
-                      borderRadius: '3px',
-                      bgcolor: `${label?.bgColor}`,
-                      color: label?.bgColor ? (isColorLight(label.bgColor) ? 'black' : 'white') : 'inherit',
-                      p: '1px 5px',
-                      mb: 0.5,
-                      display: 'flex',
-                      alignItems: 'center',
-                      fontSize: '12px'
-                    }}
-                  >
-                    {label.labelTitle}
-                  </Box>
-                )
-              }
-            })}
+            {card?.labels?.map((label) => (
+              <Box
+                key={label._id}
+                sx={{
+                  minWidth: '50px',
+                  height: '20px',
+                  borderRadius: '3px',
+                  bgcolor: `${label?.bgColor}`,
+                  color: label?.bgColor ? (isColorLight(label.bgColor) ? 'black' : 'white') : 'inherit',
+                  p: '1px 5px',
+                  mb: 0.5,
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '12px'
+                }}
+              >
+                {label.labelTitle}
+              </Box>
+            ))}
           </Box>
           <Typography>{card?.title} </Typography>
         </CardContent>

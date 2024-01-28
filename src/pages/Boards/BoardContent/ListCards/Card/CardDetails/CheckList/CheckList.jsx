@@ -29,6 +29,7 @@ const CheckList = ({ checklist, cardId }) => {
   const handleCheckListTitleClick = (listIndex) => {
     setEditingCheckListTitle(listIndex)
     setShowAddItemInput(null)
+    setEditingItem(null)
   }
 
   const handleCheckListTitleChange = (event) => {
@@ -54,6 +55,7 @@ const CheckList = ({ checklist, cardId }) => {
   const handleTitleClick = (listIndex, itemIndex) => {
     setEditingItem({ listIndex, itemIndex })
     setShowAddItemInput(null)
+    setEditingCheckListTitle(null)
   }
 
   const handleTitleChange = (event) => {
@@ -142,6 +144,7 @@ const CheckList = ({ checklist, cardId }) => {
               >
                 <LibraryAddCheckOutlinedIcon />
                 <Box
+                  as='form'
                   sx={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -149,6 +152,10 @@ const CheckList = ({ checklist, cardId }) => {
                     bgcolor: '#091e420f',
                     p: 1,
                     borderRadius: '5px'
+                  }}
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    handleEditTitleCheckList(listIndex)
                   }}
                 >
                   <TextField
@@ -161,11 +168,7 @@ const CheckList = ({ checklist, cardId }) => {
                     size='small'
                   />
                   <Box sx={{ display: 'flex', gap: 0.5 }}>
-                    <Button
-                      onClick={() => handleEditTitleCheckList(listIndex)}
-                      sx={{ width: 'fit-content' }}
-                      variant='contained'
-                    >
+                    <Button type='submit' sx={{ width: 'fit-content' }} variant='contained'>
                       Save
                     </Button>
                     <IconButton onClick={() => setEditingCheckListTitle(null)} aria-label='delete'>
@@ -227,8 +230,9 @@ const CheckList = ({ checklist, cardId }) => {
                   value={calculateProgress(list.items)}
                   color={calculateProgress(list.items) == 100 ? 'success' : 'primary'}
                   sx={{
-                    borderRadius: '4px',
-                    height: '7px'
+                    borderRadius: '5px',
+                    height: '7px',
+                    width: '98%'
                   }}
                 />
               </Box>
@@ -239,6 +243,7 @@ const CheckList = ({ checklist, cardId }) => {
               <Checkbox checked={item.checked} onChange={() => handleCheckboxChange(listIndex, itemIndex)} />
               {editingItem && editingItem.listIndex === listIndex && editingItem.itemIndex === itemIndex ? (
                 <Box
+                  as='form'
                   sx={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -246,6 +251,10 @@ const CheckList = ({ checklist, cardId }) => {
                     bgcolor: '#091e420f',
                     p: 1,
                     borderRadius: '5px'
+                  }}
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    handleEditTitleCheckListItem(listIndex)
                   }}
                 >
                   <TextField
@@ -257,11 +266,7 @@ const CheckList = ({ checklist, cardId }) => {
                     onChange={handleTitleChange}
                   />
                   <Box sx={{ display: 'flex', gap: 0.5 }}>
-                    <Button
-                      onClick={() => handleEditTitleCheckListItem(listIndex)}
-                      sx={{ width: 'fit-content' }}
-                      variant='contained'
-                    >
+                    <Button type='submit' sx={{ width: 'fit-content' }} variant='contained'>
                       Save
                     </Button>
                     <IconButton onClick={() => setEditingItem(null)} aria-label='delete'>
@@ -318,6 +323,7 @@ const CheckList = ({ checklist, cardId }) => {
             <LibraryAddCheckOutlinedIcon sx={{ color: 'transparent' }} />
             {showAddItemInput === listIndex ? (
               <Box
+                as='form'
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -326,6 +332,10 @@ const CheckList = ({ checklist, cardId }) => {
                   bgcolor: '#091e420f',
                   p: 1,
                   borderRadius: '5px'
+                }}
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  handleAddItem(listIndex)
                 }}
               >
                 <TextField
@@ -337,7 +347,7 @@ const CheckList = ({ checklist, cardId }) => {
                   onChange={(e) => setNewItemTitle(e.target.value)}
                 />
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
-                  <Button onClick={() => handleAddItem(listIndex)} sx={{ width: 'fit-content' }} variant='contained'>
+                  <Button type='submit' sx={{ width: 'fit-content' }} variant='contained'>
                     Add
                   </Button>
                   <IconButton onClick={() => setShowAddItemInput(null)} aria-label='delete'>
@@ -351,6 +361,7 @@ const CheckList = ({ checklist, cardId }) => {
                 onClick={() => {
                   setShowAddItemInput(listIndex)
                   setEditingItem(null)
+                  setEditingCheckListTitle(null)
                 }}
                 sx={{
                   mt: 1,

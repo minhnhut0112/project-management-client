@@ -23,3 +23,18 @@ export const moveCardToDifferentColunmnAPI = async (data) => {
   const res = await http.put('v1/boards/support/moving_card', data)
   return res.data
 }
+
+export const editLabelAPI = async (id, data) => {
+  const res = await http.put(`v1/boards/${id}/labels`, data)
+  return res.data
+}
+
+export const createNewLabelAPI = async (id, data) => {
+  const res = await http.post(`v1/boards/${id}/labels`, data)
+  return res.data
+}
+
+export const removeLabelAPI = async (id, labelId, cardId) => {
+  const res = await http.delete(`v1/boards/${id}/labels?labelId=${labelId}&cardId=${cardId}`)
+  return res.data
+}

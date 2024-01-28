@@ -33,7 +33,9 @@ const Description = ({ card }) => {
   const queryClient = useQueryClient()
 
   const mutationUpdateDescription = useMutation({
-    mutationFn: (data) => updateCardAPI(card._id, data)
+    mutationFn: async (data) => await updateCardAPI(card._id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] }),
+    onError: () => setDescription(card.description)
   })
 
   const handleUpdateDescription = () => {
@@ -42,16 +44,9 @@ const Description = ({ card }) => {
       return
     }
 
-    mutationUpdateDescription.mutate(
-      {
-        description: description
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['board'] })
-        }
-      }
-    )
+    mutationUpdateDescription.mutate({
+      description: description
+    })
     setOpenDescriptionForm(false)
   }
 

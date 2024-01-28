@@ -1,4 +1,5 @@
 import LabelPopover from '@/components/LabelPopover/LabelPopover'
+import { isColorLight } from '@/utils/formatters'
 import AddIcon from '@mui/icons-material/Add'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import Box from '@mui/material/Box'
@@ -10,8 +11,8 @@ const Labels = ({ card }) => {
   const [labels, setLabels] = useState([])
 
   useEffect(() => {
-    setLabels(card.labels)
-  }, [card.labels])
+    setLabels(card?.labels)
+  }, [card])
 
   const handlePopoverChange = (updatedLabels) => {
     setLabels(updatedLabels)
@@ -24,7 +25,7 @@ const Labels = ({ card }) => {
         <Typography variant='h6' sx={{ fontSize: '16px' }}>
           Labels
         </Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           {labels.map((label, index) => (
             <Box
               key={index}
@@ -35,7 +36,8 @@ const Labels = ({ card }) => {
                 p: '0 12px',
                 borderRadius: ' 3px',
                 display: 'flex',
-                alignItems: 'center'
+                alignItems: 'center',
+                color: isColorLight(label.bgColor) ? 'black' : 'white'
               }}
             >
               {label.labelTitle}

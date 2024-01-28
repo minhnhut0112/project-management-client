@@ -45,15 +45,18 @@ const BoardBar = ({ board }) => {
   }, [board?.title, openNewBoardTitleForm, newBoardTitle])
 
   useEffect(() => {
-    if (board) {
-      setNewBoardTitle(board.title)
+    if (board?.title) {
+      setNewBoardTitle(board?.title)
     }
-  }, [board])
+  }, [board?.title])
 
   const queryClient = useQueryClient()
 
   const mutionEditBoardTitle = useMutation({
-    mutationFn: (data) => moveColumnAPI(board._id, data)
+    mutationFn: (data) => moveColumnAPI(board._id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    }
   })
 
   const editBoardTitle = () => {
@@ -63,16 +66,10 @@ const BoardBar = ({ board }) => {
       return
     }
 
-    mutionEditBoardTitle.mutate(
-      {
-        title: newBoardTitle
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['board'] })
-        }
-      }
-    )
+    mutionEditBoardTitle.mutate({
+      title: newBoardTitle
+    })
+
     setOpenNewBoardTitleForm(false)
   }
 

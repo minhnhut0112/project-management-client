@@ -49,12 +49,13 @@ const Column = ({ column }) => {
   const [newCardTitle, setNewCardTitle] = useState('')
 
   const toggleOpenNewCardForm = () => {
-    setOpenNewCardForm(!openNewCardForm)
     setNewCardTitle('')
+    setOpenNewCardForm(!openNewCardForm)
   }
 
   const mutionAddCard = useMutation({
-    mutationFn: (data) => createNewCardAPI(data)
+    mutationFn: (data) => createNewCardAPI(data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
   })
 
   const addNewcard = () => {
@@ -63,14 +64,7 @@ const Column = ({ column }) => {
       return
     }
 
-    mutionAddCard.mutate(
-      { title: newCardTitle, boardId: column.boardId, columnId: column._id },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['board'] })
-        }
-      }
-    )
+    mutionAddCard.mutate({ title: newCardTitle, boardId: column.boardId, columnId: column._id })
 
     toggleOpenNewCardForm()
   }
@@ -322,7 +316,6 @@ const Column = ({ column }) => {
                     color: 'text.primary'
                   },
                   '& input': {
-                    color: (theme) => theme.palette.primary.main,
                     bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : 'white')
                   },
                   '& label.Mui-focused': {
@@ -344,7 +337,7 @@ const Column = ({ column }) => {
                 </Button>
                 <CloseIcon
                   fontSize='small'
-                  onClick={toggleOpenNewCardForm}
+                  onClick={() => setOpenNewCardForm(false)}
                   sx={{
                     color: (theme) => theme.palette.warning.light,
                     cursor: 'pointer'
