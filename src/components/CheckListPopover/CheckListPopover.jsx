@@ -64,25 +64,32 @@ const CheckListPopover = ({ anchorEl, handleClose, card, id, open }) => {
 
         <Typography variant='body'>Title</Typography>
 
-        <TextField
-          sx={{ mt: 1, mb: 1 }}
-          fullWidth
-          size='small'
-          autoFocus
-          onChange={(e) => setCheckListTitle(e.target.value)}
-        />
-
-        <Button
-          onClick={handleCreateCheclist}
-          sx={{
-            bgcolor: '#4F46E5',
-            width: '100%'
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleCreateCheclist()
           }}
-          variant='contained'
-          disableElevation
         >
-          Add
-        </Button>
+          <TextField
+            sx={{ mt: 1, mb: 1 }}
+            fullWidth
+            size='small'
+            autoFocus
+            onChange={(e) => setCheckListTitle(e.target.value)}
+          />
+
+          <Button
+            type='submit'
+            sx={{
+              bgcolor: '#4F46E5',
+              width: '100%'
+            }}
+            variant='contained'
+            disableElevation
+          >
+            Add
+          </Button>
+        </form>
       </Box>
     </Popover>
   )

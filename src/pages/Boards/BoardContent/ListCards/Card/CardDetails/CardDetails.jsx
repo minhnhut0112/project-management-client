@@ -200,7 +200,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     <Typography>In list {columnTitle}</Typography>
                   </Box>
 
-                  {card?.labels && <Labels card={card} />}
+                  {!!card?.labels.length && <Labels card={card} />}
 
                   {card?.dateTime && <DateTimes card={card} />}
 
