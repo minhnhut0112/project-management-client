@@ -206,7 +206,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
 
                   <Description card={card} />
 
-                  {!!card?.attachment?.length && <Attachments card={card} />}
+                  {!!card?.attachments?.length && <Attachments card={card} />}
 
                   {card?.checklist && <CheckList checklist={card.checklist} cardId={card._id} />}
                 </Box>

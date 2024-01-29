@@ -81,9 +81,9 @@ const CoverPopover = ({ card }) => {
   const [selectedImage, setSelectedImage] = useState(null)
 
   useEffect(() => {
-    const selectedImageId = card?.attachment?.find((item) => item.path === cover)?._id
+    const selectedImageId = card?.attachments?.find((item) => item.path === cover)?._id
     setSelectedImage(selectedImageId)
-  }, [cover, card?.attachment])
+  }, [cover, card?.attachments])
 
   const mutionUpdateCover = useMutation({
     mutationFn: async (data) => await updateCardAPI(card._id, data),
@@ -167,7 +167,7 @@ const CoverPopover = ({ card }) => {
           <Typography variant='caption'>Attachments</Typography>
 
           <ImageList sx={{ width: '100%', mt: '5px', mb: '5px' }} cols={3} rowHeight={60}>
-            {card?.attachment?.map((item) => {
+            {card?.attachments?.map((item) => {
               const isImageSelected = selectedImage === item._id
 
               if (item?.type?.includes('image')) {

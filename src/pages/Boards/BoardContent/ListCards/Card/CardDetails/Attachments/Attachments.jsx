@@ -35,7 +35,7 @@ const Attachments = ({ card }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       const newFileTimes = {}
-      card?.attachment.forEach((att) => {
+      card?.attachments.forEach((att) => {
         newFileTimes[att._id] = calculateTimeFromNow(att.createAt)
       })
       setFileTimes(newFileTimes)
@@ -43,7 +43,7 @@ const Attachments = ({ card }) => {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [card?.attachment])
+  }, [card?.attachments])
 
   const calculateTimeFromNow = (createdAt) => {
     const currentTime = moment()
@@ -167,7 +167,7 @@ const Attachments = ({ card }) => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, width: '100%' }}>
-            {card?.attachment.slice(0, showAll ? card?.attachment.length : 3).map((att) => {
+            {card?.attachments.slice(0, showAll ? card?.attachments.length : 3).map((att) => {
               if (att.type.includes('image')) {
                 return (
                   <Box
@@ -337,10 +337,10 @@ const Attachments = ({ card }) => {
                 )
               }
             })}
-            {card?.attachment.length > 3 && (
+            {card?.attachments.length > 3 && (
               <Chip
                 onClick={toggleShowAll}
-                label={showAll ? 'Show Fewer' : `Show All ( ${card?.attachment.length - 3} hidden)`}
+                label={showAll ? 'Show Fewer' : `Show All ( ${card?.attachments.length - 3} hidden)`}
                 clickable
                 variant='outlined'
                 sx={{
@@ -358,7 +358,7 @@ const Attachments = ({ card }) => {
         </Box>
       ) : (
         <Box>
-          {Array.from({ length: Math.min(3, card?.attachment.length) }, (_, index) => (
+          {Array.from({ length: Math.min(3, card?.attachments.length) }, (_, index) => (
             <SkeletonBox key={index} />
           ))}
         </Box>

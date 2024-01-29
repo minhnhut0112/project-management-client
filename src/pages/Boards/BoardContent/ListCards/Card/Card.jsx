@@ -22,7 +22,7 @@ const Card = ({ card, columnTitle }) => {
       !!card?.memberIds?.length ||
       !!card?.comments?.length ||
       !!card?.description ||
-      !!card?.attachment?.length ||
+      !!card?.attachments?.length ||
       !!card?.dateTime ||
       !!card?.checklist
     )
@@ -158,18 +158,18 @@ const Card = ({ card, columnTitle }) => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CommentOutlinedIcon fontSize='small' />
                   <Typography variant='caption' sx={{ fontSize: '12px' }}>
-                    {card?.attachment?.length}
+                    {card?.attachments?.length}
                   </Typography>
                 </Box>
               </Tooltip>
             )}
 
-            {!!card?.attachment?.length && (
+            {!!card?.attachments?.length && (
               <Tooltip title='Attachments'>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <AttachmentOutlinedIcon fontSize='small' />
                   <Typography variant='caption' sx={{ fontSize: '12px' }}>
-                    {card?.attachment?.length}
+                    {card?.attachments?.length}
                   </Typography>
                 </Box>
               </Tooltip>
