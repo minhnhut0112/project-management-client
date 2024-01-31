@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarRateIcon from '@mui/icons-material/StarRate'
 import { useEffect, useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createBoardAPI, fetchAllBoardsAPI } from '@/apis/boards.api'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
@@ -86,33 +86,22 @@ const Boards = () => {
     setVisibility(event.target.value)
   }
 
-  // const queryClient = useQueryClient()
+  const queryClient = useQueryClient()
 
   const mutionCreateBoard = useMutation({
-    mutationFn: (data) => createBoardAPI(data)
-  })
-
-  useEffect(() => {
-    if (mutionCreateBoard.data) {
-      navigate(`/board/${mutionCreateBoard.data._id}`)
+    mutationFn: (data) => createBoardAPI(data),
+    onSuccess: (data) => {
+      navigate(`/board/${data?._id}`)
+      queryClient.invalidateQueries({ queryKey: ['boards'] })
     }
-  }, [mutionCreateBoard.data, navigate])
+  })
 
   const createNewBoard = () => {
     if (!newBoardTitle || !imageSrc) {
       handleClose()
       return
     }
-    mutionCreateBoard.mutate(
-      { title: newBoardTitle, type: visibility, cover: imageSrc }
-      // {
-      //   onSuccess: () => {
-      //     navigate(`/board/${mutionCreateBoard?.data?._id}`)
-      //     queryClient.invalidateQueries({ queryKey: ['boards'] })
-      //     toast.success('Create board is successfully!')
-      //   }
-      // }
-    )
+    mutionCreateBoard.mutate({ title: newBoardTitle, type: visibility, cover: imageSrc })
     handleClose()
   }
 
@@ -124,45 +113,44 @@ const Boards = () => {
 
       <Grid container sx={{ gap: 2 }}>
         {boards?.map((board) => (
-          <>
-            <Grid
+          <Grid
+            key={board._id}
+            sx={{
+              backgroundImage: `url(${board?.cover})`,
+              height: 100,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              width: '100%',
+              cursor: 'pointer',
+              mt: 3,
+              borderRadius: '2px'
+            }}
+            item
+            xs={6}
+            md={2.5}
+            onClick={(event) => !event.target.closest('input[type="checkbox"]') && navigate(`/board/${board._id}`)}
+          >
+            <Typography
               sx={{
-                backgroundImage: `url(${board?.cover})`,
-                height: 100,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                width: '100%',
-                cursor: 'pointer',
-                mt: 3,
-                borderRadius: '2px'
+                padding: 2,
+                color: '#fff',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                textShadow: '2px 2px 5px black'
               }}
-              item
-              xs={6}
-              md={2.5}
-              onClick={(event) => !event.target.closest('input[type="checkbox"]') && navigate(`/board/${board._id}`)}
             >
-              <Typography
-                sx={{
-                  padding: 2,
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  textShadow: '2px 2px 5px black'
-                }}
-              >
-                {board.title}
-              </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-                <Checkbox
-                  sx={{ color: 'white' }}
-                  icon={<StarBorderIcon />}
-                  checked={board?.starred}
-                  onClick={handleCheckboxClick}
-                  checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />}
-                />
-              </Box>
-            </Grid>
-          </>
+              {board.title}
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+              <Checkbox
+                sx={{ color: 'white' }}
+                icon={<StarBorderIcon />}
+                checked={board?.starred}
+                onClick={handleCheckboxClick}
+                checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />}
+              />
+            </Box>
+          </Grid>
         ))}
         <Grid
           sx={{

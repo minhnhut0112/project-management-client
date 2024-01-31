@@ -1,4 +1,3 @@
-// import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -10,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ConfirmProvider } from 'material-ui-confirm'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { Provider } from 'react-redux'
+import { store } from './redux/store'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +26,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <CssVarsProvider theme={theme}>
         <ConfirmProvider>
           <CssBaseline />
-          <App />
+          <Provider store={store}>
+            <App />
+          </Provider>
           <ToastContainer position='bottom-right' />
         </ConfirmProvider>
       </CssVarsProvider>
