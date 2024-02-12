@@ -28,6 +28,7 @@ const SignIn = () => {
     },
     onSuccess: (data) => {
       if (data) {
+        localStorage.setItem('accessToken', data?.accessToken)
         disPatch(loginUser(data))
         navigate('/')
       }
@@ -42,7 +43,7 @@ const SignIn = () => {
     <Box sx={{ p: 10 }}>
       <Grid container sx={{ border: 0.5, borderRadius: '5px', borderColor: '#e5e7eb', height: 'calc(100vh - 160px)' }}>
         <Grid item md={6}>
-          <Box sx={{ display: 'flex', p: 2, gap: 1 }}>
+          <Box sx={{ display: 'flex', p: 2, gap: 1 }} onClick={() => navigate('/')}>
             <SvgIcon
               component={LogoApp}
               sx={{

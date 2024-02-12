@@ -1,15 +1,43 @@
-import { Grid, IconButton, SvgIcon, Typography } from '@mui/material'
+import { Grid, SvgIcon, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '@mui/material/Button'
 import { ReactComponent as LogoApp } from '@/assets/trello.svg'
-import InputAdornment from '@mui/material/InputAdornment'
-import Visibility from '@mui/icons-material/Visibility'
-import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { signupUserAPI } from '@/apis/users.api'
+
+const formInterFace = {
+  email: '',
+  password: '',
+  confirmPassword: ''
+}
+
 const SignIn = () => {
-  const [showPassword, setShowPassword] = useState(false)
+  const [auth, setAuth] = useState(formInterFace)
+
+  const onChangeInput = (e) => {
+    setAuth((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  const navigate = useNavigate()
+
+  const mutionsSignUp = useMutation({
+    mutationFn: async () => {
+      const res = await signupUserAPI(auth)
+      return res
+    },
+    onSuccess: (data) => {
+      if (data) {
+        navigate('/sign-in')
+      }
+    }
+  })
+
+  const handleSignUp = () => {
+    mutionsSignUp.mutate()
+  }
 
   return (
     <Box sx={{ p: 10 }}>
@@ -36,44 +64,68 @@ const SignIn = () => {
           </Box>
           <Box sx={{ p: '48px 150px' }}>
             <Typography variant='h6' sx={{ fontSize: '1.5rem' }}>
-              Sign in
+              Sign Up
             </Typography>
             <Typography sx={{ fontSize: '0.875rem' }}>
-              Have a account? <Link to='/sign-in'>Sign up!</Link>
+              Have a account? <Link to='/sign-in'>Sign in!</Link>
             </Typography>
-            <Typography variant='subtitle1' sx={{ mt: 3, mb: 0.5 }}>
-              Email
-            </Typography>
-            <TextField type='email' variant='outlined' size='small' sx={{ width: '100%' }} />
-            <Typography variant='subtitle1' sx={{ mt: 2, mb: 0.5 }}>
-              Password
-            </Typography>
-            <TextField
-              type={showPassword ? 'text' : 'password'}
-              variant='outlined'
-              size='small'
-              sx={{ width: '100%', mb: 0.5 }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <IconButton onClick={() => setShowPassword((prevShowPassword) => !prevShowPassword)} edge='end'>
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                )
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleSignUp()
               }}
-            />
-            <Typography sx={{ mt: 1, mb: 2, color: '#3742fa', textAlign: 'end' }}>Forgot password?</Typography>
-            <Button
-              sx={{
-                bgcolor: '#4F46E5',
-                width: '100%'
-              }}
-              variant='contained'
-              disableElevation
             >
-              Sign up
-            </Button>
+              <Typography variant='subtitle1' sx={{ mt: 3, mb: 0.5 }}>
+                Email
+              </Typography>
+              <TextField
+                onChange={onChangeInput}
+                name='email'
+                type='email'
+                variant='outlined'
+                size='small'
+                sx={{ width: '100%' }}
+              />
+
+              <Typography variant='subtitle1' sx={{ mt: 2, mb: 0.5 }}>
+                Password
+              </Typography>
+              <TextField
+                onChange={onChangeInput}
+                name='password'
+                type='password'
+                variant='outlined'
+                size='small'
+                sx={{ width: '100%', mb: 0.5 }}
+              />
+
+              <Typography variant='subtitle1' sx={{ mt: 2, mb: 0.5 }}>
+                Confirm Password
+              </Typography>
+              <TextField
+                onChange={onChangeInput}
+                name='confirmPassword'
+                type='password'
+                variant='outlined'
+                size='small'
+                sx={{ width: '100%', mb: 0.5 }}
+              />
+
+              <Typography sx={{ mt: 1, mb: 2, color: '#3742fa', textAlign: 'end' }}>Forgot password?</Typography>
+
+              <Button
+                type='submit'
+                sx={{
+                  bgcolor: '#4F46E5',
+                  width: '100%'
+                }}
+                variant='contained'
+                disableElevation
+              >
+                Sign up
+              </Button>
+            </form>
           </Box>
         </Grid>
         <Grid item md={6}>

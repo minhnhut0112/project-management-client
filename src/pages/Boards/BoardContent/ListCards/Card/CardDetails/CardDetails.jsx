@@ -1,7 +1,6 @@
 import { deleteCardAPI, updateCardAPI } from '@/apis/cards.api'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
-import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import { Grid, TextField } from '@mui/material'
@@ -23,6 +22,7 @@ import Labels from './Labels/Labels'
 import CheckListChip from './CheckListChip/CheckListChip'
 import CheckList from './CheckList/CheckList'
 import ConfirmationPopover from '@/components/ConfirmationPopover/ConfirmationPopover'
+import MemsberChip from './MembersChip/MemsberChip'
 
 const chipStyle = {
   fontSize: '15px',
@@ -226,6 +226,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     </IconButton>
                   </Box>
                 )}
+
                 <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                   <Typography>Suggested</Typography>
                   <Chip
@@ -237,10 +238,9 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                   />
                   <Typography>Add to card</Typography>
                   <DateChip card={card} />
-                  <Chip icon={<GroupAddOutlinedIcon />} sx={chipStyle} label='Members' clickable variant='outlined' />
+                  <MemsberChip card={card} />
                   <LabelChip card={card} />
                   <CoverPopover card={card} />
-
                   <AttachmentsPopover card={card} />
                   <CheckListChip card={card} />
                   <Typography>Actions</Typography>

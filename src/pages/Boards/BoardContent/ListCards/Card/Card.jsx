@@ -3,7 +3,7 @@ import { CSS } from '@dnd-kit/utilities'
 import AttachmentOutlinedIcon from '@mui/icons-material/AttachmentOutlined'
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
-import { Box, Card as MuiCard, Tooltip } from '@mui/material'
+import { Avatar, Box, Card as MuiCard, Tooltip } from '@mui/material'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
@@ -122,69 +122,98 @@ const Card = ({ card, columnTitle }) => {
         </CardContent>
 
         {idShowCardActions() && (
-          <CardActions sx={{ p: '0 4px 5px 4px', display: 'flex', gap: 0.5, ml: 0.5 }}>
-            {!!card?.description && (
-              <Tooltip title='Card has description'>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <DescriptionOutlinedIcon sx={{ fontSize: '18px' }} />
-                </Box>
-              </Tooltip>
-            )}
-
-            {!!card?.dateTime && (
-              <Tooltip title='Estimated completion time'>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#4bce97' : '#1f845a'),
-                    color: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#ffffff'),
-                    borderRadius: '3px',
-                    p: 0.5,
-                    height: '20px',
-                    fontSize: '12px'
-                  }}
-                >
-                  <AccessTimeOutlinedIcon sx={{ fontSize: '16px', mr: 0.5 }} />
-                  <Box>
-                    {dayjs(startDateTime).format('MMM D')} - {dayjs(dueDateTime).format('MMM D')}
+          <CardActions
+            sx={{
+              p: '0 4px 5px 4px',
+              display: 'flex',
+              ml: 0.5,
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%'
+            }}
+          >
+            <Box sx={{ display: 'flex', gap: 1, mb: 0.5 }}>
+              {!!card?.description && (
+                <Tooltip title='Card has description'>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <DescriptionOutlinedIcon sx={{ fontSize: '18px' }} />
                   </Box>
-                </Box>
-              </Tooltip>
-            )}
+                </Tooltip>
+              )}
 
-            {!!card?.comments?.length && (
-              <Tooltip title='Coments'>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <CommentOutlinedIcon fontSize='small' />
-                  <Typography variant='caption' sx={{ fontSize: '12px' }}>
-                    {card?.attachments?.length}
-                  </Typography>
-                </Box>
-              </Tooltip>
-            )}
+              {!!card?.dateTime && (
+                <Tooltip title='Estimated completion time'>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#4bce97' : '#1f845a'),
+                      color: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#ffffff'),
+                      borderRadius: '3px',
+                      p: 0.5,
+                      height: '20px',
+                      fontSize: '12px'
+                    }}
+                  >
+                    <AccessTimeOutlinedIcon sx={{ fontSize: '16px', mr: 0.5 }} />
+                    <Box>
+                      {dayjs(startDateTime).format('MMM D')} - {dayjs(dueDateTime).format('MMM D')}
+                    </Box>
+                  </Box>
+                </Tooltip>
+              )}
 
-            {!!card?.attachments?.length && (
-              <Tooltip title='Attachments'>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <AttachmentOutlinedIcon fontSize='small' />
-                  <Typography variant='caption' sx={{ fontSize: '12px' }}>
-                    {card?.attachments?.length}
-                  </Typography>
-                </Box>
-              </Tooltip>
-            )}
+              {!!card?.comments?.length && (
+                <Tooltip title='Coments'>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <CommentOutlinedIcon fontSize='small' />
+                    <Typography variant='caption' sx={{ fontSize: '12px' }}>
+                      {card?.attachments?.length}
+                    </Typography>
+                  </Box>
+                </Tooltip>
+              )}
 
-            {!!card?.checklist?.length && (
-              <Tooltip title='Checklist'>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LibraryAddCheckOutlinedIcon fontSize='small' />
-                  <Typography variant='caption' sx={{ fontSize: '12px' }}>
-                    {card?.checklist?.length}
-                  </Typography>
-                </Box>
-              </Tooltip>
-            )}
+              {!!card?.attachments?.length && (
+                <Tooltip title='Attachments'>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <AttachmentOutlinedIcon fontSize='small' />
+                    <Typography variant='caption' sx={{ fontSize: '12px' }}>
+                      {card?.attachments?.length}
+                    </Typography>
+                  </Box>
+                </Tooltip>
+              )}
+
+              {!!card?.checklist?.length && (
+                <Tooltip title='Checklist'>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <LibraryAddCheckOutlinedIcon fontSize='small' />
+                    <Typography variant='caption' sx={{ fontSize: '12px' }}>
+                      {card?.checklist?.length}
+                    </Typography>
+                  </Box>
+                </Tooltip>
+              )}
+            </Box>
+            <Box sx={{ display: 'flex', width: '100%', gap: 0.5, justifyContent: 'end', mr: 1, mt: 0.5 }}>
+              {card?.members?.map((member) => (
+                <Tooltip title={member?.username} key={member?._id}>
+                  <Avatar
+                    size='small'
+                    sx={{
+                      backgroundColor: member?.avatarColor,
+                      width: 30,
+                      height: 30
+                    }}
+                    src={member?.avatar}
+                  >
+                    {member?.username?.charAt(0)?.toUpperCase()}
+                  </Avatar>
+                </Tooltip>
+              ))}
+            </Box>
           </CardActions>
         )}
       </MuiCard>

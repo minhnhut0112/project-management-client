@@ -1,19 +1,27 @@
 import Container from '@mui/material/Container'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
-// import { useEffect, useState } from 'react'
-
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '@/utils/formatters'
-// import { mockData } from '@/apis/mock-data'
 import { mapOrder } from '@/utils/sorts'
 import { Box, LinearProgress } from '@mui/material'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchBoardDetailsAPI } from '@/apis/boards.api'
+import { useSelector } from 'react-redux'
 
 const Board = () => {
+  const user = useSelector((state) => state.user.auth)
+
+  const navigate = useNavigate()
+
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate('/sign-in')
+  //   }
+  // }, [user, navigate])
+
   const [board, setBoard] = useState(null)
   const { id } = useParams()
 

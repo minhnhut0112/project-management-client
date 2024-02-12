@@ -15,6 +15,7 @@ import ImageListItem from '@mui/material/ImageListItem'
 import { ReactComponent as boardbg } from '@/assets/trello.board.bg.svg'
 import IconButton from '@mui/material/IconButton'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
+import { useSelector } from 'react-redux'
 
 const itemData = [
   {
@@ -48,6 +49,14 @@ const Boards = () => {
   const [checked, setChecked] = useState(false)
   const [boards, setBoards] = useState(null)
   const [imageSrc, setImageSrc] = useState(itemData[0].img)
+
+  const user = useSelector((state) => state.user.auth)
+
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate('/sign-in')
+  //   }
+  // }, [navigate, user])
 
   const handleCheckboxClick = () => {
     setChecked(!checked)
@@ -97,11 +106,11 @@ const Boards = () => {
   })
 
   const createNewBoard = () => {
-    if (!newBoardTitle || !imageSrc) {
+    if (!newBoardTitle || !imageSrc || !user) {
       handleClose()
       return
     }
-    mutionCreateBoard.mutate({ title: newBoardTitle, type: visibility, cover: imageSrc })
+    mutionCreateBoard.mutate({ title: newBoardTitle, type: visibility, cover: imageSrc, ownerId: user._id })
     handleClose()
   }
 

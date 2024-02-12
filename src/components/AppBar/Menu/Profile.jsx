@@ -1,3 +1,4 @@
+import { logoutUser } from '@/redux/userSile'
 import Logout from '@mui/icons-material/Logout'
 import Settings from '@mui/icons-material/Settings'
 import Avatar from '@mui/material/Avatar'
@@ -8,8 +9,8 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { NavLink } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 const Profile = () => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -23,6 +24,15 @@ const Profile = () => {
 
   const user = useSelector((state) => state.user.auth)
 
+  const navigate = useNavigate()
+  const disPatch = useDispatch()
+
+  const handleLogout = async () => {
+    disPatch(logoutUser())
+    localStorage.removeItem('accessToken')
+    navigate('/sign-in')
+  }
+
   return (
     <Box>
       <IconButton
@@ -33,8 +43,8 @@ const Profile = () => {
         aria-haspopup='true'
         aria-expanded={open ? 'true' : undefined}
       >
-        <Avatar sx={{ width: 32, height: 32 }} alt='avatar' src={user?.avatar}>
-          M
+        <Avatar sx={{ width: 32, height: 32, bgcolor: user?.avatarColor }} alt='avatar' src={user?.avatar}>
+          {user?.username?.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
       <Menu
@@ -63,7 +73,7 @@ const Profile = () => {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize='small' />
           </ListItemIcon>

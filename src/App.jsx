@@ -1,9 +1,38 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { routes } from './routes'
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import DefaultLayout from './components/Layout/DefaultLayout/DefaultLayout'
+import { useDispatch, useSelector } from 'react-redux'
+import { jwtDecode } from 'jwt-decode'
+import { getUserAPI } from './apis/users.api'
+import { loginUser } from './redux/userSile'
 
 function App() {
+  const user = useSelector((state) => state.user.auth)
+  const disPatch = useDispatch()
+
+  const handleGetDetailsUser = async (id) => {
+    const res = await getUserAPI(id)
+    disPatch(loginUser(res))
+  }
+
+  const handleDecode = () => {
+    const accessToken = user?.accessToken || localStorage.getItem('accessToken')
+    let currUser = ''
+    if (accessToken) {
+      currUser = jwtDecode(accessToken)
+    }
+    return currUser
+  }
+
+  useEffect(() => {
+    const currUser = handleDecode()
+    if (currUser) {
+      handleGetDetailsUser(currUser.id)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <>
       <Router>
