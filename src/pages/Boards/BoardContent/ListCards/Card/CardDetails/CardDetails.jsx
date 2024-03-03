@@ -23,6 +23,8 @@ import CheckListChip from './CheckListChip/CheckListChip'
 import CheckList from './CheckList/CheckList'
 import ConfirmationPopover from '@/components/ConfirmationPopover/ConfirmationPopover'
 import MemsberChip from './MembersChip/MemsberChip'
+import Members from './Members/Members'
+import Comments from './Comments/Comments'
 
 const chipStyle = {
   fontSize: '15px',
@@ -200,6 +202,8 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     <Typography>In list {columnTitle}</Typography>
                   </Box>
 
+                  {!!card?.members?.length && <Members card={card} />}
+
                   {!!card?.labels.length && <Labels card={card} />}
 
                   {card?.dateTime && <DateTimes card={card} />}
@@ -209,6 +213,8 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                   {!!card?.attachments?.length && <Attachments card={card} />}
 
                   {card?.checklist && <CheckList checklist={card.checklist} cardId={card._id} />}
+
+                  <Comments card={card} />
                 </Box>
               </Grid>
 

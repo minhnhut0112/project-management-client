@@ -133,11 +133,11 @@ const Card = ({ card, columnTitle }) => {
               width: '100%'
             }}
           >
-            <Box sx={{ display: 'flex', gap: 1, mb: 0.5 }}>
+            <Box sx={{ display: 'flex', gap: 1.5, mb: 0.5 }}>
               {!!card?.description && (
                 <Tooltip title='Card has description'>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <DescriptionOutlinedIcon sx={{ fontSize: '18px' }} />
+                    <DescriptionOutlinedIcon sx={{ fontSize: '20px' }} />
                   </Box>
                 </Tooltip>
               )}
@@ -169,7 +169,7 @@ const Card = ({ card, columnTitle }) => {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <CommentOutlinedIcon fontSize='small' />
                     <Typography variant='caption' sx={{ fontSize: '12px' }}>
-                      {card?.attachments?.length}
+                      {card?.comments?.length}
                     </Typography>
                   </Box>
                 </Tooltip>

@@ -1,9 +1,11 @@
+import CloseIcon from '@mui/icons-material/Close'
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined'
-import { IconButton, Modal, TextField, Typography } from '@mui/material'
+import { Avatar, IconButton, Modal, TextField, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
 import { useState } from 'react'
-import CloseIcon from '@mui/icons-material/Close'
 
 const style = {
   position: 'absolute',
@@ -17,7 +19,7 @@ const style = {
   borderRadius: '5px'
 }
 
-const InviteButon = () => {
+const InviteButon = ({ board }) => {
   const [open, setOpen] = useState(false)
 
   return (
@@ -45,16 +47,47 @@ const InviteButon = () => {
         <Box sx={style}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography id='modal-modal-title' variant='h6' component='h2'>
-              Text in a modal
+              Share board
             </Typography>
             <IconButton onClick={() => setOpen(false)} aria-label='invite-buton'>
               <CloseIcon />
             </IconButton>
           </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1, mt: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1, mt: 1, mb: 2 }}>
             <TextField placeholder='Email address or name' variant='outlined' size='small' fullWidth />
-            <Button variant='contained'>Invite</Button>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Select size='small' value='member'>
+                <MenuItem value='admin'>Admin</MenuItem>
+                <MenuItem value='member'>Member</MenuItem>
+                <MenuItem>Remove from board</MenuItem>
+              </Select>
+              <Button sx={{ bgcolor: '#4f46e5' }} variant='contained'>
+                Invite
+              </Button>
+            </Box>
+          </Box>
+
+          <Box sx={{ mt: 1 }}>
+            {board?.userInBoard?.map((member) => (
+              <Box key={member?._id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                  <Avatar size='small' sx={{ backgroundColor: member?.avatarColor }} src={member?.avatar}>
+                    {member?.username?.charAt(0)?.toUpperCase()}
+                  </Avatar>
+                  <Typography>{member?.username}</Typography>
+                </Box>
+                <Select
+                  sx={{ height: '32px' }}
+                  size='small'
+                  value={member?._id === board?.ownerId ? 'admin' : 'member'}
+                >
+                  <MenuItem value='admin'>Admin</MenuItem>
+                  <MenuItem value='member'>Member</MenuItem>
+                  <MenuItem>Remove from board</MenuItem>
+                </Select>
+              </Box>
+            ))}
           </Box>
         </Box>
       </Modal>

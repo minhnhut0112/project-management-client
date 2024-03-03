@@ -137,8 +137,8 @@ const Column = ({ column }) => {
         {...listeners}
         sx={{
           cursor: 'pointer',
-          minWidth: '300px',
-          maxWidth: '300px',
+          minWidth: '275px',
+          maxWidth: '275px',
           bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#ebecf0'),
           ml: 2,
           borderRadius: '6px',

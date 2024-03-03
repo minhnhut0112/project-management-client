@@ -61,7 +61,7 @@ const MembersPopover = ({ anchorEl, handleClose, card, id, open }) => {
         horizontal: 'left'
       }}
       transformOrigin={{
-        vertical: 'bottom',
+        vertical: 'center',
         horizontal: 'left'
       }}
       sx={{ mx: 2, marginBottom: 10 }}

@@ -4,15 +4,14 @@ import AddToDriveIcon from '@mui/icons-material/AddToDrive'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import PublicIcon from '@mui/icons-material/Public'
-import { TextField, Tooltip } from '@mui/material'
-import Avatar from '@mui/material/Avatar'
-import AvatarGroup from '@mui/material/AvatarGroup'
+import { TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import BoardUser from './BoardUser/BoardUser'
 import InviteButon from './InviteButon/InviteButon'
 
 const menuStyle = {
@@ -134,34 +133,11 @@ const BoardBar = ({ board }) => {
         <Chip sx={menuStyle} label={capitalizeFirstLetter(board?.type)} clickable icon={<PublicIcon />} />
         <Chip sx={menuStyle} label='Add to Drive' clickable icon={<AddToDriveIcon />} />
       </Box>
+
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <AvatarGroup
-          max={4}
-          sx={{
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              fontSize: 16,
-              border: 'none',
-              color: 'white',
-              cursor: 'pointer',
+        <BoardUser board={board} />
 
-              '&:first-of-type': {
-                bgcolor: '#a4b0be'
-              }
-            }
-          }}
-        >
-          {board?.userInBoard?.map((user) => (
-            <Tooltip key={user?._id} title={user?.username}>
-              <Avatar sx={{ backgroundColor: user?.avatarColor }} alt={user?.username}>
-                {user?.username?.charAt(0).toUpperCase()}
-              </Avatar>
-            </Tooltip>
-          ))}
-        </AvatarGroup>
-
-        <InviteButon />
+        <InviteButon board={board} />
 
         <IconButton onClick={handleDrawer}>
           <MoreHorizIcon />
