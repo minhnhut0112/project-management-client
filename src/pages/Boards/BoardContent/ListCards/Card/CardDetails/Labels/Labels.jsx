@@ -39,6 +39,9 @@ const Labels = ({ card }) => {
                 alignItems: 'center',
                 color: isColorLight(label.bgColor) ? 'black' : 'white'
               }}
+              onClick={(event) => {
+                setAnchorEl(event.currentTarget)
+              }}
             >
               {label.labelTitle}
             </Box>

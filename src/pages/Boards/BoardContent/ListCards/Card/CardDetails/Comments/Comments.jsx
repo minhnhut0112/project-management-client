@@ -1,5 +1,7 @@
-import { Avatar, Box, TextField, Typography } from '@mui/material'
+import { Avatar, Box, IconButton, TextField, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
+import SendIcon from '@mui/icons-material/Send'
+import InputBase from '@mui/material/InputBase'
 
 const Comments = ({ card }) => {
   const user = useSelector((state) => state.user.auth)
@@ -16,14 +18,22 @@ const Comments = ({ card }) => {
         >
           {user?.username?.charAt(0)?.toUpperCase()}
         </Avatar>
-        <TextField
-          placeholder='Write a comment...'
-          InputProps={{
-            readOnly: true
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1,
+            width: '100%',
+            alignItems: 'center',
+            border: '1px solid #95afc0',
+            borderRadius: '5px',
+            pl: 1
           }}
-          fullWidth
-          size='small'
-        />
+        >
+          <InputBase placeholder='Write a comment...' fullWidth size='small' />
+          <IconButton>
+            <SendIcon color='primary' />
+          </IconButton>
+        </Box>
       </Box>
 
       <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>

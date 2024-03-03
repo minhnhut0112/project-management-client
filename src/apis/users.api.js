@@ -19,3 +19,8 @@ export const refreshTokenAPI = async () => {
   const res = await http.post('v1/users/refreshtoken')
   return res.data
 }
+
+export const findUsersAPI = async (email) => {
+  const res = await http.post('v1/users/finduser', email)
+  return res.data
+}
