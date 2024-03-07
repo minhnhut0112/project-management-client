@@ -15,6 +15,8 @@ import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutl
 
 import dayjs from 'dayjs'
 import { isColorLight } from '@/utils/formatters'
+import { io } from 'socket.io-client'
+import { useQueryClient } from '@tanstack/react-query'
 
 const Card = ({ card, columnTitle }) => {
   const idShowCardActions = () => {
@@ -55,6 +57,20 @@ const Card = ({ card, columnTitle }) => {
       setDueDateTime(dayjs(card?.dateTime?.dueDateTime))
     }
   }, [card.dateTime])
+
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    const socket = io('http://localhost:8017')
+
+    socket.on('chat-message', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    return () => {
+      socket.off('chat-message')
+    }
+  }, [queryClient])
 
   return (
     <Box>
@@ -133,7 +149,7 @@ const Card = ({ card, columnTitle }) => {
               width: '100%'
             }}
           >
-            <Box sx={{ display: 'flex', gap: 1.5, mb: 0.5 }}>
+            <Box sx={{ display: 'flex', gap: 1.5, mb: 0.5, flexWrap: 'wrap' }}>
               {!!card?.description && (
                 <Tooltip title='Card has description'>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
