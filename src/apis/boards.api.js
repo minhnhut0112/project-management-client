@@ -24,6 +24,11 @@ export const moveCardToDifferentColunmnAPI = async (data) => {
   return res.data
 }
 
+export const sendInviteEmailAPI = async (data) => {
+  const res = await http.post('v1/boards/invite', data)
+  return res.data
+}
+
 export const editLabelAPI = async (id, data) => {
   const res = await http.put(`v1/boards/${id}/labels`, data)
   return res.data
