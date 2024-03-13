@@ -1,3 +1,4 @@
+import Authentication from '@/pages/Auth/Authentication'
 import SignIn from '@/pages/Auth/SignIn'
 import SignUp from '@/pages/Auth/SignUp'
 import Board from '@/pages/Boards/Board'
@@ -8,6 +9,7 @@ const routes = [
   { path: '/', component: Home },
   { path: '/board/:id', component: Board },
   { path: '/sign-in', component: SignIn, layout: null },
+  { path: '/login', component: Authentication, layout: null },
   { path: '/sign-up', component: SignUp, layout: null },
   { path: '/*', component: NotFound, layout: null }
 ]

@@ -25,7 +25,7 @@ const style = {
 
 const InviteButon = ({ board }) => {
   const [open, setOpen] = useState(false)
-  const [emailToFind, setEmailToFind] = useState('')
+  const [inviteeEmail, setInviteeEmail] = useState('')
 
   const user = useSelector((state) => state.user.auth)
 
@@ -37,15 +37,15 @@ const InviteButon = ({ board }) => {
 
   const sendInviteEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(emailToFind)) {
+    if (!emailRegex.test(inviteeEmail)) {
       toast.error('Please enter a valid email address')
       return
     }
 
     mutionSendEmail.mutate({
-      email: emailToFind,
-      fullName: user.fullname,
-      boardName: board.title
+      inviteeEmail: inviteeEmail,
+      inviterId: user._id,
+      boardId: board._id
     })
   }
 
@@ -86,22 +86,16 @@ const InviteButon = ({ board }) => {
             <TextField
               type='email'
               autoFocus
-              onChange={(e) => setEmailToFind(e.target.value)}
+              onChange={(e) => setInviteeEmail(e.target.value)}
               placeholder='Email address...'
               variant='outlined'
               size='small'
               fullWidth
             />
 
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Select size='small' value='member'>
-                <MenuItem value='admin'>Admin</MenuItem>
-                <MenuItem value='member'>Member</MenuItem>
-              </Select>
-              <Button sx={{ bgcolor: '#4f46e5' }} onClick={sendInviteEmail} variant='contained'>
-                Invite
-              </Button>
-            </Box>
+            <Button sx={{ bgcolor: '#4f46e5' }} onClick={sendInviteEmail} variant='contained'>
+              Invite
+            </Button>
           </Box>
 
           <Box sx={{ mt: 1 }}>

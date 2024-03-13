@@ -29,6 +29,16 @@ export const sendInviteEmailAPI = async (data) => {
   return res.data
 }
 
+export const confirmInviteEmailAPI = async (id) => {
+  const res = await http.put(`v1/boards/invite/${id}`)
+  return res.data
+}
+
+export const getInviteAPI = async (id) => {
+  const res = await http.get(`v1/boards/invite/${id}`)
+  return res.data
+}
+
 export const editLabelAPI = async (id, data) => {
   const res = await http.put(`v1/boards/${id}/labels`, data)
   return res.data

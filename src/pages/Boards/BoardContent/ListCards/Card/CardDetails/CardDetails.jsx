@@ -92,15 +92,15 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
             left: '50%',
             transform: 'translate(-50%, -50%)',
             bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2f3542' : '#ebecf0'),
-            borderRadius: '5px',
+            borderRadius: '12px',
             '&:focus': { outline: 'none' }
           }}
         >
           <Box
             sx={{
               p: '0 2px 0 0',
-              width: { xs: 350, md: 800 },
-              maxWidth: { xs: 350, md: 800 },
+              width: { xs: 350, md: 768 },
+              maxWidth: { xs: 350, md: 768 },
               height: { xs: 700, md: 700 },
               maxHeight: { xs: 700, md: 800 },
               overflowY: 'auto',

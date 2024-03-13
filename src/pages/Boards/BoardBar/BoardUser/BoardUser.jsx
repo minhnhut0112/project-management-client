@@ -25,19 +25,15 @@ const BoardUser = ({ board }) => {
             fontSize: 16,
             border: 'none',
             color: 'white',
-            cursor: 'pointer',
-
-            '&:first-of-type': {
-              bgcolor: '#a4b0be'
-            }
+            cursor: 'pointer'
           }
         }}
       >
         {board?.userInBoard?.map((user) => (
           <Tooltip key={user?._id} title={user?.username}>
             <Avatar
-              onClick={(event) => handleClick(event, user?._id)} // Truyền userId vào handleClick
-              sx={{ backgroundColor: user?.avatarColor }}
+              onClick={(event) => handleClick(event, user?._id)}
+              sx={{ bgcolor: user?.avatarColor }}
               src={user?.avatar}
               alt={user?.username}
             >
