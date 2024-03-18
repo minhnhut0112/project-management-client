@@ -10,6 +10,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
+import CircularProgress from '@mui/material/CircularProgress'
 
 const style = {
   position: 'absolute',
@@ -31,9 +32,17 @@ const InviteButon = ({ board }) => {
 
   const mutionSendEmail = useMutation({
     mutationFn: (data) => sendInviteEmailAPI(data),
-    onSuccess: () => toast.success('Invite email send successfully'),
-    onError: () => toast.error('Unknown recipient email')
+    onSuccess: () => {
+      toast.success('Invite email send successfully')
+      setInviteeEmail('')
+    },
+    onError: () => {
+      toast.error('Unknown recipient email')
+      setInviteeEmail('')
+    }
   })
+
+  const { isPending } = mutionSendEmail
 
   const sendInviteEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -86,6 +95,7 @@ const InviteButon = ({ board }) => {
             <TextField
               type='email'
               autoFocus
+              value={inviteeEmail}
               onChange={(e) => setInviteeEmail(e.target.value)}
               placeholder='Email address...'
               variant='outlined'
@@ -94,7 +104,7 @@ const InviteButon = ({ board }) => {
             />
 
             <Button sx={{ bgcolor: '#4f46e5' }} onClick={sendInviteEmail} variant='contained'>
-              Invite
+              {isPending ? <CircularProgress sx={{ color: 'white', display: 'flex' }} size='25px' /> : <>Invite</>}
             </Button>
           </Box>
 
