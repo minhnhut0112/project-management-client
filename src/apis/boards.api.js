@@ -1,7 +1,7 @@
 import http from '@/utils/http'
 
-export const fetchAllBoardsAPI = async () => {
-  const res = await http.get('v1/boards/')
+export const fetchAllBoardsAPI = async (userId) => {
+  const res = await http.get(`v1/boards/getAll/${userId}`)
   return res.data
 }
 export const createBoardAPI = async (data) => {

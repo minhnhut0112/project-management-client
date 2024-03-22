@@ -1,7 +1,6 @@
 import { deleteCardAPI, updateCardAPI } from '@/apis/cards.api'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 import { Grid, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
@@ -25,6 +24,8 @@ import ConfirmationPopover from '@/components/ConfirmationPopover/ConfirmationPo
 import MemsberChip from './MembersChip/MemsberChip'
 import Members from './Members/Members'
 import Comments from './Comments/Comments'
+import JoinChip from './JoinChip/JoinChip'
+import { useSelector } from 'react-redux'
 
 const chipStyle = {
   fontSize: '15px',
@@ -38,6 +39,8 @@ const chipStyle = {
 export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
   const [openNewCardTitleForm, setOpenNewCardTitleForm] = useState(false)
   const [newCardTitle, setNewCardTitle] = useState('')
+
+  const user = useSelector((state) => state.user.auth)
 
   useEffect(() => {
     if (card) {
@@ -234,15 +237,10 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                 )}
 
                 <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                  <Typography>Suggested</Typography>
-                  <Chip
-                    icon={<PersonOutlineOutlinedIcon fontSize='small' />}
-                    sx={chipStyle}
-                    label='Join'
-                    clickable
-                    variant='outlined'
-                  />
                   <Typography>Add to card</Typography>
+
+                  {!card.members?.some((cardMember) => cardMember._id === user._id) && <JoinChip card={card} />}
+
                   <DateChip card={card} />
                   <MemsberChip card={card} />
                   <LabelChip card={card} />

@@ -46,6 +46,7 @@ const Comments = ({ card }) => {
           _id: user._id,
           avatar: user.avatar,
           username: user.username,
+          fullname: user.fullname,
           avatarColor: user.avatarColor,
           content: inputMessage.trim(),
           timestamp: new Date().valueOf()
@@ -123,7 +124,7 @@ const Comments = ({ card }) => {
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Typography variant='h6' sx={{ fontSize: '14px' }}>
-                    {comment?.username}
+                    {comment?.fullname}
                   </Typography>
                   <Typography variant='body2' sx={{ fontSize: '14px' }}>
                     {dayjs(comment.timestamp).format('MMM D, YYYY [at] h:mm A')}

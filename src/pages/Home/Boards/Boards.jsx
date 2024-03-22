@@ -62,7 +62,7 @@ const Boards = () => {
     setChecked(!checked)
   }
 
-  const boardsQuery = useQuery({ queryKey: ['boards'], queryFn: () => fetchAllBoardsAPI() })
+  const boardsQuery = useQuery({ queryKey: ['boards', user?._id], queryFn: () => fetchAllBoardsAPI(user?._id) })
 
   useEffect(() => {
     if (boardsQuery.data) {
@@ -70,6 +70,10 @@ const Boards = () => {
       setChecked(boardsQuery.data.starred)
     }
   }, [boardsQuery.data])
+
+  const yourBoards = boards?.filter((board) => board.ownerId === user?._id)
+
+  const guestBoards = boards?.filter((board) => board.ownerId !== user?._id)
 
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -115,13 +119,11 @@ const Boards = () => {
   }
 
   return (
-    <Box sx={{ padding: '10px 0px 10px 0px', width: { xs: 250, md: 1000 }, mx: 3 }}>
-      <Typography variant='h6' sx={{ color: 'white' }}>
-        YOUR WORKSPACES
-      </Typography>
+    <Box sx={{ width: { xs: 250, md: 1200 } }}>
+      <Typography variant='h6'>Your Boards</Typography>
 
-      <Grid container sx={{ gap: 2 }}>
-        {boards?.map((board) => (
+      <Grid container sx={{ gap: 2, mt: 1, mb: 3 }}>
+        {yourBoards?.map((board) => (
           <Grid
             key={board._id}
             sx={{
@@ -131,7 +133,6 @@ const Boards = () => {
               backgroundPosition: 'center',
               width: '100%',
               cursor: 'pointer',
-              mt: 3,
               borderRadius: '2px'
             }}
             item
@@ -161,12 +162,12 @@ const Boards = () => {
             </Box>
           </Grid>
         ))}
+
         <Grid
           sx={{
             display: 'flex',
             justifyContent: 'center',
             bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#091e420f'),
-            mt: 3,
             height: 100,
             borderRadius: '2px'
           }}
@@ -289,6 +290,53 @@ const Boards = () => {
           </Box>
         </Grid>
       </Grid>
+
+      {!!guestBoards?.length && (
+        <Box>
+          <Typography variant='h6'>Guest Boards</Typography>
+          <Grid container sx={{ gap: 2, mt: 1 }}>
+            {guestBoards?.map((board) => (
+              <Grid
+                key={board._id}
+                sx={{
+                  backgroundImage: `url(${board?.cover})`,
+                  height: 100,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  width: '100%',
+                  cursor: 'pointer',
+                  borderRadius: '2px'
+                }}
+                item
+                xs={6}
+                md={2.5}
+                onClick={(event) => !event.target.closest('input[type="checkbox"]') && navigate(`/board/${board._id}`)}
+              >
+                <Typography
+                  sx={{
+                    padding: 2,
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    fontSize: '16px',
+                    textShadow: '2px 2px 5px black'
+                  }}
+                >
+                  {board.title}
+                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+                  <Checkbox
+                    sx={{ color: 'white' }}
+                    icon={<StarBorderIcon />}
+                    checked={board?.starred}
+                    onClick={handleCheckboxClick}
+                    checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />}
+                  />
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      )}
     </Box>
   )
 }

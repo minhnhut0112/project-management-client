@@ -305,9 +305,9 @@ const Column = ({ column }) => {
               <TextField
                 placeholder='Enter card title...'
                 type='text'
-                onBlur={addNewcard}
                 autoFocus
                 data-no-dnd='true'
+                onBlur={() => setOpenNewColumnTitleForm(false)}
                 value={newCardTitle}
                 onChange={(e) => setNewCardTitle(e.target.value)}
                 size='small'

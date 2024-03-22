@@ -7,21 +7,10 @@ import { isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '@/utils/formatters'
 import { mapOrder } from '@/utils/sorts'
 import { Box, LinearProgress } from '@mui/material'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { fetchBoardDetailsAPI } from '@/apis/boards.api'
-import { useSelector } from 'react-redux'
 
 const Board = () => {
-  const user = useSelector((state) => state.user.auth)
-
-  const navigate = useNavigate()
-
-  // useEffect(() => {
-  //   if (!user) {
-  //     navigate('/sign-in')
-  //   }
-  // }, [user, navigate])
-
   const [board, setBoard] = useState(null)
   const { id } = useParams()
 
