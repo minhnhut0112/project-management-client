@@ -1,4 +1,4 @@
-import { moveColumnAPI } from '@/apis/boards.api'
+import { updateBoardAPI } from '@/apis/boards.api'
 import { capitalizeFirstLetter } from '@/utils/formatters'
 import AddToDriveIcon from '@mui/icons-material/AddToDrive'
 import DashboardIcon from '@mui/icons-material/Dashboard'
@@ -42,7 +42,7 @@ const BoardBar = ({ board }) => {
   const queryClient = useQueryClient()
 
   const mutionEditBoardTitle = useMutation({
-    mutationFn: (data) => moveColumnAPI(board._id, data),
+    mutationFn: (data) => updateBoardAPI(board._id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['board'] })
     }

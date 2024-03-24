@@ -58,6 +58,26 @@ const Card = ({ card, columnTitle }) => {
     }
   }, [card.dateTime])
 
+  const currentDateTime = dayjs()
+
+  const isOverdue = currentDateTime.isAfter(dueDateTime)
+  const isComplete = card?.completed
+
+  let status = ''
+  let bgColor = ''
+  let color = ''
+  if (isComplete) {
+    status = 'This card is complete.'
+    bgColor = '#1f845a'
+    color = 'white'
+  } else if (isOverdue) {
+    status = 'This card is past due.'
+    bgColor = '#ffeceb'
+    color = '#ae2e24'
+  } else {
+    status = 'This card is due later.'
+  }
+
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -150,22 +170,14 @@ const Card = ({ card, columnTitle }) => {
             }}
           >
             <Box sx={{ display: 'flex', gap: 1.5, mb: 0.5, flexWrap: 'wrap' }}>
-              {!!card?.description && (
-                <Tooltip title='Card has description'>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <DescriptionOutlinedIcon sx={{ fontSize: '20px' }} />
-                  </Box>
-                </Tooltip>
-              )}
-
               {!!card?.dateTime && (
-                <Tooltip title='Estimated completion time'>
+                <Tooltip title={status}>
                   <Box
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
-                      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#4bce97' : '#1f845a'),
-                      color: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#ffffff'),
+                      bgcolor: bgColor,
+                      color: color,
                       borderRadius: '3px',
                       p: 0.5,
                       height: '20px',
@@ -176,6 +188,14 @@ const Card = ({ card, columnTitle }) => {
                     <Box>
                       {dayjs(startDateTime).format('MMM D')} - {dayjs(dueDateTime).format('MMM D')}
                     </Box>
+                  </Box>
+                </Tooltip>
+              )}
+
+              {!!card?.description && (
+                <Tooltip title='Card has description'>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <DescriptionOutlinedIcon sx={{ fontSize: '20px' }} />
                   </Box>
                 </Tooltip>
               )}

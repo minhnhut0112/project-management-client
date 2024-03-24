@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 const formInterFace = {
   email: '',
-  fullName: '',
+  fullname: '',
   password: '',
   confirmPassword: ''
 }
@@ -63,7 +63,7 @@ const ConfirmSignUp = () => {
   const handleSignUp = () => {
     mutionsSignUp.mutate({
       email: inviteeEmail,
-      fullName: user.fullName,
+      fullname: user.fullname,
       password: user.password,
       confirmPassword: user.confirmPassword
     })

@@ -1,28 +1,27 @@
-import Box from '@mui/material/Box'
-import ListColumns from './ListColumns/ListColumns'
+import { MouseSensor, TouchSensor } from '@/customLib/DndKitSensor'
 import {
   DndContext,
-  useSensor,
-  useSensors,
   DragOverlay,
-  defaultDropAnimationSideEffects,
   closestCorners,
+  defaultDropAnimationSideEffects,
+  getFirstCollision,
   pointerWithin,
-  getFirstCollision
+  useSensor,
+  useSensors
 } from '@dnd-kit/core'
-import { MouseSensor, TouchSensor } from '@/customLib/DndKitSensor'
 import { arrayMove } from '@dnd-kit/sortable'
-import { useState, useEffect } from 'react'
+import Box from '@mui/material/Box'
 import { cloneDeep, isEmpty } from 'lodash'
+import { useEffect, useState } from 'react'
+import ListColumns from './ListColumns/ListColumns'
 
-import Column from './ListColumns/Column/Column'
-import Card from './ListCards/Card/Card'
-import { useCallback } from 'react'
-import { useRef } from 'react'
 import { generatePlaceholderCard } from '@/utils/formatters'
 import { useMutation } from '@tanstack/react-query'
+import { useCallback, useRef } from 'react'
+import Card from './ListCards/Card/Card'
+import Column from './ListColumns/Column/Column'
 
-import { moveCardToDifferentColunmnAPI, moveColumnAPI } from '@/apis/boards.api'
+import { moveCardToDifferentColunmnAPI, updateBoardAPI } from '@/apis/boards.api'
 import { updateColumnAPI } from '@/apis/columns.api'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
@@ -63,7 +62,7 @@ const BoardContent = ({ board }) => {
   const mutionMoveColumn = useMutation({
     mutationFn: (data) => {
       const { columnOrderIds } = data
-      moveColumnAPI(board._id, { columnOrderIds: columnOrderIds })
+      updateBoardAPI(board._id, { columnOrderIds: columnOrderIds })
     }
   })
 

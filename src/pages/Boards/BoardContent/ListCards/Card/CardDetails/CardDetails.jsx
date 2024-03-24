@@ -106,6 +106,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
               maxWidth: { xs: 350, md: 768 },
               height: { xs: 700, md: 700 },
               maxHeight: { xs: 700, md: 800 },
+              borderRadius: '12px',
               overflowY: 'auto',
               overflowX: 'hidden',
               '&::-webkit-scrollbar-track': {
@@ -119,7 +120,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                   display: 'flex',
                   justifyContent: 'center',
                   bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#b2bec3' : '#dfe6e9'),
-                  borderRadius: '5px 5px 0 0',
+                  borderRadius: '12px 12px 0 0',
                   position: 'relative'
                 }}
               >

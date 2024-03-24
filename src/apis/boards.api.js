@@ -14,7 +14,7 @@ export const fetchBoardDetailsAPI = async (boardId) => {
   return res.data
 }
 
-export const moveColumnAPI = async (id, data) => {
+export const updateBoardAPI = async (id, data) => {
   const res = await http.put(`v1/boards/${id}`, data)
   return res.data
 }

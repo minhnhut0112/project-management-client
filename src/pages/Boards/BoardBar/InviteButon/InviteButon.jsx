@@ -115,12 +115,21 @@ const InviteButon = ({ board }) => {
                   <Avatar size='small' sx={{ backgroundColor: member?.avatarColor }} src={member?.avatar}>
                     {member?.username?.charAt(0)?.toUpperCase()}
                   </Avatar>
-                  <Typography>{member?.username}</Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Typography variant='body'>
+                      {member?.fullname} {user?._id === member?._id && '(you)'}
+                    </Typography>
+                    <Typography variant='caption'>@{member?.username}</Typography>
+                  </Box>
                 </Box>
                 <Select
                   sx={{ height: '32px' }}
                   size='small'
-                  value={member?._id === board?.ownerId ? 'admin' : 'member'}
+                  value={
+                    member?._id === board?.ownerId || board?.admins.some((admin) => admin === member?._id)
+                      ? 'admin'
+                      : 'member'
+                  }
                 >
                   <MenuItem value='admin'>Admin</MenuItem>
                   <MenuItem value='member'>Member</MenuItem>
