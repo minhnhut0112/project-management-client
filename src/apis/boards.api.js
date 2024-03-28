@@ -53,3 +53,18 @@ export const removeLabelAPI = async (id, labelId, cardId) => {
   const res = await http.delete(`v1/boards/${id}/labels?labelId=${labelId}&cardId=${cardId}`)
   return res.data
 }
+
+export const changeToAdminAPI = async (id, userId) => {
+  const res = await http.put(`v1/boards/${id}/permission`, { userId })
+  return res.data
+}
+
+export const changeToMemberAPI = async (id, userId) => {
+  const res = await http.post(`v1/boards/${id}/permission`, { userId })
+  return res.data
+}
+
+export const removeFromBoardlAPI = async (id, userId) => {
+  const res = await http.delete(`v1/boards/${id}/permission?userId=${userId}`)
+  return res.data
+}

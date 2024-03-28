@@ -1,4 +1,4 @@
-import { sendInviteEmailAPI } from '@/apis/boards.api'
+import { changeToAdminAPI, changeToMemberAPI, removeFromBoardlAPI, sendInviteEmailAPI } from '@/apis/boards.api'
 import CloseIcon from '@mui/icons-material/Close'
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined'
 import { Avatar, IconButton, Modal, TextField, Typography } from '@mui/material'
@@ -6,7 +6,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -56,6 +56,54 @@ const InviteButon = ({ board }) => {
       inviterId: user._id,
       boardId: board._id
     })
+  }
+
+  const queryClient = useQueryClient()
+
+  const mutionChangeToAssistant = useMutation({
+    mutationFn: (data) => changeToAdminAPI(data.boardId, data.userId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
+  })
+
+  const mutionChangeToMember = useMutation({
+    mutationFn: (data) => changeToMemberAPI(data.boardId, data.userId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
+  })
+
+  const changePermission = (e, userId) => {
+    const permission = parseInt(e.target.value)
+    if (permission === 2) {
+      mutionChangeToAssistant.mutate({ boardId: board?._id, userId: userId })
+    } else if (permission === 1) {
+      mutionChangeToMember.mutate({ boardId: board?._id, userId: userId })
+    }
+  }
+
+  const checkPermission = (member, board) => {
+    if (member && board) {
+      if (member._id === board.ownerId) {
+        return 3
+      }
+
+      if (board.assistant && board.assistant.some((admin) => admin === member._id)) {
+        return 2
+      }
+
+      if (board.members && board.members.some((memberId) => memberId === member._id)) {
+        return 1
+      }
+    }
+
+    return 0
+  }
+
+  const mutionRemoveFromBoard = useMutation({
+    mutationFn: (data) => removeFromBoardlAPI(data.boardId, data.userId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
+  })
+
+  const removeFromBoard = (userId) => {
+    mutionRemoveFromBoard.mutate({ boardId: board?._id, userId: userId })
   }
 
   return (
@@ -109,34 +157,40 @@ const InviteButon = ({ board }) => {
           </Box>
 
           <Box sx={{ mt: 1 }}>
-            {board?.userInBoard?.map((member) => (
-              <Box key={member?._id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                  <Avatar size='small' sx={{ backgroundColor: member?.avatarColor }} src={member?.avatar}>
-                    {member?.username?.charAt(0)?.toUpperCase()}
-                  </Avatar>
-                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant='body'>
-                      {member?.fullname} {user?._id === member?._id && '(you)'}
-                    </Typography>
-                    <Typography variant='caption'>@{member?.username}</Typography>
+            {board?.userInBoard
+              ?.sort((a, b) => {
+                if (user?._id === a?._id) return -1
+                if (user?._id === b?._id) return 1
+                return 0
+              })
+              ?.map((member) => (
+                <Box key={member?._id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <Avatar size='small' sx={{ backgroundColor: member?.avatarColor }} src={member?.avatar}>
+                      {member?.username?.charAt(0)?.toUpperCase()}
+                    </Avatar>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                      <Typography variant='body'>
+                        {member?.fullname} {user?._id === member?._id && '(you)'}
+                      </Typography>
+                      <Typography variant='caption'>@{member?.username}</Typography>
+                    </Box>
                   </Box>
+                  <Select
+                    onChange={(e) => changePermission(e, member?._id)}
+                    sx={{ height: '32px' }}
+                    size='small'
+                    value={checkPermission(member, board)}
+                  >
+                    <MenuItem value={3}>Manager</MenuItem>
+                    <MenuItem value={2}>Assistant</MenuItem>
+                    <MenuItem value={1}>Member</MenuItem>
+                    <MenuItem onClick={() => removeFromBoard(member?._id)}>
+                      {user?._id === member?._id ? 'Leave board' : 'Remove from board'}
+                    </MenuItem>
+                  </Select>
                 </Box>
-                <Select
-                  sx={{ height: '32px' }}
-                  size='small'
-                  value={
-                    member?._id === board?.ownerId || board?.admins.some((admin) => admin === member?._id)
-                      ? 'admin'
-                      : 'member'
-                  }
-                >
-                  <MenuItem value='admin'>Admin</MenuItem>
-                  <MenuItem value='member'>Member</MenuItem>
-                  <MenuItem>Remove from board</MenuItem>
-                </Select>
-              </Box>
-            ))}
+              ))}
           </Box>
         </Box>
       </Modal>
