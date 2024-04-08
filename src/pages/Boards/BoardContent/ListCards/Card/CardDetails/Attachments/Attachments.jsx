@@ -31,6 +31,15 @@ const Attachments = ({ card }) => {
 
   const [fileTimes, setFileTimes] = useState({})
   const [isTimeCalculated, setIsTimeCalculated] = useState(false)
+  const [attachments, setAttachments] = useState([])
+
+  useEffect(() => {
+    if (card.attachments) {
+      setAttachments(card.attachments)
+    }
+  }, [card.attachments])
+
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -84,8 +93,6 @@ const Attachments = ({ card }) => {
   const toggleShowAll = () => {
     setShowAll(!showAll)
   }
-
-  const queryClient = useQueryClient()
 
   const mutionRemoveFile = useMutation({
     mutationFn: (data) => removeAttachmentsAPI(card?._id, data),
@@ -167,8 +174,8 @@ const Attachments = ({ card }) => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, width: '100%' }}>
-            {card?.attachments.slice(0, showAll ? card?.attachments.length : 3).map((att) => {
-              if (att.type.includes('image')) {
+            {attachments?.slice(0, showAll ? attachments.length : 3).map((att) => {
+              if (att?.type?.includes('image')) {
                 return (
                   <Box
                     key={att._id}
@@ -337,10 +344,10 @@ const Attachments = ({ card }) => {
                 )
               }
             })}
-            {card?.attachments.length > 3 && (
+            {attachments.length > 3 && (
               <Chip
                 onClick={toggleShowAll}
-                label={showAll ? 'Show Fewer' : `Show All ( ${card?.attachments.length - 3} hidden)`}
+                label={showAll ? 'Show Fewer' : `Show All ( ${attachments.length - 3} hidden)`}
                 clickable
                 variant='outlined'
                 sx={{
@@ -358,7 +365,7 @@ const Attachments = ({ card }) => {
         </Box>
       ) : (
         <Box>
-          {Array.from({ length: Math.min(3, card?.attachments.length) }, (_, index) => (
+          {Array.from({ length: Math.min(3, attachments.length) }, (_, index) => (
             <SkeletonBox key={index} />
           ))}
         </Box>

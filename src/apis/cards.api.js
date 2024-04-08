@@ -70,3 +70,8 @@ export const updateCheckListAPI = async (id, data) => {
   const res = await http.put(`v1/cards/${id}/checklist`, data)
   return res.data
 }
+
+export const createCommentstAPI = async (id, data) => {
+  const res = await http.post(`v1/cards/${id}/comments`, data)
+  return res.data
+}

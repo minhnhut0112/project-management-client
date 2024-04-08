@@ -60,7 +60,7 @@ const InviteButon = ({ board }) => {
 
   const queryClient = useQueryClient()
 
-  const mutionChangeToAssistant = useMutation({
+  const mutionChangeToAdmins = useMutation({
     mutationFn: (data) => changeToAdminAPI(data.boardId, data.userId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
   })
@@ -73,7 +73,7 @@ const InviteButon = ({ board }) => {
   const changePermission = (e, userId) => {
     const permission = parseInt(e.target.value)
     if (permission === 2) {
-      mutionChangeToAssistant.mutate({ boardId: board?._id, userId: userId })
+      mutionChangeToAdmins.mutate({ boardId: board?._id, userId: userId })
     } else if (permission === 1) {
       mutionChangeToMember.mutate({ boardId: board?._id, userId: userId })
     }
@@ -82,10 +82,10 @@ const InviteButon = ({ board }) => {
   const checkPermission = (member, board) => {
     if (member && board) {
       if (member._id === board.ownerId) {
-        return 3
+        return 2
       }
 
-      if (board.assistant && board.assistant.some((admin) => admin === member._id)) {
+      if (board.admins && board.admins.some((admin) => admin === member._id)) {
         return 2
       }
 
@@ -182,8 +182,7 @@ const InviteButon = ({ board }) => {
                     size='small'
                     value={checkPermission(member, board)}
                   >
-                    <MenuItem value={3}>Manager</MenuItem>
-                    <MenuItem value={2}>Assistant</MenuItem>
+                    <MenuItem value={2}>Admin</MenuItem>
                     <MenuItem value={1}>Member</MenuItem>
                     <MenuItem onClick={() => removeFromBoard(member?._id)}>
                       {user?._id === member?._id ? 'Leave board' : 'Remove from board'}

@@ -1,6 +1,6 @@
 import { logoutUser } from '@/redux/userSile'
+import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined'
 import Logout from '@mui/icons-material/Logout'
-import Settings from '@mui/icons-material/Settings'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
@@ -57,22 +57,15 @@ const Profile = () => {
         }}
         sx={{ mt: 1 }}
       >
-        <NavLink to='/sign-in' style={{ textDecoration: 'none', color: 'black' }} onClick={handleClose}>
+        <NavLink to='/profile' style={{ textDecoration: 'none', color: 'black' }} onClick={handleClose}>
           <MenuItem sx={{ gap: 1 }}>
-            <Avatar size='small' /> Profile
+            <AssignmentIndOutlinedIcon />
+            My Profile
           </MenuItem>
         </NavLink>
-        <MenuItem sx={{ gap: 1 }} onClick={handleClose}>
-          <Avatar size='small' /> My account
-        </MenuItem>
+
         <Divider />
 
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize='small' />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize='small' />

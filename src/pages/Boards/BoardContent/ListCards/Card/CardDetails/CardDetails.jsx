@@ -26,6 +26,7 @@ import Members from './Members/Members'
 import Comments from './Comments/Comments'
 import JoinChip from './JoinChip/JoinChip'
 import { useSelector } from 'react-redux'
+import Activity from './Activity/Activity'
 
 const chipStyle = {
   fontSize: '15px',
@@ -219,6 +220,8 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                   {card?.checklist && <CheckList checklist={card.checklist} cardId={card._id} />}
 
                   <Comments card={card} />
+
+                  {!!card?.activitys?.length && <Activity card={card} />}
                 </Box>
               </Grid>
 

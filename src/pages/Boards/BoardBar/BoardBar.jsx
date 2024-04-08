@@ -1,10 +1,10 @@
 import { updateBoardAPI } from '@/apis/boards.api'
-import { capitalizeFirstLetter } from '@/utils/formatters'
-import AddToDriveIcon from '@mui/icons-material/AddToDrive'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
-import PublicIcon from '@mui/icons-material/Public'
-import { TextField } from '@mui/material'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
+import StarRateIcon from '@mui/icons-material/StarRate'
+import ViewTimelineOutlinedIcon from '@mui/icons-material/ViewTimelineOutlined'
+import { Checkbox, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Drawer from '@mui/material/Drawer'
@@ -13,6 +13,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import BoardUser from './BoardUser/BoardUser'
 import InviteButon from './InviteButon/InviteButon'
+import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined'
+import { useNavigate } from 'react-router-dom'
 
 const menuStyle = {
   bgcolor: 'transparent',
@@ -67,6 +69,8 @@ const BoardBar = ({ board }) => {
   const handleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen)
   }
+
+  const navigate = useNavigate()
 
   return (
     <Box
@@ -130,19 +134,36 @@ const BoardBar = ({ board }) => {
             onClick={() => setOpenNewBoardTitleForm(true)}
           />
         )}
-        <Chip sx={menuStyle} label={capitalizeFirstLetter(board?.type)} clickable icon={<PublicIcon />} />
-        <Chip sx={menuStyle} label='Add to Drive' clickable icon={<AddToDriveIcon />} />
+
+        <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+          <Checkbox icon={<StarBorderIcon />} checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />} />
+        </Box>
+
+        <Box
+          onClick={() => navigate(`/board/${board?._id}`)}
+          sx={{ display: 'flex', justifyContent: 'center', gap: 1, cursor: 'pointer' }}
+        >
+          <ViewKanbanOutlinedIcon /> Board
+        </Box>
+
+        <Box
+          onClick={() => navigate(`/timeline/${board?._id}`)}
+          sx={{ display: 'flex', justifyContent: 'center', gap: 1, cursor: 'pointer' }}
+        >
+          <ViewTimelineOutlinedIcon /> TimeLine
+        </Box>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        {/* <Chip sx={menuStyle} label='Add to Drive' clickable icon={<AddToDriveIcon />} /> */}
+
+        <span>|</span>
+
         <BoardUser board={board} />
-
         <InviteButon board={board} />
-
         <IconButton onClick={handleDrawer}>
           <MoreHorizIcon />
         </IconButton>
-
         <Drawer anchor='right' open={isDrawerOpen} onClose={handleDrawer}>
           <div style={{ width: 250, padding: '20px' }}>
             <h2>Drawer Content</h2>

@@ -12,11 +12,8 @@ import { useEffect, useState } from 'react'
 import ModalCardDetails from './CardDetails/CardDetails'
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
 import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined'
-
 import dayjs from 'dayjs'
 import { isColorLight } from '@/utils/formatters'
-import { io } from 'socket.io-client'
-import { useQueryClient } from '@tanstack/react-query'
 
 const Card = ({ card, columnTitle }) => {
   const idShowCardActions = () => {
@@ -77,20 +74,6 @@ const Card = ({ card, columnTitle }) => {
   } else {
     status = 'This card is due later.'
   }
-
-  const queryClient = useQueryClient()
-
-  useEffect(() => {
-    const socket = io('http://localhost:8017')
-
-    socket.on('chat-message', () => {
-      queryClient.invalidateQueries({ queryKey: ['board'] })
-    })
-
-    return () => {
-      socket.off('chat-message')
-    }
-  }, [queryClient])
 
   return (
     <Box>

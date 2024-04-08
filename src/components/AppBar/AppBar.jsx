@@ -9,18 +9,18 @@ import Starred from './Menu/Starred'
 import Button from '@mui/material/Button'
 import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined'
 import TextField from '@mui/material/TextField'
-import Badge from '@mui/material/Badge'
-import Tooltip from '@mui/material/Tooltip'
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
+
 import Profile from './Menu/Profile'
 import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Notification from './Notifications'
 
 const AppBar = () => {
   const [searchValue, setSearchValue] = useState('')
+
   const navigate = useNavigate()
   return (
     <Box
@@ -117,13 +117,8 @@ const AppBar = () => {
           }}
         />
         <ModeSelect />
-        <Tooltip title='Notifications'>
-          <Badge color='warning' variant='dot'>
-            <NotificationsNoneOutlinedIcon
-              sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }}
-            />
-          </Badge>
-        </Tooltip>
+
+        <Notification />
 
         <Box>
           <Profile />

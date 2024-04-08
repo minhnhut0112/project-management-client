@@ -11,8 +11,8 @@ const BoardUser = ({ board }) => {
         return 'yellow'
       }
 
-      if (board.assistant && board.assistant.some((admin) => admin === member._id)) {
-        return 'white'
+      if (board.admins && board.admins.some((admin) => admin === member._id)) {
+        return 'yellow'
       }
 
       if (board.members && board.members.some((memberId) => memberId === member._id)) {
