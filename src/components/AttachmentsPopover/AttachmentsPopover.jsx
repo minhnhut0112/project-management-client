@@ -7,6 +7,7 @@ import Popover from '@mui/material/Popover'
 import { styled } from '@mui/material/styles'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
+import { useSelector } from 'react-redux'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -23,6 +24,8 @@ const VisuallyHiddenInput = styled('input')({
 const AttachmentsPopover = ({ anchorEl, handleClose, card, id, open }) => {
   const queryClient = useQueryClient()
 
+  const user = useSelector((state) => state.user.auth)
+
   const handleFileChange = async (e) => {
     const newFile = e.target.files[0]
 
@@ -31,7 +34,7 @@ const AttachmentsPopover = ({ anchorEl, handleClose, card, id, open }) => {
 
     if (!newFile) return
 
-    const res = await uploadAttachmentsAPI(card._id, formData)
+    const res = await uploadAttachmentsAPI(card._id, formData, user.accessToken)
 
     if (res) {
       toast.success('Upload attachment is successfully!')

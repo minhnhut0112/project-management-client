@@ -11,10 +11,13 @@ import { DateTimePicker } from '@mui/x-date-pickers'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
   const [startDateTime, setStartDateTime] = useState(null)
   const [dueDateTime, setDueDateTime] = useState(null)
+
+  const user = useSelector((state) => state.user.auth)
 
   useEffect(() => {
     if (card?.dateTime) {
@@ -48,7 +51,7 @@ const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
 
   const mutiionUpdateDate = useMutation({
     mutationFn: async (data) => {
-      await updateDatesAPI(card._id, data)
+      await updateDatesAPI(card._id, data, user?.accessToken)
     },
     onSuccess: () => {
       queryClient.invalidateQueries('board')
@@ -64,7 +67,7 @@ const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
   }
 
   const mutiionRemoveDate = useMutation({
-    mutationFn: (id) => removeDatesAPI(id),
+    mutationFn: (id) => removeDatesAPI(id, user?.accessToken),
     onSuccess: () => {
       queryClient.invalidateQueries('board')
     }

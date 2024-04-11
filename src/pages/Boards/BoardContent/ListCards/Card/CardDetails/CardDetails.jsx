@@ -70,7 +70,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
   }
 
   const mutionDeleteCard = useMutation({
-    mutationFn: (id) => deleteCardAPI(id),
+    mutationFn: (id) => deleteCardAPI(id, user?.accessToken),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
   })
 

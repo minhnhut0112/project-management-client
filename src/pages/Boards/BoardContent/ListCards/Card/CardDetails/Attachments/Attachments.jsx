@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const SkeletonBox = () => (
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
@@ -28,6 +29,8 @@ const Attachments = ({ card }) => {
   }
   const open = Boolean(anchorEl)
   const id = open ? 'attachments-popover' : undefined
+
+  const user = useSelector((state) => state.user.auth)
 
   const [fileTimes, setFileTimes] = useState({})
   const [isTimeCalculated, setIsTimeCalculated] = useState(false)
@@ -95,7 +98,7 @@ const Attachments = ({ card }) => {
   }
 
   const mutionRemoveFile = useMutation({
-    mutationFn: (data) => removeAttachmentsAPI(card?._id, data),
+    mutationFn: (data) => removeAttachmentsAPI(card?._id, data, user.accessToken),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['board'] })
     }
@@ -127,7 +130,7 @@ const Attachments = ({ card }) => {
   }
 
   const mutionRemoveCover = useMutation({
-    mutationFn: async () => await removeCoverAPI(card._id),
+    mutationFn: async () => await removeCoverAPI(card._id, user.accessToken),
     onSuccess: () => {
       queryClient.invalidateQueries('board')
     }

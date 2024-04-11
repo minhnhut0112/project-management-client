@@ -23,7 +23,7 @@ const Comments = ({ card }) => {
   const queryClient = useQueryClient()
 
   const mutioncreateComment = useMutation({
-    mutationFn: async (data) => await createCommentstAPI(card._id, data),
+    mutationFn: async (data) => await createCommentstAPI(card._id, data, user.accessToken),
     onSuccess: () => {
       queryClient.invalidateQueries('board')
     }

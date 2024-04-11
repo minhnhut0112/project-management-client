@@ -12,9 +12,9 @@ function App() {
 
   const disPatch = useDispatch()
 
-  const handleGetDetailsUser = async (id) => {
+  const handleGetDetailsUser = async (id, accessToken) => {
     const res = await getUserAPI(id)
-    disPatch(loginUser(res))
+    disPatch(loginUser({ ...res, accessToken: accessToken }))
   }
 
   const handleDecode = () => {
@@ -23,13 +23,13 @@ function App() {
     if (accessToken) {
       currUser = jwtDecode(accessToken)
     }
-    return currUser
+    return { currUser, accessToken }
   }
 
   useEffect(() => {
-    const currUser = handleDecode()
+    const { currUser, accessToken } = handleDecode()
     if (currUser) {
-      handleGetDetailsUser(currUser.id)
+      handleGetDetailsUser(currUser.id, accessToken)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

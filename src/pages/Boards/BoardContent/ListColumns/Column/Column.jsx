@@ -23,6 +23,7 @@ import { createNewCardAPI } from '@/apis/cards.api'
 import { useConfirm } from 'material-ui-confirm'
 import { deleteColumnAPI, updateColumnAPI } from '@/apis/columns.api'
 import ListCards from '../../ListCards/ListCards'
+import { useSelector } from 'react-redux'
 
 const Column = ({ column }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -43,6 +44,8 @@ const Column = ({ column }) => {
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleClose = () => setAnchorEl(null)
 
+  const user = useSelector((state) => state.user.auth)
+
   const queryClient = useQueryClient()
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
@@ -54,7 +57,7 @@ const Column = ({ column }) => {
   }
 
   const mutionAddCard = useMutation({
-    mutationFn: (data) => createNewCardAPI(data),
+    mutationFn: (data) => createNewCardAPI(data, user.accessToken),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
   })
 

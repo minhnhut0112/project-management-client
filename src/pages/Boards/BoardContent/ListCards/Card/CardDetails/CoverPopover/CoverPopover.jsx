@@ -9,6 +9,7 @@ import Popover from '@mui/material/Popover'
 import { styled } from '@mui/material/styles'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -51,6 +52,8 @@ const CoverPopover = ({ card }) => {
 
   const queryClient = useQueryClient()
 
+  const user = useSelector((state) => state.user.auth)
+
   const handleFileChange = async (e) => {
     const newFile = e.target.files[0]
 
@@ -59,7 +62,7 @@ const CoverPopover = ({ card }) => {
 
     if (!newFile) return
 
-    const res = await updateCoverAPI(card._id, formData)
+    const res = await updateCoverAPI(card._id, formData, user.accessToken)
 
     if (res) {
       setCover(res.cover)
@@ -68,7 +71,7 @@ const CoverPopover = ({ card }) => {
   }
 
   const mutionRemoveCover = useMutation({
-    mutationFn: async () => await removeCoverAPI(card._id),
+    mutationFn: async () => await removeCoverAPI(card._id, user.accessToken),
     onSuccess: () => {
       queryClient.invalidateQueries('board')
     }

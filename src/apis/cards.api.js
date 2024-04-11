@@ -1,7 +1,11 @@
 import http from '@/utils/http'
 
-export const createNewCardAPI = async (newCardData) => {
-  const res = await http.post('v1/cards', newCardData)
+export const createNewCardAPI = async (newCardData, access_token) => {
+  const res = await http.post('v1/cards', newCardData, {
+    headers: {
+      token: `Bearer ${access_token}`
+    }
+  })
   return res.data
 }
 
@@ -10,68 +14,88 @@ export const updateCardAPI = async (id, data) => {
   return res.data
 }
 
-export const deleteCardAPI = async (id) => {
-  const res = await http.delete(`v1/cards/${id}`)
+export const deleteCardAPI = async (id, access_token) => {
+  const res = await http.delete(`v1/cards/${id}`, {
+    headers: {
+      token: `Bearer ${access_token}`
+    }
+  })
   return res.data
 }
 
-export const updateCoverAPI = async (id, data) => {
+export const updateCoverAPI = async (id, data, access_token) => {
   const res = await http.post(`v1/cards/${id}/cover`, data, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { token: `Bearer ${access_token}`, 'Content-Type': 'multipart/form-data' }
   })
   return res.data
 }
 
-export const removeCoverAPI = async (id) => {
-  const res = await http.delete(`v1/cards/${id}/cover`)
+export const removeCoverAPI = async (id, access_token) => {
+  const res = await http.delete(`v1/cards/${id}/cover`, {
+    headers: {
+      token: `Bearer ${access_token}`
+    }
+  })
   return res.data
 }
 
-export const updateDatesAPI = async (id, data) => {
-  const res = await http.put(`v1/cards/${id}/dates`, data)
+export const updateDatesAPI = async (id, data, access_token) => {
+  const res = await http.put(`v1/cards/${id}/dates`, data, {
+    headers: {
+      token: `Bearer ${access_token}`
+    }
+  })
   return res.data
 }
 
-export const removeDatesAPI = async (id) => {
-  const res = await http.delete(`v1/cards/${id}/dates`)
+export const removeDatesAPI = async (id, access_token) => {
+  const res = await http.delete(`v1/cards/${id}/dates`, {
+    headers: {
+      token: `Bearer ${access_token}`
+    }
+  })
   return res.data
 }
 
-export const uploadAttachmentsAPI = async (id, data) => {
+export const uploadAttachmentsAPI = async (id, data, access_token) => {
   const res = await http.post(`v1/cards/${id}/attachments`, data, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { token: `Bearer ${access_token}`, 'Content-Type': 'multipart/form-data' }
   })
   return res.data
 }
 
-export const removeAttachmentsAPI = async (id, data) => {
-  const res = await http.put(`v1/cards/${id}/attachments`, data)
-  return res.data
-}
-
-export const cardUploadFileAPI = async (id, data) => {
-  const res = await http.post(`v1/cards/file/${id}`, data, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+export const removeAttachmentsAPI = async (id, data, access_token) => {
+  const res = await http.put(`v1/cards/${id}/attachments`, data, {
+    headers: {
+      token: `Bearer ${access_token}`
+    }
   })
   return res.data
 }
 
-export const cardDeleteFileAPI = async (id, data) => {
-  const res = await http.put(`v1/cards/file/${id}`, data)
+export const createChecklistAPI = async (id, data, access_token) => {
+  const res = await http.post(`v1/cards/${id}/checklist`, data, {
+    headers: {
+      token: `Bearer ${access_token}`
+    }
+  })
   return res.data
 }
 
-export const createChecklistAPI = async (id, data) => {
-  const res = await http.post(`v1/cards/${id}/checklist`, data)
+export const updateCheckListAPI = async (id, data, access_token) => {
+  const res = await http.put(`v1/cards/${id}/checklist`, data, {
+    headers: {
+      token: `Bearer ${access_token}`
+    }
+  })
   return res.data
 }
 
-export const updateCheckListAPI = async (id, data) => {
-  const res = await http.put(`v1/cards/${id}/checklist`, data)
-  return res.data
-}
-
-export const createCommentstAPI = async (id, data) => {
-  const res = await http.post(`v1/cards/${id}/comments`, data)
+export const createCommentstAPI = async (id, data, access_token) => {
+  const res = await http.post(`v1/cards/${id}/comments`, data, {
+    headers: {
+      token: `Bearer ${access_token}`
+    }
+  })
   return res.data
 }

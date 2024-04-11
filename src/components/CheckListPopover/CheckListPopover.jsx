@@ -5,15 +5,18 @@ import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const CheckListPopover = ({ anchorEl, handleClose, card, id, open }) => {
   const [checklistTitle, setCheckListTitle] = useState('')
 
   const queryClient = useQueryClient()
 
+  const user = useSelector((state) => state.user.auth)
+
   const mutionCreateCheckList = useMutation({
     mutationFn: async (data) => {
-      const res = await createChecklistAPI(card?._id, data)
+      const res = await createChecklistAPI(card?._id, data, user.accessToken)
       return res.data
     },
     onSuccess: () => {

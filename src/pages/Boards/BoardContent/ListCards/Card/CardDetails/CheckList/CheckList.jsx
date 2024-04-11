@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import ConfirmationPopover from '@/components/ConfirmationPopover/ConfirmationPopover'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import { useSelector } from 'react-redux'
 
 const CheckList = ({ checklist, cardId }) => {
   const [checkListState, setCheckListState] = useState([])
@@ -85,9 +86,11 @@ const CheckList = ({ checklist, cardId }) => {
 
   const queryClient = useQueryClient()
 
+  const user = useSelector((state) => state.user.auth)
+
   const mutionUpdateCheckList = useMutation({
     mutationFn: async (data) => {
-      const res = await updateCheckListAPI(cardId, data)
+      const res = await updateCheckListAPI(cardId, data, user.accessToken)
       return res.data
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
