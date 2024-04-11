@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import BoardBar from '../Boards/BoardBar/BoardBar'
-import GrantChart from './GrantChart/GrantChart'
+import BasicTable from './GrantChart/Table'
 
 const TimeLine = () => {
   const [board, setBoard] = useState([])
@@ -47,13 +47,16 @@ const TimeLine = () => {
       {board && !isLoadBoard ? (
         <Box
           sx={{
+            backgroundImage: `url(${board?.cover})`,
             width: '100%',
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         >
           <BoardBar board={board} />
-          <GrantChart />
+          <Box sx={{ p: 2, width: '100%', height: (theme) => theme.todolist.boardContentHeight }}>
+            <BasicTable board={board} />
+          </Box>
         </Box>
       ) : (
         <Box
