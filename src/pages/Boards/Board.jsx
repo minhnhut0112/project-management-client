@@ -1,22 +1,22 @@
-import Container from '@mui/material/Container'
-import BoardBar from './BoardBar/BoardBar'
-import BoardContent from './BoardContent/BoardContent'
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { isEmpty } from 'lodash'
+import { fetchBoardDetailsAPI } from '@/apis/boards.api'
 import { generatePlaceholderCard } from '@/utils/formatters'
 import { mapOrder } from '@/utils/sorts'
 import { Box, LinearProgress } from '@mui/material'
+import Container from '@mui/material/Container'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { isEmpty } from 'lodash'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { fetchBoardDetailsAPI } from '@/apis/boards.api'
-import { useQueryClient } from '@tanstack/react-query'
 import { io } from 'socket.io-client'
+import BoardBar from './BoardBar/BoardBar'
+import BoardContent from './BoardContent/BoardContent'
+import BasicBars from './DashBoard/DashBoard'
+import BasicTable from './Table/Table'
 
 const socket = io('http://localhost:8017')
 
 const Board = () => {
   const [board, setBoard] = useState(null)
-  const [isLoadBoard, setIsLoadBoard] = useState(true)
 
   const { id } = useParams()
 
@@ -38,7 +38,6 @@ const Board = () => {
       })
 
       setBoard(boardData)
-      setIsLoadBoard(false)
     }
   }, [boardQuery.data])
 
@@ -138,6 +137,12 @@ const Board = () => {
     })
   }, [queryClient])
 
+  const [index, setIndex] = useState(0)
+
+  const boardDisPlay = (value) => {
+    setIndex(value)
+  }
+
   return (
     <Container
       disableGutters
@@ -146,7 +151,7 @@ const Board = () => {
         height: (theme) => `calc(100vh - ${theme.todolist.appBarHeight}`
       }}
     >
-      {board && !isLoadBoard ? (
+      {board ? (
         <Box
           sx={{
             backgroundImage: `url(${board?.cover})`,
@@ -155,8 +160,36 @@ const Board = () => {
             backgroundPosition: 'center'
           }}
         >
-          <BoardBar board={board} />
-          <BoardContent board={board} boardId={board._id} />
+          <BoardBar board={board} boardDisPlay={boardDisPlay} index={index} />
+          {index === 0 && <BoardContent board={board} boardId={board._id} />}
+          {index === 1 && (
+            <Box
+              sx={{
+                // backgroundImage: `url(${board?.cover})`,
+                width: '100%',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              <Box sx={{ p: 2, width: '100%', height: (theme) => theme.todolist.boardContentHeight }}>
+                <BasicTable board={board} />
+              </Box>
+            </Box>
+          )}
+          {index === 2 && (
+            <Box
+              sx={{
+                // backgroundImage: `url(${board?.cover})`,
+                width: '100%',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              <Box sx={{ p: 2, width: '100%', height: (theme) => theme.todolist.boardContentHeight }}>
+                <BasicBars board={board} />
+              </Box>
+            </Box>
+          )}
         </Box>
       ) : (
         <Box

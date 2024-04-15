@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box'
-import ModeSelect from '@/components/ModeSelect/ModeSelect'
 import { ReactComponent as LogoApp } from '@/assets/trello.svg'
 import { SvgIcon, Typography } from '@mui/material'
 import AppsIcon from '@mui/icons-material/Apps'
@@ -13,7 +12,6 @@ import TextField from '@mui/material/TextField'
 import Profile from './Menu/Profile'
 import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
-import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Notification from './Notifications'
@@ -74,7 +72,7 @@ const AppBar = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <TextField
           label='Search...'
-          type='text'
+          type='search'
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           size='small'
@@ -83,22 +81,11 @@ const AppBar = () => {
               <InputAdornment position='start'>
                 <SearchIcon sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }} />
               </InputAdornment>
-            ),
-            endAdornment: (
-              <CloseIcon
-                onClick={() => setSearchValue('')}
-                fontSize='small'
-                sx={{
-                  color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
-                  cursor: 'pointer',
-                  display: !searchValue ? 'none' : 'block'
-                }}
-              />
             )
           }}
           sx={{
             minWidth: 120,
-            maxWidth: 170,
+            maxWidth: 180,
             mt: 0.5,
             '& label': {
               color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
@@ -116,7 +103,6 @@ const AppBar = () => {
             }
           }}
         />
-        <ModeSelect />
 
         <Notification />
 

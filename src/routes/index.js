@@ -6,13 +6,11 @@ import Board from '@/pages/Boards/Board'
 import Home from '@/pages/Home/Home'
 import NotFound from '@/pages/NotFound'
 import Profile from '@/pages/Profile/Profile'
-import TimeLine from '@/pages/TimeLine/TimeLine'
 
 const routes = [
   { path: '/', component: Home },
   { path: '/board/:id', component: Board },
   { path: '/profile', component: Profile },
-  { path: '/timeline/:id', component: TimeLine },
 
   { path: '/login', component: ConfirmSignIn, layout: null },
   { path: '/signup', component: ConfirmSignUp, layout: null },

@@ -29,12 +29,12 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open, onPopoverChange }
   }, [open])
 
   useEffect(() => {
-    setCheckedLabels(card.labels)
-  }, [card.labels])
+    setCheckedLabels(card?.labels)
+  }, [card?.labels])
 
   const boardQuery = useQuery({
-    queryKey: ['board', card.boardId],
-    queryFn: async () => await fetchBoardDetailsAPI(card.boardId)
+    queryKey: ['board', card?.boardId],
+    queryFn: async () => await fetchBoardDetailsAPI(card?.boardId)
   })
 
   useEffect(() => {
@@ -138,10 +138,10 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open, onPopoverChange }
         horizontal: 'left'
       }}
       transformOrigin={{
-        vertical: 'bottom',
+        vertical: 'center',
         horizontal: 'left'
       }}
-      sx={{ mx: 2, marginBottom: 10 }}
+      sx={{ mx: 2, marginBottom: 10, boxShadow: 'none' }}
     >
       <Box
         sx={{

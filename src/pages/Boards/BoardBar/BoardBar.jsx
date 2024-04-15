@@ -1,29 +1,28 @@
 import { updateBoardAPI } from '@/apis/boards.api'
 import DashboardIcon from '@mui/icons-material/Dashboard'
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import InsertChartOutlinedOutlinedIcon from '@mui/icons-material/InsertChartOutlinedOutlined'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarRateIcon from '@mui/icons-material/StarRate'
-import ViewTimelineOutlinedIcon from '@mui/icons-material/ViewTimelineOutlined'
+import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined'
+import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined'
 import { Checkbox, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
-import Drawer from '@mui/material/Drawer'
-import IconButton from '@mui/material/IconButton'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import BoardMenu from './BoardMenu/BoardMenu'
 import BoardUser from './BoardUser/BoardUser'
 import InviteButon from './InviteButon/InviteButon'
-import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined'
-import { useNavigate } from 'react-router-dom'
 
 const menuStyle = {
   bgcolor: 'transparent',
   border: 'none',
   paddingX: '5px',
-  borderRadius: '4px'
+  borderRadius: '4px',
+  color: 'white'
 }
 
-const BoardBar = ({ board }) => {
+const BoardBar = ({ board, boardDisPlay, index }) => {
   const [openNewBoardTitleForm, setOpenNewBoardTitleForm] = useState(false)
   const [newBoardTitle, setNewBoardTitle] = useState('')
   const [chipWidth, setChipWidth] = useState(null)
@@ -64,14 +63,6 @@ const BoardBar = ({ board }) => {
     setOpenNewBoardTitleForm(false)
   }
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-
-  const handleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen)
-  }
-
-  const navigate = useNavigate()
-
   return (
     <Box
       sx={{
@@ -83,11 +74,13 @@ const BoardBar = ({ board }) => {
         justifyContent: 'space-between',
         gap: 2,
         overflowX: 'auto',
-        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#576574' : '#dfe6e9')
+        backdropFilter: blur(1),
+        background: '#0000003d'
+        // bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#576574' : '#dfe6e9')
         // backdropFilter: 'blur(20px)'
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {openNewBoardTitleForm ? (
           <Box
             as='form'
@@ -105,13 +98,14 @@ const BoardBar = ({ board }) => {
               onChange={(e) => setNewBoardTitle(e.target.value)}
               size='small'
               sx={{
+                color: 'white',
                 width: `${chipWidth}px`,
                 '& label': {
-                  color: 'text.primary'
+                  color: 'white'
                 },
 
                 '& label.Mui-focused': {
-                  color: (theme) => theme.palette.primary.main
+                  bgcolor: 'white'
                 },
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: (theme) => theme.palette.primary.main },
@@ -119,7 +113,8 @@ const BoardBar = ({ board }) => {
                   '&.Mui-focused fieldset': { borderColor: (theme) => theme.palette.primary.main }
                 },
                 '& .MuiOutlinedInput-input': {
-                  borderRadius: 1
+                  borderRadius: 1,
+                  bgcolor: 'white'
                 }
               }}
             />
@@ -127,31 +122,44 @@ const BoardBar = ({ board }) => {
         ) : (
           <Chip
             id='boardChip'
-            sx={menuStyle}
+            sx={{ ...menuStyle, fontWeight: 'bold', fontSize: '18px' }}
             label={newBoardTitle}
             clickable
-            icon={<DashboardIcon fontSize='small' />}
+            icon={<DashboardIcon color='white' fontSize='small' />}
             onClick={() => setOpenNewBoardTitleForm(true)}
           />
         )}
 
         <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-          <Checkbox icon={<StarBorderIcon />} checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />} />
+          <Checkbox
+            icon={<StarBorderIcon sx={{ color: 'white' }} />}
+            checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />}
+          />
         </Box>
 
-        <Box
-          onClick={() => navigate(`/board/${board?._id}`)}
-          sx={{ display: 'flex', justifyContent: 'center', gap: 1, cursor: 'pointer' }}
-        >
-          <ViewKanbanOutlinedIcon /> Board
-        </Box>
+        <Chip
+          sx={{ ...menuStyle, bgcolor: index === 0 ? '#e9f2ff' : 'transparent', color: index !== 0 && 'white' }}
+          label='Board'
+          clickable
+          icon={<ViewKanbanOutlinedIcon color='white' fontSize='small' />}
+          onClick={() => boardDisPlay(0)}
+        />
 
-        <Box
-          onClick={() => navigate(`/timeline/${board?._id}`)}
-          sx={{ display: 'flex', justifyContent: 'center', gap: 1, cursor: 'pointer' }}
-        >
-          <ViewTimelineOutlinedIcon /> TimeLine
-        </Box>
+        <Chip
+          sx={{ ...menuStyle, bgcolor: index === 1 ? '#e9f2ff' : 'transparent', color: index !== 1 && 'white' }}
+          label='Table'
+          clickable
+          icon={<TableChartOutlinedIcon color='white' fontSize='small' />}
+          onClick={() => boardDisPlay(1)}
+        />
+
+        <Chip
+          sx={{ ...menuStyle, bgcolor: index === 2 ? '#e9f2ff' : 'transparent', color: index !== 2 && 'white' }}
+          label='DashBoard'
+          clickable
+          icon={<InsertChartOutlinedOutlinedIcon color='white' fontSize='small' />}
+          onClick={() => boardDisPlay(2)}
+        />
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -160,15 +168,10 @@ const BoardBar = ({ board }) => {
         <span>|</span>
 
         <BoardUser board={board} />
+
         <InviteButon board={board} />
-        <IconButton onClick={handleDrawer}>
-          <MoreHorizIcon />
-        </IconButton>
-        <Drawer anchor='right' open={isDrawerOpen} onClose={handleDrawer}>
-          <div style={{ width: 250, padding: '20px' }}>
-            <h2>Drawer Content</h2>
-          </div>
-        </Drawer>
+
+        <BoardMenu board={board} />
       </Box>
     </Box>
   )

@@ -111,10 +111,12 @@ const InviteButon = ({ board }) => {
       <Button
         onClick={() => setOpen(true)}
         sx={{
-          color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
-          borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
+          color: 'black',
+          borderColor: 'white',
+          bgcolor: 'white',
           '&:hover': {
-            borderColor: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D')
+            borderColor: 'white',
+            bgcolor: 'white'
           }
         }}
         variant='outlined'
