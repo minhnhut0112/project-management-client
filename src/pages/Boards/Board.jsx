@@ -12,6 +12,7 @@ import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 import BasicBars from './DashBoard/DashBoard'
 import BasicTable from './Table/Table'
+import Issues from './Issues/Issues'
 
 const socket = io('http://localhost:8017')
 
@@ -165,7 +166,6 @@ const Board = () => {
           {index === 1 && (
             <Box
               sx={{
-                // backgroundImage: `url(${board?.cover})`,
                 width: '100%',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
@@ -179,7 +179,6 @@ const Board = () => {
           {index === 2 && (
             <Box
               sx={{
-                // backgroundImage: `url(${board?.cover})`,
                 width: '100%',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
@@ -187,6 +186,19 @@ const Board = () => {
             >
               <Box sx={{ p: 2, width: '100%', height: (theme) => theme.todolist.boardContentHeight }}>
                 <BasicBars board={board} />
+              </Box>
+            </Box>
+          )}
+          {index === 3 && (
+            <Box
+              sx={{
+                width: '100%',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              <Box sx={{ p: 2, width: '100%', height: (theme) => theme.todolist.boardContentHeight }}>
+                <Issues board={board} />
               </Box>
             </Box>
           )}

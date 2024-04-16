@@ -19,28 +19,36 @@ import { useSelector } from 'react-redux'
 
 const itemData = [
   {
-    img: 'https://1.bp.blogspot.com/--8hF_fSPDWM/YTa5yJ5NxEI/AAAAAAAAHgI/FCKkttVZaBUeUN_fIJC1ny444vu4QRCxwCLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-61.jpg',
-    title: 'Coffee'
+    img: 'http://localhost:8017/uploads/bg1.jpg',
+    title: 'bg1'
   },
   {
-    img: 'https://1.bp.blogspot.com/-Lw-Jbz0M05c/YTa5ZHqdr-I/AAAAAAAAHaY/XivGTHyBt5UWtqMDjiAsx_DyKTZ1T-ZYQCLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-4.jpg',
-    title: 'Hats'
+    img: 'http://localhost:8017/uploads/bg2.jpg',
+    title: 'bg2'
   },
   {
-    img: 'https://1.bp.blogspot.com/-wHNc1eq9fpo/YTa4O0iiK3I/AAAAAAAAHJw/1kRgEYPGak8-bnCl8c0BqiNJUqrFCpg9ACLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-16.jpg',
-    title: 'Honey'
+    img: 'http://localhost:8017/uploads/bg3.jpg',
+    title: 'bg3'
   },
   {
-    img: 'https://1.bp.blogspot.com/-n4Krw0YS-Uk/YTa4fIbzUzI/AAAAAAAAHNM/83TOiGwJ4HIP-oh54_LtZNgDFLQi05jvwCLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-21.jpg',
-    title: 'Basketball'
+    img: 'http://localhost:8017/uploads/bg4.jpg',
+    title: 'bg4'
   },
   {
-    img: 'https://1.bp.blogspot.com/-3cWMJKowm6c/YTa41Q-SF1I/AAAAAAAAHSE/V6Ibuh23MHQoD961d5ahPPJfpKjqUYpZACLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-28.jpg',
-    title: 'Fern'
+    img: 'http://localhost:8017/uploads/bg5.jpg',
+    title: 'bg5'
   },
   {
-    img: 'https://1.bp.blogspot.com/-G1Z1e6rHNgc/YTa5r4yB3fI/AAAAAAAAHek/GoCreu5YihwjbBr3XGMMoqHkULSLYFpMgCLcBGAsYHQ/s0-rw/hinh-nen-may-tinh-full-hd-cuc-dep-46.jpg',
-    title: 'Mushrooms'
+    img: 'http://localhost:8017/uploads/bg6.jpg',
+    title: 'bg6'
+  },
+  {
+    img: 'http://localhost:8017/uploads/bg7.jpg',
+    title: 'bg7'
+  },
+  {
+    img: 'http://localhost:8017/uploads/bg8.jpg',
+    title: 'bg8'
   }
 ]
 
@@ -205,7 +213,7 @@ const Boards = () => {
                   e.preventDefault()
                   createNewBoard()
                 }}
-                sx={{ width: 300, height: 565, p: 2 }}
+                sx={{ width: 300, p: 2, height: 'fit-content' }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                   <Box sx={{ marginLeft: '35px' }}></Box>
@@ -259,7 +267,7 @@ const Boards = () => {
                   label='Enter board title'
                   size='small'
                 ></TextField>
-                <Box sx={{ width: '100%', mt: 2, mb: 2 }}>
+                <Box sx={{ width: '100%', mt: 2 }}>
                   <FormControl fullWidth>
                     <InputLabel defaultValue='Public' size='small' id='demo-simple-select-label'>
                       Visibility

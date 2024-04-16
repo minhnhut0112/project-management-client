@@ -18,6 +18,11 @@ import MenuList from '@mui/material/MenuList'
 import Popover from '@mui/material/Popover'
 import { useState } from 'react'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import AboutBoard from './AboutBoard/AboutBoard'
+import Activity from './Activity/Activity'
+import Archive from './Archived/Archived'
+import ChangeBackground from './ChangeBG/ChangeBG'
+import Labels from './Labels/Labels'
 
 const BoardMenu = ({ board }) => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -26,9 +31,16 @@ const BoardMenu = ({ board }) => {
   }
   const handleClose = () => {
     setAnchorEl(null)
+    setContent('menu')
   }
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
+
+  const [content, setContent] = useState('menu')
+
+  const handleChangeContent = (content) => {
+    setContent(content)
+  }
 
   return (
     <div>
@@ -52,84 +64,106 @@ const BoardMenu = ({ board }) => {
           }}
           sx={{ mx: 2 }}
         >
-          <Box sx={{ width: 280, p: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-              <Box sx={{ marginLeft: '35px' }}></Box>
-              <Typography sx={{ fontSize: '16px' }} variant='h6'>
-                Menu
-              </Typography>
-              <IconButton sx={{ p: 0 }} onClick={handleClose} aria-label='delete'>
-                <ClearOutlinedIcon />
-              </IconButton>
+          {content === 'menu' && (
+            <Box sx={{ width: 280, p: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                <Box sx={{ marginLeft: '35px' }}></Box>
+                <Typography sx={{ fontSize: '16px' }} variant='h6'>
+                  Menu
+                </Typography>
+                <IconButton onClick={handleClose} aria-label='delete'>
+                  <ClearOutlinedIcon fontSize='small' />
+                </IconButton>
+              </Box>
+
+              <Divider sx={{ m: 1 }} />
+
+              <MenuList sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
+                <MenuItem onClick={() => setContent('aboutboard')}>
+                  <ListItemIcon>
+                    <InfoOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText>About this board</ListItemText>
+                </MenuItem>
+
+                <MenuItem onClick={() => setContent('activity')}>
+                  <ListItemIcon>
+                    <SvgIcon
+                      component={ActivitySVG}
+                      fontSize='small'
+                      inheritViewBox
+                      sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText>Activity</ListItemText>
+                </MenuItem>
+
+                <MenuItem onClick={() => setContent('archived')}>
+                  <ListItemIcon>
+                    <ArchiveOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText>Archived items</ListItemText>
+                </MenuItem>
+
+                <MenuItem onClick={() => setContent('changebg')}>
+                  <ListItemIcon>
+                    <Avatar src={board.cover} sx={{ width: 22, height: 22 }} variant='rounded' />
+                  </ListItemIcon>
+                  <ListItemText>Change background</ListItemText>
+                </MenuItem>
+
+                <MenuItem onClick={() => setContent('labels')}>
+                  <ListItemIcon>
+                    <LocalOfferOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText>Labels</ListItemText>
+                </MenuItem>
+
+                <Divider />
+
+                <MenuItem>
+                  <ListItemIcon>
+                    <RemoveIcon />
+                  </ListItemIcon>
+                  <ListItemText>Close board</ListItemText>
+                </MenuItem>
+
+                <MenuItem>
+                  <ListItemIcon>
+                    <ExitToAppIcon />
+                  </ListItemIcon>
+                  <ListItemText>Leave board</ListItemText>
+                </MenuItem>
+
+                <MenuItem>
+                  <ListItemIcon>
+                    <DeleteOutlineOutlinedIcon />
+                  </ListItemIcon>
+                  <ListItemText>Delete board</ListItemText>
+                </MenuItem>
+              </MenuList>
             </Box>
+          )}
 
-            <Divider sx={{ m: 1 }} />
+          {content === 'aboutboard' && (
+            <AboutBoard handleChangeContent={handleChangeContent} handleClose={handleClose} board={board} />
+          )}
 
-            <MenuList sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
-              <MenuItem>
-                <ListItemIcon>
-                  <InfoOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText>About this board</ListItemText>
-              </MenuItem>
+          {content === 'activity' && (
+            <Activity handleChangeContent={handleChangeContent} handleClose={handleClose} board={board} />
+          )}
 
-              <MenuItem>
-                <ListItemIcon>
-                  <SvgIcon
-                    component={ActivitySVG}
-                    fontSize='small'
-                    inheritViewBox
-                    sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }}
-                  />
-                </ListItemIcon>
-                <ListItemText>Activity</ListItemText>
-              </MenuItem>
+          {content === 'archived' && (
+            <Archive handleChangeContent={handleChangeContent} handleClose={handleClose} board={board} />
+          )}
 
-              <MenuItem>
-                <ListItemIcon>
-                  <ArchiveOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText>Archived items</ListItemText>
-              </MenuItem>
+          {content === 'changebg' && (
+            <ChangeBackground handleChangeContent={handleChangeContent} handleClose={handleClose} board={board} />
+          )}
 
-              <MenuItem>
-                <ListItemIcon>
-                  <Avatar src={board.cover} sx={{ width: 22, height: 22 }} variant='rounded' />
-                </ListItemIcon>
-                <ListItemText>Change background</ListItemText>
-              </MenuItem>
-
-              <MenuItem>
-                <ListItemIcon>
-                  <LocalOfferOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText>Labels</ListItemText>
-              </MenuItem>
-
-              <Divider />
-
-              <MenuItem>
-                <ListItemIcon>
-                  <RemoveIcon />
-                </ListItemIcon>
-                <ListItemText>Close board</ListItemText>
-              </MenuItem>
-
-              <MenuItem>
-                <ListItemIcon>
-                  <ExitToAppIcon />
-                </ListItemIcon>
-                <ListItemText>Leave board</ListItemText>
-              </MenuItem>
-
-              <MenuItem>
-                <ListItemIcon>
-                  <DeleteOutlineOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText>Delete board</ListItemText>
-              </MenuItem>
-            </MenuList>
-          </Box>
+          {content === 'labels' && (
+            <Labels handleChangeContent={handleChangeContent} handleClose={handleClose} board={board} />
+          )}
         </Popover>
       </Box>
     </div>

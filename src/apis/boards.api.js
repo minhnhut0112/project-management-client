@@ -68,3 +68,10 @@ export const removeFromBoardlAPI = async (id, userId) => {
   const res = await http.delete(`v1/boards/${id}/permission?userId=${userId}`)
   return res.data
 }
+
+export const uploadCoverAPI = async (id, data) => {
+  const res = await http.post(`v1/boards/${id}/cover`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+  return res.data
+}

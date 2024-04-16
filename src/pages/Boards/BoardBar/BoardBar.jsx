@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import BoardMenu from './BoardMenu/BoardMenu'
 import BoardUser from './BoardUser/BoardUser'
 import InviteButon from './InviteButon/InviteButon'
+import AdjustOutlinedIcon from '@mui/icons-material/AdjustOutlined'
 
 const menuStyle = {
   bgcolor: 'transparent',
@@ -138,7 +139,12 @@ const BoardBar = ({ board, boardDisPlay, index }) => {
         </Box>
 
         <Chip
-          sx={{ ...menuStyle, bgcolor: index === 0 ? '#e9f2ff' : 'transparent', color: index !== 0 && 'white' }}
+          sx={{
+            ...menuStyle,
+            bgcolor: index === 0 ? '#e9f2ff' : 'transparent',
+            color: index !== 0 && 'white',
+            '&:hover': { bgcolor: index === 0 && '#e9f2ff' }
+          }}
           label='Board'
           clickable
           icon={<ViewKanbanOutlinedIcon color='white' fontSize='small' />}
@@ -146,7 +152,12 @@ const BoardBar = ({ board, boardDisPlay, index }) => {
         />
 
         <Chip
-          sx={{ ...menuStyle, bgcolor: index === 1 ? '#e9f2ff' : 'transparent', color: index !== 1 && 'white' }}
+          sx={{
+            ...menuStyle,
+            bgcolor: index === 1 ? '#e9f2ff' : 'transparent',
+            color: index !== 1 && 'white',
+            '&:hover': { bgcolor: index === 1 && '#e9f2ff' }
+          }}
           label='Table'
           clickable
           icon={<TableChartOutlinedIcon color='white' fontSize='small' />}
@@ -154,11 +165,29 @@ const BoardBar = ({ board, boardDisPlay, index }) => {
         />
 
         <Chip
-          sx={{ ...menuStyle, bgcolor: index === 2 ? '#e9f2ff' : 'transparent', color: index !== 2 && 'white' }}
+          sx={{
+            ...menuStyle,
+            bgcolor: index === 2 ? '#e9f2ff' : 'transparent',
+            color: index !== 2 && 'white',
+            '&:hover': { bgcolor: index === 2 && '#e9f2ff' }
+          }}
           label='DashBoard'
           clickable
           icon={<InsertChartOutlinedOutlinedIcon color='white' fontSize='small' />}
           onClick={() => boardDisPlay(2)}
+        />
+
+        <Chip
+          sx={{
+            ...menuStyle,
+            bgcolor: index === 3 ? '#e9f2ff' : 'transparent',
+            color: index !== 3 && 'white',
+            '&:hover': { bgcolor: index === 3 && '#e9f2ff' }
+          }}
+          label='Issues'
+          clickable
+          icon={<AdjustOutlinedIcon color='white' fontSize='small' />}
+          onClick={() => boardDisPlay(3)}
         />
       </Box>
 

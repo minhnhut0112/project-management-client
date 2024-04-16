@@ -89,7 +89,7 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open, onPopoverChange }
   const handleSaveEditLabel = async () => {
     if (!selectedLabel) return
 
-    mutionSaveEditLabel.mutate({ labelEdited: selectedLabel, cardId: card._id })
+    mutionSaveEditLabel.mutate({ labelEdited: selectedLabel })
   }
 
   const mutionAddNewLabel = useMutation({
@@ -112,7 +112,7 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open, onPopoverChange }
 
   const mutionRemoveLabel = useMutation({
     mutationFn: async (labelId) => {
-      const res = await removeLabelAPI(card.boardId, labelId.labelId, card._id)
+      const res = await removeLabelAPI(card.boardId, labelId.labelId)
       return res
     },
     onSuccess: () => {
