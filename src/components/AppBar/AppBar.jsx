@@ -71,7 +71,7 @@ const AppBar = () => {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <TextField
-          label='Search...'
+          placeholder='Search...'
           type='search'
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}

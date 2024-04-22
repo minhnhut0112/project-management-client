@@ -76,7 +76,7 @@ const MembersPopover = ({ anchorEl, handleClose, card, id, open }) => {
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
           <Box sx={{ marginLeft: '15px' }}></Box>
           <Typography sx={{ fontSize: '16px' }} variant='h6'>
-            Memsber
+            Members
           </Typography>
           <IconButton sx={{ p: 0 }} onClick={handleClose} aria-label='delete'>
             <ClearOutlinedIcon fontSize='small' />

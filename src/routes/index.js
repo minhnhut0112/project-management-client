@@ -3,6 +3,7 @@ import ConfirmSignUp from '@/pages/Auth/ConfirmSignUp'
 import SignIn from '@/pages/Auth/SignIn'
 import SignUp from '@/pages/Auth/SignUp'
 import Board from '@/pages/Boards/Board'
+// import ModalCardWrapper from '@/pages/Boards/BoardContent/ListCards/Card/ModalCardWrapper/ModalCardWrapper'
 import Home from '@/pages/Home/Home'
 import NotFound from '@/pages/NotFound'
 import Profile from '@/pages/Profile/Profile'
@@ -10,6 +11,7 @@ import Profile from '@/pages/Profile/Profile'
 const routes = [
   { path: '/', component: Home },
   { path: '/board/:id', component: Board },
+  // { path: '/card/:id', component: ModalCardWrapper },
   { path: '/profile', component: Profile },
 
   { path: '/login', component: ConfirmSignIn, layout: null },

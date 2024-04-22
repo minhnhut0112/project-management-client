@@ -23,6 +23,9 @@ import Activity from './Activity/Activity'
 import Archive from './Archived/Archived'
 import ChangeBackground from './ChangeBG/ChangeBG'
 import Labels from './Labels/Labels'
+import CloseBoard from './CloseBoard/CloseBoard'
+import DeleteBoard from './DeleteBoard/DeleteBoard'
+import LeaveBoard from './LeaveBoard/LeaveBoard'
 
 const BoardMenu = ({ board }) => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -85,7 +88,6 @@ const BoardMenu = ({ board }) => {
                   </ListItemIcon>
                   <ListItemText>About this board</ListItemText>
                 </MenuItem>
-
                 <MenuItem onClick={() => setContent('activity')}>
                   <ListItemIcon>
                     <SvgIcon
@@ -97,21 +99,18 @@ const BoardMenu = ({ board }) => {
                   </ListItemIcon>
                   <ListItemText>Activity</ListItemText>
                 </MenuItem>
-
                 <MenuItem onClick={() => setContent('archived')}>
                   <ListItemIcon>
                     <ArchiveOutlinedIcon />
                   </ListItemIcon>
                   <ListItemText>Archived items</ListItemText>
                 </MenuItem>
-
                 <MenuItem onClick={() => setContent('changebg')}>
                   <ListItemIcon>
                     <Avatar src={board.cover} sx={{ width: 22, height: 22 }} variant='rounded' />
                   </ListItemIcon>
                   <ListItemText>Change background</ListItemText>
                 </MenuItem>
-
                 <MenuItem onClick={() => setContent('labels')}>
                   <ListItemIcon>
                     <LocalOfferOutlinedIcon />
@@ -121,26 +120,13 @@ const BoardMenu = ({ board }) => {
 
                 <Divider />
 
-                <MenuItem>
-                  <ListItemIcon>
-                    <RemoveIcon />
-                  </ListItemIcon>
-                  <ListItemText>Close board</ListItemText>
-                </MenuItem>
+                <CloseBoard board={board} />
 
-                <MenuItem>
-                  <ListItemIcon>
-                    <ExitToAppIcon />
-                  </ListItemIcon>
-                  <ListItemText>Leave board</ListItemText>
-                </MenuItem>
+                <LeaveBoard board={board} />
 
-                <MenuItem>
-                  <ListItemIcon>
-                    <DeleteOutlineOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText>Delete board</ListItemText>
-                </MenuItem>
+                <Divider />
+
+                <DeleteBoard board={board} />
               </MenuList>
             </Box>
           )}

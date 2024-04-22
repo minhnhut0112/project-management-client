@@ -3,7 +3,7 @@ import { Button, IconButton, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 
-const ConfirmationPopover = ({ anchorEl, handleClose, id, open, onConfirm, title, description, confirmArgs }) => {
+const ConfirmationPopover = ({ anchorEl, handleClose, open, onConfirm, title, description, confirmArgs, button }) => {
   const handleConfirm = () => {
     onConfirm(confirmArgs)
     handleClose()
@@ -12,7 +12,6 @@ const ConfirmationPopover = ({ anchorEl, handleClose, id, open, onConfirm, title
   return (
     <Popover
       data-no-dnd
-      id={id}
       open={open}
       anchorEl={anchorEl}
       onClose={handleClose}
@@ -49,7 +48,7 @@ const ConfirmationPopover = ({ anchorEl, handleClose, id, open, onConfirm, title
           }}
           onClick={handleConfirm}
         >
-          Delete
+          {button ? button : 'Delete'}
         </Button>
       </div>
     </Popover>
