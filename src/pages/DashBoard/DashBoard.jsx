@@ -1,15 +1,14 @@
 import { fetchBoardDetailsAPI } from '@/apis/boards.api'
 import { generatePlaceholderCard } from '@/utils/formatters'
 import { mapOrder } from '@/utils/sorts'
-import { Box, LinearProgress } from '@mui/material'
-import Container from '@mui/material/Container'
+import { Box, Container, LinearProgress } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import BoardContent from './BoardContent/BoardContent'
+import BasicBars from './DashBoardContent'
 
-const Board = () => {
+const DashBoard = () => {
   const [board, setBoard] = useState(null)
 
   const { id } = useParams()
@@ -49,10 +48,21 @@ const Board = () => {
             backgroundImage: `url(${board?.cover})`,
             width: '100%',
             backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            backgroundPosition: 'center',
+            p: 2,
+            height: (theme) => theme.todolist.boardContentHeight
           }}
         >
-          <BoardContent board={board} boardId={board._id} />
+          <Box
+            sx={{
+              height: '100%',
+              bgcolor: '#ffffff',
+              overflow: 'auto',
+              borderRadius: '5px'
+            }}
+          >
+            <BasicBars board={board} />
+          </Box>
         </Box>
       ) : (
         <Box
@@ -67,4 +77,4 @@ const Board = () => {
   )
 }
 
-export default Board
+export default DashBoard

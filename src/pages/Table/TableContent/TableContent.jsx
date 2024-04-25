@@ -14,7 +14,6 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import dayjs from 'dayjs'
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
-import ModalCardDetails from '../BoardContent/ListCards/Card/CardDetails/CardDetails'
 import { isColorLight } from '@/utils/formatters'
 import LabelPopover from '@/components/LabelPopover/LabelPopover'
 import AddIcon from '@mui/icons-material/Add'
@@ -22,6 +21,7 @@ import MembersPopover from '@/components/MembersPopover/MembersPopover'
 import DatePopover from '@/components/DatePopover/DatePopover'
 import { useMutation } from '@tanstack/react-query'
 import { updateCardAPI } from '@/apis/cards.api'
+import ModalCardDetails from '@/pages/Boards/BoardContent/ListCards/Card/CardDetails/CardDetails'
 
 export default function BasicTable({ board }) {
   const [modalOpen, setModalOpen] = useState('')

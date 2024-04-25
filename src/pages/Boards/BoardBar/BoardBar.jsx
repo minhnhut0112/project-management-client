@@ -1,4 +1,4 @@
-import { updateBoardAPI } from '@/apis/boards.api'
+import { fetchBoardDetailsAPI, updateBoardAPI } from '@/apis/boards.api'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import InsertChartOutlinedOutlinedIcon from '@mui/icons-material/InsertChartOutlinedOutlined'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
@@ -8,12 +8,17 @@ import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined'
 import { Checkbox, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import BoardMenu from './BoardMenu/BoardMenu'
 import BoardUser from './BoardUser/BoardUser'
 import InviteButon from './InviteButon/InviteButon'
 import AdjustOutlinedIcon from '@mui/icons-material/AdjustOutlined'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { mapOrder } from '@/utils/sorts'
+import { isEmpty } from 'lodash'
+import { generatePlaceholderCard } from '@/utils/formatters'
+import { io } from 'socket.io-client'
 
 const menuStyle = {
   bgcolor: 'transparent',
@@ -23,7 +28,42 @@ const menuStyle = {
   color: 'white'
 }
 
-const BoardBar = ({ board, boardDisPlay, index }) => {
+const socket = io('http://localhost:8017')
+
+const BoardBar = () => {
+  const [board, setBoard] = useState(null)
+
+  const location = useLocation()
+
+  // Lấy path từ location
+  const path = location.pathname
+  // Tách chuỗi path để lấy phần trước issueId
+  const parts = path.split('/')
+  const displayType = parts[parts.length - 2]
+
+  const { id } = useParams()
+
+  const boardQuery = useQuery({ queryKey: ['board', id], queryFn: () => fetchBoardDetailsAPI(id) })
+
+  useEffect(() => {
+    if (boardQuery.data) {
+      const boardData = boardQuery.data
+
+      boardData.columns = mapOrder(boardData.columns, boardData.columnOrderIds, '_id')
+
+      boardData.columns.forEach((column) => {
+        if (isEmpty(column.cards)) {
+          column.cards = [generatePlaceholderCard(column)]
+          column.cardOrderIds = [generatePlaceholderCard(column)._id]
+        } else {
+          column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
+        }
+      })
+
+      setBoard(boardData)
+    }
+  }, [boardQuery.data])
+
   const [openNewBoardTitleForm, setOpenNewBoardTitleForm] = useState(false)
   const [newBoardTitle, setNewBoardTitle] = useState('')
   const [chipWidth, setChipWidth] = useState(null)
@@ -64,6 +104,110 @@ const BoardBar = ({ board, boardDisPlay, index }) => {
     setOpenNewBoardTitleForm(false)
   }
 
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    socket.on('createdCard', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('updatedCard', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('deletedCard', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('updatedCover', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('deletedCover', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('updateDates', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('deletedDate', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('uploadedAttachments', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('deletedAttachment', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('createdChecklist', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('updatedCheckList', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('createdComment', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('moveCardToDifferentColunmn', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('updateColumnOrderIds', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('editLabel', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('createNewLabel', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('deleteLabel', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('changeToAdmin', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('changeToMember', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('removeFromBoard', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('createNewColumn', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('updateCardOrderIds', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+
+    socket.on('deleteColumn', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+    socket.on('updateIssue', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+    socket.on('createNewIssue', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+  }, [queryClient])
+
+  if (!board) return
+
   return (
     <Box
       sx={{
@@ -76,9 +220,10 @@ const BoardBar = ({ board, boardDisPlay, index }) => {
         gap: 2,
         overflowX: 'auto',
         backdropFilter: blur(1),
-        background: '#0000003d'
+        background: '#0000003d',
         // bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#576574' : '#dfe6e9')
-        // backdropFilter: 'blur(20px)'
+        // backdropFilter: 'blur(20px)',
+        backgroundImage: `url(${board?.cover})`
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -141,53 +286,53 @@ const BoardBar = ({ board, boardDisPlay, index }) => {
         <Chip
           sx={{
             ...menuStyle,
-            bgcolor: index === 0 ? '#e9f2ff' : 'transparent',
-            color: index !== 0 && 'white',
-            '&:hover': { bgcolor: index === 0 && '#e9f2ff' }
+            bgcolor: displayType === 'board' ? '#e9f2ff' : 'transparent',
+            color: displayType !== 'board' && 'white',
+            '&:hover': { bgcolor: displayType === 'board' && '#e9f2ff' }
           }}
           label='Board'
           clickable
           icon={<ViewKanbanOutlinedIcon color='white' fontSize='small' />}
-          onClick={() => boardDisPlay(0)}
+          onClick={() => navigate(`/board/${board._id}`)}
         />
 
         <Chip
           sx={{
             ...menuStyle,
-            bgcolor: index === 1 ? '#e9f2ff' : 'transparent',
-            color: index !== 1 && 'white',
-            '&:hover': { bgcolor: index === 1 && '#e9f2ff' }
+            bgcolor: displayType === 'table' ? '#e9f2ff' : 'transparent',
+            color: displayType !== 'table' && 'white',
+            '&:hover': { bgcolor: displayType === 'table' && '#e9f2ff' }
           }}
           label='Table'
           clickable
           icon={<TableChartOutlinedIcon color='white' fontSize='small' />}
-          onClick={() => boardDisPlay(1)}
+          onClick={() => navigate(`/table/${board._id}`)}
         />
 
         <Chip
           sx={{
             ...menuStyle,
-            bgcolor: index === 2 ? '#e9f2ff' : 'transparent',
-            color: index !== 2 && 'white',
-            '&:hover': { bgcolor: index === 2 && '#e9f2ff' }
+            bgcolor: displayType === 'dashboard' ? '#e9f2ff' : 'transparent',
+            color: displayType !== 'dashboard' && 'white',
+            '&:hover': { bgcolor: displayType === 'dashboard' && '#e9f2ff' }
           }}
           label='DashBoard'
           clickable
           icon={<InsertChartOutlinedOutlinedIcon color='white' fontSize='small' />}
-          onClick={() => boardDisPlay(2)}
+          onClick={() => navigate(`/dashboard/${board._id}`)}
         />
 
         <Chip
           sx={{
             ...menuStyle,
-            bgcolor: index === 3 ? '#e9f2ff' : 'transparent',
-            color: index !== 3 && 'white',
-            '&:hover': { bgcolor: index === 3 && '#e9f2ff' }
+            bgcolor: displayType === 'issue' ? '#e9f2ff' : 'transparent',
+            color: displayType !== 'issue' && 'white',
+            '&:hover': { bgcolor: displayType === 'issue' && '#e9f2ff' }
           }}
           label='Issues'
           clickable
           icon={<AdjustOutlinedIcon color='white' fontSize='small' />}
-          onClick={() => boardDisPlay(3)}
+          onClick={() => navigate(`/issue/${board._id}`)}
         />
       </Box>
 

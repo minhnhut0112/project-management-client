@@ -1,15 +1,16 @@
 import { fetchBoardDetailsAPI } from '@/apis/boards.api'
 import { generatePlaceholderCard } from '@/utils/formatters'
 import { mapOrder } from '@/utils/sorts'
-import { Box, LinearProgress } from '@mui/material'
-import Container from '@mui/material/Container'
+import { Box, Container, LinearProgress } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import BoardContent from './BoardContent/BoardContent'
+import AllIssue from './AllIssue/AllIssue'
+import NewIssue from './NewIssue/NewIssue'
+import IssueDetails from './IssueDetails/IssueDetails'
 
-const Board = () => {
+const Issue = () => {
   const [board, setBoard] = useState(null)
 
   const { id } = useParams()
@@ -35,6 +36,17 @@ const Board = () => {
     }
   }, [boardQuery.data])
 
+  const [index, setIndex] = useState(0)
+  const [issueDetail, setIssueDetails] = useState(null)
+
+  const handleClickDetails = (data) => {
+    setIssueDetails(data)
+  }
+
+  const handleChangeIndex = (value) => {
+    setIndex(value)
+  }
+
   return (
     <Container
       disableGutters
@@ -49,10 +61,30 @@ const Board = () => {
             backgroundImage: `url(${board?.cover})`,
             width: '100%',
             backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            backgroundPosition: 'center',
+            p: 2,
+            height: (theme) => theme.todolist.boardContentHeight
           }}
         >
-          <BoardContent board={board} boardId={board._id} />
+          <Box
+            sx={{
+              height: '100%',
+              bgcolor: '#ffffff',
+              overflow: 'auto',
+              borderRadius: '5px',
+              p: '40px 300px 40px 300px'
+            }}
+          >
+            <Box>
+              {index === 0 && (
+                <AllIssue handleChangeIndex={handleChangeIndex} board={board} handleClickDetails={handleClickDetails} />
+              )}
+              {index === 1 && <NewIssue handleChangeIndex={handleChangeIndex} board={board} />}
+              {index === 2 && (
+                <IssueDetails handleChangeIndex={handleChangeIndex} board={board} issueid={issueDetail} />
+              )}
+            </Box>
+          </Box>
         </Box>
       ) : (
         <Box
@@ -67,4 +99,4 @@ const Board = () => {
   )
 }
 
-export default Board
+export default Issue

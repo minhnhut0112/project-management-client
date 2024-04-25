@@ -135,11 +135,15 @@ export default function BasicBars({ board }) {
             <Typography variant='h6' sx={{ fontSize: '18px' }}>
               Card per list
             </Typography>
-            <BarChart
-              height={490}
-              series={[{ data: cardPerList, color: '#54a0ff' }]}
-              xAxis={[{ data: columnsTitle, scaleType: 'band' }]}
-            />
+            {!!cardPerList.length && !!columnsTitle.length ? (
+              <BarChart
+                height={490}
+                series={[{ data: cardPerList, color: '#54a0ff' }]}
+                xAxis={[{ data: columnsTitle, scaleType: 'band' }]}
+              />
+            ) : (
+              <Box sx={{ height: 490 }}>No data</Box>
+            )}
           </Box>
         </Grid>
         <Grid item md={6}>
@@ -147,11 +151,15 @@ export default function BasicBars({ board }) {
             <Typography variant='h6' sx={{ fontSize: '18px' }}>
               Card per due date
             </Typography>
-            <BarChart
-              height={490}
-              series={[{ data: cardPerDueDate }]}
-              xAxis={[{ data: dueDateStatus, scaleType: 'band' }]}
-            />
+            {!!cardPerDueDate.length && !!dueDateStatus.length ? (
+              <BarChart
+                height={490}
+                series={[{ data: cardPerDueDate }]}
+                xAxis={[{ data: dueDateStatus, scaleType: 'band' }]}
+              />
+            ) : (
+              <Box sx={{ height: 490 }}>No data</Box>
+            )}
           </Box>
         </Grid>
         <Grid item md={6}>
@@ -159,11 +167,15 @@ export default function BasicBars({ board }) {
             <Typography variant='h6' sx={{ fontSize: '18px' }}>
               Card per member
             </Typography>
-            <BarChart
-              height={490}
-              series={[{ data: cardPerMember.map((s) => s.count), color: '#273c75' }]}
-              xAxis={[{ data: memberUsername.map((username) => getFullNameByUsername(username)), scaleType: 'band' }]}
-            />
+            {!!cardPerMember.length && !!memberUsername.length ? (
+              <BarChart
+                height={490}
+                series={[{ data: cardPerMember.map((s) => s.count), color: '#273c75' }]}
+                xAxis={[{ data: memberUsername.map((username) => getFullNameByUsername(username)), scaleType: 'band' }]}
+              />
+            ) : (
+              <Box sx={{ height: 490 }}>No data</Box>
+            )}
           </Box>
         </Grid>
         <Grid item md={6}>
@@ -171,11 +183,15 @@ export default function BasicBars({ board }) {
             <Typography variant='h6' sx={{ fontSize: '18px' }}>
               Card per label
             </Typography>
-            <BarChart
-              height={490}
-              series={[{ data: cardPerLabel.map((s) => s.count), color: '#81ecec' }]}
-              xAxis={[{ data: labelIds.map((label) => getLabelNameById(label)), scaleType: 'band' }]}
-            />
+            {!!cardPerLabel.length && !!labelIds.length ? (
+              <BarChart
+                height={490}
+                series={[{ data: cardPerLabel.map((s) => s.count), color: '#81ecec' }]}
+                xAxis={[{ data: labelIds.map((label) => getLabelNameById(label)), scaleType: 'band' }]}
+              />
+            ) : (
+              <Box sx={{ height: 490 }}>No data</Box>
+            )}
           </Box>
         </Grid>
       </Grid>

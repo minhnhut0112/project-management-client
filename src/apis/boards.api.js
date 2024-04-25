@@ -75,3 +75,18 @@ export const uploadCoverAPI = async (id, data) => {
   })
   return res.data
 }
+
+export const createNewIssueAPI = async (id, data) => {
+  const res = await http.post(`v1/boards/${id}/issues`, data)
+  return res.data
+}
+
+export const updateIssueAPI = async (id, data) => {
+  const res = await http.put(`v1/boards/${id}/issues`, data)
+  return res.data
+}
+
+export const editIssueAPI = async (id, data) => {
+  const res = await http.patch(`v1/boards/${id}/issues`, data)
+  return res.data
+}
