@@ -50,6 +50,7 @@ const ConfirmSignIn = () => {
 
       if (invited) {
         navigate(`/board/${invited?.boardId}`)
+        toast.success('You have successfully joined the board')
       }
     }
   })

@@ -1,10 +1,15 @@
+import { createNewCardAPI } from '@/apis/cards.api'
+import { archiveAllCardAPI, deleteColumnAPI, updateColumnAPI } from '@/apis/columns.api'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined'
-import ContentCopy from '@mui/icons-material/ContentCopy'
-import ContentCut from '@mui/icons-material/ContentCut'
-import ContentPaste from '@mui/icons-material/ContentPaste'
+import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
+import CloseIcon from '@mui/icons-material/Close'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import DragHandleOutlinedIcon from '@mui/icons-material/DragHandleOutlined'
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import SortIcon from '@mui/icons-material/Sort'
 import { Button, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
@@ -14,16 +19,12 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import { useEffect, useState } from 'react'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import CloseIcon from '@mui/icons-material/Close'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createNewCardAPI } from '@/apis/cards.api'
 import { useConfirm } from 'material-ui-confirm'
-import { deleteColumnAPI, updateColumnAPI } from '@/apis/columns.api'
-import ListCards from '../../ListCards/ListCards'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import ListCards from '../../ListCards/ListCards'
+import ConfirmationPopover from '@/components/ConfirmationPopover/ConfirmationPopover'
 
 const Column = ({ column }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -40,6 +41,8 @@ const Column = ({ column }) => {
   }
 
   const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorElArchive, setAnchorElArchive] = useState(null)
+
   const open = Boolean(anchorEl)
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleClose = () => setAnchorEl(null)
@@ -52,6 +55,7 @@ const Column = ({ column }) => {
   const [newCardTitle, setNewCardTitle] = useState('')
 
   const toggleOpenNewCardForm = () => {
+    handleClose()
     setNewCardTitle('')
     setOpenNewCardForm(!openNewCardForm)
   }
@@ -110,7 +114,8 @@ const Column = ({ column }) => {
   }
 
   const mutionEditColumnTitle = useMutation({
-    mutationFn: (data) => updateColumnAPI(column._id, data)
+    mutationFn: (data) => updateColumnAPI(column._id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
   })
 
   const editColumnTitle = () => {
@@ -120,18 +125,32 @@ const Column = ({ column }) => {
       return
     }
 
-    mutionEditColumnTitle.mutate(
-      {
-        title: newColumnTitle
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['board'] })
-        }
-      }
-    )
+    mutionEditColumnTitle.mutate({
+      title: newColumnTitle
+    })
 
     toggleOpenNewColumnTitleForm()
+  }
+
+  const mutionArchiveList = useMutation({
+    mutationFn: (data) => updateColumnAPI(column._id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
+  })
+
+  const handleArchiveList = () => {
+    mutionArchiveList.mutate({
+      _destroy: true
+    })
+  }
+
+  const mutionArchiveAllCardInList = useMutation({
+    mutationFn: () => archiveAllCardAPI(column._id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
+  })
+
+  const handleArchiveAllCardInList = () => {
+    mutionArchiveAllCardInList.mutate()
+    handleClose()
   }
 
   return (
@@ -219,7 +238,6 @@ const Column = ({ column }) => {
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
-              onClick={handleClose}
               MenuListProps={{
                 'aria-labelledby': 'basic-column-dropdown'
               }}
@@ -240,24 +258,73 @@ const Column = ({ column }) => {
                 </ListItemIcon>
                 <ListItemText>Add new cart</ListItemText>
               </MenuItem>
-              <MenuItem>
-                <ListItemIcon>
-                  <ContentCut fontSize='small' />
+              <Divider />
+
+              <MenuItem
+                sx={{
+                  '&:hover': {
+                    color: 'primary.main',
+                    '& .add-icon': {
+                      color: 'primary.main'
+                    }
+                  }
+                }}
+              >
+                <ListItemIcon className='add-icon'>
+                  <SortIcon fontSize='small' />
                 </ListItemIcon>
-                <ListItemText>Cut</ListItemText>
+                <ListItemText>Sort by</ListItemText>
               </MenuItem>
-              <MenuItem>
-                <ListItemIcon>
-                  <ContentCopy fontSize='small' />
+              <Divider />
+
+              <MenuItem
+                onClick={(event) => {
+                  setAnchorElArchive(event.currentTarget)
+                }}
+                sx={{
+                  '&:hover': {
+                    color: 'primary.main',
+                    '& .add-icon': {
+                      color: 'primary.main'
+                    }
+                  }
+                }}
+              >
+                <ListItemIcon className='add-icon'>
+                  <ArchiveOutlinedIcon fontSize='small' />
                 </ListItemIcon>
-                <ListItemText>Copy</ListItemText>
+                <ListItemText>Archive all cards in this list</ListItemText>
               </MenuItem>
-              <MenuItem>
-                <ListItemIcon>
-                  <ContentPaste fontSize='small' />
+
+              <ConfirmationPopover
+                title='Archive all cards in this list?'
+                description='This will remove all the cards in this list from the board. To view archived cards and bring them back to the board, click “Menu” > “Archived Items.”'
+                open={Boolean(anchorElArchive)}
+                anchorEl={anchorElArchive}
+                handleClose={() => {
+                  setAnchorElArchive(null)
+                }}
+                onConfirm={handleArchiveAllCardInList}
+                button='Archive all'
+              />
+
+              <MenuItem
+                sx={{
+                  '&:hover': {
+                    color: 'primary.main',
+                    '& .add-icon': {
+                      color: 'primary.main'
+                    }
+                  }
+                }}
+                onClick={handleArchiveList}
+              >
+                <ListItemIcon className='add-icon'>
+                  <Inventory2OutlinedIcon fontSize='small' />
                 </ListItemIcon>
-                <ListItemText>Paste</ListItemText>
+                <ListItemText>Archive this list</ListItemText>
               </MenuItem>
+
               <Divider />
               <MenuItem
                 sx={{
@@ -310,7 +377,6 @@ const Column = ({ column }) => {
                 type='text'
                 autoFocus
                 data-no-dnd='true'
-                onBlur={() => setOpenNewColumnTitleForm(false)}
                 value={newCardTitle}
                 onChange={(e) => setNewCardTitle(e.target.value)}
                 size='small'

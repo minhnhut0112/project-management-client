@@ -6,16 +6,14 @@ import StarRateIcon from '@mui/icons-material/StarRate'
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createBoardAPI, fetchAllBoardsAPI } from '@/apis/boards.api'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import FormControl from '@mui/material/FormControl'
-import Select from '@mui/material/Select'
 import ImageList from '@mui/material/ImageList'
 import ImageListItem from '@mui/material/ImageListItem'
 import { ReactComponent as boardbg } from '@/assets/trello.board.bg.svg'
 import IconButton from '@mui/material/IconButton'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserAPI, removeStarredBoardAPI, updateRecentBoardAPI, updateStarredBoardAPI } from '@/apis/users.api'
+import { loginUser } from '@/redux/userSile'
 
 const itemData = [
   {
@@ -54,11 +52,15 @@ const itemData = [
 
 const Boards = () => {
   const navigate = useNavigate()
-  const [checked, setChecked] = useState(false)
   const [boards, setBoards] = useState(null)
   const [imageSrc, setImageSrc] = useState(itemData[0].img)
+  const [starredIds, setStarredIds] = useState([])
 
   const user = useSelector((state) => state.user.auth)
+
+  useEffect(() => {
+    setStarredIds(user?.starredIds)
+  }, [user])
 
   // useEffect(() => {
   //   if (!user) {
@@ -66,16 +68,17 @@ const Boards = () => {
   //   }
   // }, [navigate, user])
 
-  const handleCheckboxClick = () => {
-    setChecked(!checked)
-  }
-
-  const boardsQuery = useQuery({ queryKey: ['boards', user?._id], queryFn: () => fetchAllBoardsAPI(user?._id) })
+  const boardsQuery = useQuery({
+    queryKey: ['boards', user?._id],
+    queryFn: async () => {
+      if (!user?._id) return []
+      return await fetchAllBoardsAPI(user?._id)
+    }
+  })
 
   useEffect(() => {
     if (boardsQuery.data) {
       setBoards(boardsQuery.data)
-      setChecked(boardsQuery.data.starred)
     }
   }, [boardsQuery.data])
 
@@ -90,12 +93,10 @@ const Boards = () => {
   }
 
   const [newBoardTitle, setNewBoardTitle] = useState('')
-  const [visibility, setVisibility] = useState('public')
 
   const handleClose = () => {
     setAnchorEl(null)
     setNewBoardTitle('')
-    setVisibility('public')
     setImageSrc(itemData[0].img)
     document.body.focus()
   }
@@ -103,15 +104,12 @@ const Boards = () => {
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
 
-  const handleChange = (event) => {
-    setVisibility(event.target.value)
-  }
-
   const queryClient = useQueryClient()
 
   const mutionCreateBoard = useMutation({
     mutationFn: (data) => createBoardAPI(data),
     onSuccess: (data) => {
+      mutionUpdateRecentBoard.mutate({ boardId: data?._id })
       navigate(`/board/${data?._id}`)
       queryClient.invalidateQueries({ queryKey: ['boards'] })
     }
@@ -122,8 +120,57 @@ const Boards = () => {
       handleClose()
       return
     }
-    mutionCreateBoard.mutate({ title: newBoardTitle, type: visibility, cover: imageSrc, ownerId: user._id })
+    mutionCreateBoard.mutate({ title: newBoardTitle, cover: imageSrc, ownerId: user._id })
     handleClose()
+  }
+
+  const mutionUpdateRecentBoard = useMutation({
+    mutationFn: (data) => updateRecentBoardAPI(user._id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['boardRecent'] })
+    }
+  })
+
+  const handleNavigateBoard = (event, boardId) => {
+    if (!event.target.closest('input[type="checkbox"]')) {
+      mutionUpdateRecentBoard.mutate({ boardId: boardId })
+      navigate(`/board/${boardId}`)
+    }
+  }
+
+  const disPatch = useDispatch()
+
+  const handleGetDetailsUser = async (id, accessToken) => {
+    const res = await getUserAPI(id)
+    disPatch(loginUser({ ...res, accessToken: accessToken }))
+  }
+
+  const mutionUpdateStarredBoard = useMutation({
+    mutationFn: (data) => updateStarredBoardAPI(user._id, data),
+    onSuccess: (data) => {
+      setStarredIds(data.starredIds)
+      const accessToken = user?.accessToken || localStorage.getItem('accessToken')
+      handleGetDetailsUser(user._id, accessToken)
+      queryClient.invalidateQueries({ queryKey: ['boardStarred'] })
+    }
+  })
+
+  const mutionRemoveStarredBoard = useMutation({
+    mutationFn: (data) => removeStarredBoardAPI(user._id, data),
+    onSuccess: (data) => {
+      setStarredIds(data.starredIds)
+      const accessToken = user?.accessToken || localStorage.getItem('accessToken')
+      handleGetDetailsUser(user._id, accessToken)
+      queryClient.invalidateQueries({ queryKey: ['boardStarred'] })
+    }
+  })
+
+  const updateStarredBoard = (boardId) => {
+    if (starredIds?.includes(boardId)) {
+      mutionRemoveStarredBoard.mutate({ boardId: boardId })
+    } else {
+      mutionUpdateStarredBoard.mutate({ boardId: boardId })
+    }
   }
 
   return (
@@ -146,7 +193,7 @@ const Boards = () => {
             item
             xs={6}
             md={2.5}
-            onClick={(event) => !event.target.closest('input[type="checkbox"]') && navigate(`/board/${board._id}`)}
+            onClick={(e) => handleNavigateBoard(e, board._id)}
           >
             <Typography
               sx={{
@@ -161,10 +208,10 @@ const Boards = () => {
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'end' }}>
               <Checkbox
+                onChange={() => updateStarredBoard(board?._id)}
                 sx={{ color: 'white' }}
                 icon={<StarBorderIcon />}
-                checked={board?.starred}
-                onClick={handleCheckboxClick}
+                checked={starredIds?.includes(board._id)}
                 checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />}
               />
             </Box>
@@ -267,23 +314,7 @@ const Boards = () => {
                   label='Enter board title'
                   size='small'
                 ></TextField>
-                <Box sx={{ width: '100%', mt: 2 }}>
-                  <FormControl fullWidth>
-                    <InputLabel defaultValue='Public' size='small' id='demo-simple-select-label'>
-                      Visibility
-                    </InputLabel>
-                    <Select
-                      size='small'
-                      labelId='demo-simple-select-label'
-                      id='demo-simple-select'
-                      value={visibility}
-                      label='Visibility'
-                      onChange={handleChange}
-                    >
-                      <MenuItem value='public'>Public</MenuItem>
-                      <MenuItem value='private'>Private</MenuItem>
-                    </Select>
-                  </FormControl>
+                <Box sx={{ width: '100%' }}>
                   <Button
                     disabled={!imageSrc || !newBoardTitle}
                     sx={{ width: '100%', mt: 2 }}
@@ -318,7 +349,7 @@ const Boards = () => {
                 item
                 xs={6}
                 md={2.5}
-                onClick={(event) => !event.target.closest('input[type="checkbox"]') && navigate(`/board/${board._id}`)}
+                onClick={(e) => handleNavigateBoard(e, board._id)}
               >
                 <Typography
                   sx={{
@@ -335,8 +366,8 @@ const Boards = () => {
                   <Checkbox
                     sx={{ color: 'white' }}
                     icon={<StarBorderIcon />}
-                    checked={board?.starred}
-                    onClick={handleCheckboxClick}
+                    checked={starredIds?.includes(board._id)}
+                    onChange={() => updateStarredBoard(board?._id)}
                     checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />}
                   />
                 </Box>

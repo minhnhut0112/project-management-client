@@ -2,11 +2,9 @@ import Box from '@mui/material/Box'
 import { ReactComponent as LogoApp } from '@/assets/trello.svg'
 import { SvgIcon, Typography } from '@mui/material'
 import AppsIcon from '@mui/icons-material/Apps'
-import WorkSpaces from './Menu/WorkSpaces'
 import Recent from './Menu/Recent'
 import Starred from './Menu/Starred'
-import Button from '@mui/material/Button'
-import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined'
+
 import TextField from '@mui/material/TextField'
 
 import Profile from './Menu/Profile'
@@ -15,6 +13,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Notification from './Notifications'
+import Create from './Menu/Create'
 
 const AppBar = () => {
   const [searchValue, setSearchValue] = useState('')
@@ -57,15 +56,10 @@ const AppBar = () => {
           </Typography>
         </Box>
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
-          <WorkSpaces />
+          {/* <WorkSpaces /> */}
           <Recent />
           <Starred />
-          <Button
-            sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }}
-            startIcon={<LibraryAddOutlinedIcon />}
-          >
-            Create
-          </Button>
+          <Create />
         </Box>
       </Box>
 

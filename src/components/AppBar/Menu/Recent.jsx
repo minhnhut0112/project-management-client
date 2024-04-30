@@ -1,17 +1,13 @@
-import { useState } from 'react'
+import { getRecentBoard } from '@/apis/users.api'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { Avatar, Popover } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import Divider from '@mui/material/Divider'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemIcon from '@mui/material/ListItemIcon'
 import Typography from '@mui/material/Typography'
-import ContentCut from '@mui/icons-material/ContentCut'
-import ContentCopy from '@mui/icons-material/ContentCopy'
-import ContentPaste from '@mui/icons-material/ContentPaste'
-import Cloud from '@mui/icons-material/Cloud'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 const Recent = () => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -22,6 +18,34 @@ const Recent = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
+
+  const user = useSelector((state) => state.user.auth)
+  const userId = user?._id
+
+  const [recentBoards, setRecentBoards] = useState([])
+
+  const boardQuery = useQuery({
+    queryKey: ['boardRecent', userId],
+    queryFn: async () => {
+      if (!userId) return []
+      return await getRecentBoard(userId)
+    }
+  })
+
+  useEffect(() => {
+    if (boardQuery.data) {
+      const boardData = boardQuery.data
+      setRecentBoards(boardData)
+    }
+  }, [boardQuery.data])
+
+  const navigate = useNavigate()
+
+  const handleNavigate = (boardId) => {
+    navigate(`/board/${boardId}`)
+    setAnchorEl(null)
+  }
+
   return (
     <Box>
       <Button
@@ -35,50 +59,42 @@ const Recent = () => {
       >
         Recent
       </Button>
-      <Menu
-        id='basic-menu-recent'
-        anchorEl={anchorEl}
+      <Popover
         open={open}
+        anchorEl={anchorEl}
         onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button-recent'
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left'
         }}
       >
-        <MenuItem>
-          <ListItemIcon>
-            <ContentCut fontSize='small' />
-          </ListItemIcon>
-          <ListItemText>Cut</ListItemText>
-          <Typography variant='body2' color='text.secondary'>
-            ⌘X
-          </Typography>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ContentCopy fontSize='small' />
-          </ListItemIcon>
-          <ListItemText>Copy</ListItemText>
-          <Typography variant='body2' color='text.secondary'>
-            ⌘C
-          </Typography>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ContentPaste fontSize='small' />
-          </ListItemIcon>
-          <ListItemText>Paste</ListItemText>
-          <Typography variant='body2' color='text.secondary'>
-            ⌘V
-          </Typography>
-        </MenuItem>
-        <Divider />
-        <MenuItem>
-          <ListItemIcon>
-            <Cloud fontSize='small' />
-          </ListItemIcon>
-          <ListItemText>Web Clipboard</ListItemText>
-        </MenuItem>
-      </Menu>
+        <Box sx={{ width: 250, p: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {recentBoards?.slice(0, 5)?.map((board) => (
+            <Box
+              key={board._id}
+              onClick={() => handleNavigate(board._id)}
+              sx={{
+                display: 'flex',
+                gap: 1,
+                cursor: 'pointer',
+                '&:hover': {
+                  bgcolor: '#f5f5f5'
+                },
+                p: 0.5
+              }}
+            >
+              <Avatar src={board?.cover} sx={{ width: 50, height: 40 }} variant='rounded' />
+              <Typography variant='body' sx={{ mt: 0.25, fontSize: '16px', fontWeight: 500 }}>
+                {board?.title}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      </Popover>
     </Box>
   )
 }

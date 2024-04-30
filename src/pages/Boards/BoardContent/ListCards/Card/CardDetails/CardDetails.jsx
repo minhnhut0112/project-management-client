@@ -27,6 +27,7 @@ import Comments from './Comments/Comments'
 import JoinChip from './JoinChip/JoinChip'
 import { useSelector } from 'react-redux'
 import Activity from './Activity/Activity'
+import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
 
 const chipStyle = {
   fontSize: '15px',
@@ -78,6 +79,17 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
 
   const handleConfirm = () => {
     mutionDeleteCard.mutate(card._id)
+  }
+
+  const mutionArchiveCard = useMutation({
+    mutationFn: (data) => updateCardAPI(card._id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
+  })
+
+  const handleArchiveCard = () => {
+    mutionArchiveCard.mutate({
+      _destroy: true
+    })
   }
 
   return (
@@ -252,6 +264,17 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                   <AttachmentsPopover card={card} />
                   <CheckListChip card={card} />
                   <Typography>Actions</Typography>
+
+                  <Chip
+                    onClick={handleArchiveCard}
+                    icon={<ArchiveOutlinedIcon />}
+                    sx={{
+                      ...chipStyle
+                    }}
+                    label='Archive'
+                    clickable
+                    variant='outlined'
+                  />
 
                   <Chip
                     onClick={(event) => {

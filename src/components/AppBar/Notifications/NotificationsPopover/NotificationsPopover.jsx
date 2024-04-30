@@ -1,22 +1,27 @@
-import { Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import Popover from '@mui/material/Popover'
 
 const NotificationsPopover = ({ anchorEl, handleClose, id, open }) => {
   return (
-    <div>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left'
-        }}
-      >
+    <Popover
+      id={id}
+      open={open}
+      anchorEl={anchorEl}
+      onClose={handleClose}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'center'
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'left'
+      }}
+      sx={{ mt: 2, boxShadow: 'none' }}
+    >
+      <Box sx={{ width: 400 }}>
         <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
-      </Popover>
-    </div>
+      </Box>
+    </Popover>
   )
 }
 

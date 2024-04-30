@@ -19,6 +19,9 @@ import { mapOrder } from '@/utils/sorts'
 import { isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '@/utils/formatters'
 import { io } from 'socket.io-client'
+import { getUserAPI, removeStarredBoardAPI, updateStarredBoardAPI } from '@/apis/users.api'
+import { useDispatch, useSelector } from 'react-redux'
+import { loginUser } from '@/redux/userSile'
 
 const menuStyle = {
   bgcolor: 'transparent',
@@ -35,9 +38,7 @@ const BoardBar = () => {
 
   const location = useLocation()
 
-  // Lấy path từ location
   const path = location.pathname
-  // Tách chuỗi path để lấy phần trước issueId
   const parts = path.split('/')
   const displayType = parts[parts.length - 2]
 
@@ -64,9 +65,16 @@ const BoardBar = () => {
     }
   }, [boardQuery.data])
 
+  const user = useSelector((state) => state.user.auth)
+
   const [openNewBoardTitleForm, setOpenNewBoardTitleForm] = useState(false)
   const [newBoardTitle, setNewBoardTitle] = useState('')
+  const [starredIds, setStarredIds] = useState([])
   const [chipWidth, setChipWidth] = useState(null)
+
+  useEffect(() => {
+    setStarredIds(user?.starredIds)
+  }, [user])
 
   useEffect(() => {
     const chipElement = document.getElementById('boardChip')
@@ -102,6 +110,41 @@ const BoardBar = () => {
     })
 
     setOpenNewBoardTitleForm(false)
+  }
+
+  const disPatch = useDispatch()
+
+  const handleGetDetailsUser = async (id, accessToken) => {
+    const res = await getUserAPI(id)
+    disPatch(loginUser({ ...res, accessToken: accessToken }))
+  }
+
+  const mutionUpdateStarredBoard = useMutation({
+    mutationFn: (data) => updateStarredBoardAPI(user._id, data),
+    onSuccess: (data) => {
+      setStarredIds(data.starredIds)
+      const accessToken = user?.accessToken || localStorage.getItem('accessToken')
+      handleGetDetailsUser(user._id, accessToken)
+      queryClient.invalidateQueries({ queryKey: ['boardStarred'] })
+    }
+  })
+
+  const mutionRemoveStarredBoard = useMutation({
+    mutationFn: (data) => removeStarredBoardAPI(user._id, data),
+    onSuccess: (data) => {
+      setStarredIds(data.starredIds)
+      const accessToken = user?.accessToken || localStorage.getItem('accessToken')
+      handleGetDetailsUser(user._id, accessToken)
+      queryClient.invalidateQueries({ queryKey: ['boardStarred'] })
+    }
+  })
+
+  const updateStarredBoard = () => {
+    if (starredIds?.includes(board._id)) {
+      mutionRemoveStarredBoard.mutate({ boardId: board._id })
+    } else {
+      mutionUpdateStarredBoard.mutate({ boardId: board._id })
+    }
   }
 
   const navigate = useNavigate()
@@ -206,147 +249,151 @@ const BoardBar = () => {
     })
   }, [queryClient])
 
-  if (!board) return
-
   return (
-    <Box
-      sx={{
-        height: (theme) => theme.todolist.boardBarHeight,
-        width: '100%',
-        paddingX: 2,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 2,
-        overflowX: 'auto',
-        backdropFilter: blur(1),
-        background: '#0000003d',
-        // bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#576574' : '#dfe6e9')
-        // backdropFilter: 'blur(20px)',
-        backgroundImage: `url(${board?.cover})`
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        {openNewBoardTitleForm ? (
-          <Box
-            as='form'
-            onSubmit={(e) => {
-              e.preventDefault()
-              editBoardTitle()
-            }}
-          >
-            <TextField
-              type='text'
-              value={newBoardTitle}
-              onBlur={editBoardTitle}
-              autoFocus
-              data-no-dnd='true'
-              onChange={(e) => setNewBoardTitle(e.target.value)}
-              size='small'
-              sx={{
-                color: 'white',
-                width: `${chipWidth}px`,
-                '& label': {
-                  color: 'white'
-                },
+    <Box>
+      {board && (
+        <Box
+          sx={{
+            height: (theme) => theme.todolist.boardBarHeight,
+            width: '100%',
+            paddingX: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 2,
+            overflowX: 'auto',
+            backdropFilter: blur(1),
+            background: '#0000003d',
+            // bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#576574' : '#dfe6e9')
+            // backdropFilter: 'blur(20px)',
+            backgroundImage: `url(${board?.cover})`
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {openNewBoardTitleForm ? (
+              <Box
+                as='form'
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  editBoardTitle()
+                }}
+              >
+                <TextField
+                  type='text'
+                  value={newBoardTitle}
+                  onBlur={editBoardTitle}
+                  autoFocus
+                  data-no-dnd='true'
+                  onChange={(e) => setNewBoardTitle(e.target.value)}
+                  size='small'
+                  sx={{
+                    color: 'white',
+                    width: `${chipWidth}px`,
+                    '& label': {
+                      color: 'white'
+                    },
 
-                '& label.Mui-focused': {
-                  bgcolor: 'white'
-                },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: (theme) => theme.palette.primary.main },
-                  '&:hover fieldset': { borderColor: (theme) => theme.palette.primary.main },
-                  '&.Mui-focused fieldset': { borderColor: (theme) => theme.palette.primary.main }
-                },
-                '& .MuiOutlinedInput-input': {
-                  borderRadius: 1,
-                  bgcolor: 'white'
-                }
+                    '& label.Mui-focused': {
+                      bgcolor: 'white'
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                      '&:hover fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                      '&.Mui-focused fieldset': { borderColor: (theme) => theme.palette.primary.main }
+                    },
+                    '& .MuiOutlinedInput-input': {
+                      borderRadius: 1,
+                      bgcolor: 'white'
+                    }
+                  }}
+                />
+              </Box>
+            ) : (
+              <Chip
+                id='boardChip'
+                sx={{ ...menuStyle, fontWeight: 'bold', fontSize: '18px' }}
+                label={newBoardTitle}
+                clickable
+                icon={<DashboardIcon color='white' fontSize='small' />}
+                onClick={() => setOpenNewBoardTitleForm(true)}
+              />
+            )}
+
+            <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+              <Checkbox
+                checked={starredIds?.includes(board._id)}
+                onChange={updateStarredBoard}
+                icon={<StarBorderIcon sx={{ color: 'white' }} />}
+                checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />}
+              />
+            </Box>
+
+            <Chip
+              sx={{
+                ...menuStyle,
+                bgcolor: displayType === 'board' ? '#e9f2ff' : 'transparent',
+                color: displayType !== 'board' && 'white',
+                '&:hover': { bgcolor: displayType === 'board' && '#e9f2ff' }
               }}
+              label='Board'
+              clickable
+              icon={<ViewKanbanOutlinedIcon color='white' fontSize='small' />}
+              onClick={() => navigate(`/board/${board._id}`)}
+            />
+
+            <Chip
+              sx={{
+                ...menuStyle,
+                bgcolor: displayType === 'table' ? '#e9f2ff' : 'transparent',
+                color: displayType !== 'table' && 'white',
+                '&:hover': { bgcolor: displayType === 'table' && '#e9f2ff' }
+              }}
+              label='Table'
+              clickable
+              icon={<TableChartOutlinedIcon color='white' fontSize='small' />}
+              onClick={() => navigate(`/table/${board._id}`)}
+            />
+
+            <Chip
+              sx={{
+                ...menuStyle,
+                bgcolor: displayType === 'dashboard' ? '#e9f2ff' : 'transparent',
+                color: displayType !== 'dashboard' && 'white',
+                '&:hover': { bgcolor: displayType === 'dashboard' && '#e9f2ff' }
+              }}
+              label='DashBoard'
+              clickable
+              icon={<InsertChartOutlinedOutlinedIcon color='white' fontSize='small' />}
+              onClick={() => navigate(`/dashboard/${board._id}`)}
+            />
+
+            <Chip
+              sx={{
+                ...menuStyle,
+                bgcolor: displayType === 'issue' ? '#e9f2ff' : 'transparent',
+                color: displayType !== 'issue' && 'white',
+                '&:hover': { bgcolor: displayType === 'issue' && '#e9f2ff' }
+              }}
+              label='Issues'
+              clickable
+              icon={<AdjustOutlinedIcon color='white' fontSize='small' />}
+              onClick={() => navigate(`/issue/${board._id}`)}
             />
           </Box>
-        ) : (
-          <Chip
-            id='boardChip'
-            sx={{ ...menuStyle, fontWeight: 'bold', fontSize: '18px' }}
-            label={newBoardTitle}
-            clickable
-            icon={<DashboardIcon color='white' fontSize='small' />}
-            onClick={() => setOpenNewBoardTitleForm(true)}
-          />
-        )}
 
-        <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-          <Checkbox
-            icon={<StarBorderIcon sx={{ color: 'white' }} />}
-            checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />}
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* <Chip sx={menuStyle} label='Add to Drive' clickable icon={<AddToDriveIcon />} /> */}
+
+            <span>|</span>
+
+            <BoardUser board={board} />
+
+            <InviteButon board={board} />
+
+            <BoardMenu board={board} />
+          </Box>
         </Box>
-
-        <Chip
-          sx={{
-            ...menuStyle,
-            bgcolor: displayType === 'board' ? '#e9f2ff' : 'transparent',
-            color: displayType !== 'board' && 'white',
-            '&:hover': { bgcolor: displayType === 'board' && '#e9f2ff' }
-          }}
-          label='Board'
-          clickable
-          icon={<ViewKanbanOutlinedIcon color='white' fontSize='small' />}
-          onClick={() => navigate(`/board/${board._id}`)}
-        />
-
-        <Chip
-          sx={{
-            ...menuStyle,
-            bgcolor: displayType === 'table' ? '#e9f2ff' : 'transparent',
-            color: displayType !== 'table' && 'white',
-            '&:hover': { bgcolor: displayType === 'table' && '#e9f2ff' }
-          }}
-          label='Table'
-          clickable
-          icon={<TableChartOutlinedIcon color='white' fontSize='small' />}
-          onClick={() => navigate(`/table/${board._id}`)}
-        />
-
-        <Chip
-          sx={{
-            ...menuStyle,
-            bgcolor: displayType === 'dashboard' ? '#e9f2ff' : 'transparent',
-            color: displayType !== 'dashboard' && 'white',
-            '&:hover': { bgcolor: displayType === 'dashboard' && '#e9f2ff' }
-          }}
-          label='DashBoard'
-          clickable
-          icon={<InsertChartOutlinedOutlinedIcon color='white' fontSize='small' />}
-          onClick={() => navigate(`/dashboard/${board._id}`)}
-        />
-
-        <Chip
-          sx={{
-            ...menuStyle,
-            bgcolor: displayType === 'issue' ? '#e9f2ff' : 'transparent',
-            color: displayType !== 'issue' && 'white',
-            '&:hover': { bgcolor: displayType === 'issue' && '#e9f2ff' }
-          }}
-          label='Issues'
-          clickable
-          icon={<AdjustOutlinedIcon color='white' fontSize='small' />}
-          onClick={() => navigate(`/issue/${board._id}`)}
-        />
-      </Box>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        {/* <Chip sx={menuStyle} label='Add to Drive' clickable icon={<AddToDriveIcon />} /> */}
-
-        <span>|</span>
-
-        <BoardUser board={board} />
-
-        <InviteButon board={board} />
-
-        <BoardMenu board={board} />
-      </Box>
+      )}
     </Box>
   )
 }

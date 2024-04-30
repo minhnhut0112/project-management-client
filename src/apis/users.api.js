@@ -24,3 +24,28 @@ export const findUsersAPI = async (email) => {
   const res = await http.post('v1/users/finduser', email)
   return res.data
 }
+
+export const updateStarredBoardAPI = async (userId, boardId) => {
+  const res = await http.post(`v1/users/starred/${userId}`, boardId)
+  return res.data
+}
+
+export const removeStarredBoardAPI = async (userId, boardId) => {
+  const res = await http.put(`v1/users/starred/${userId}`, boardId)
+  return res.data
+}
+
+export const getStarredBoard = async (userId) => {
+  const res = await http.get(`v1/users/starred/${userId}`)
+  return res.data
+}
+
+export const updateRecentBoardAPI = async (userId, boardId) => {
+  const res = await http.post(`v1/users/recent/${userId}`, boardId)
+  return res.data
+}
+
+export const getRecentBoard = async (userId) => {
+  const res = await http.get(`v1/users/recent/${userId}`)
+  return res.data
+}

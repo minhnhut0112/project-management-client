@@ -1,17 +1,14 @@
-import { useState } from 'react'
+import { getStarredBoard } from '@/apis/users.api'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { Avatar, Popover, SvgIcon } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import Divider from '@mui/material/Divider'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemIcon from '@mui/material/ListItemIcon'
 import Typography from '@mui/material/Typography'
-import ContentCut from '@mui/icons-material/ContentCut'
-import ContentCopy from '@mui/icons-material/ContentCopy'
-import ContentPaste from '@mui/icons-material/ContentPaste'
-import Cloud from '@mui/icons-material/Cloud'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { ReactComponent as noStarred } from '@/assets/nostarred.svg'
 
 const Starred = () => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -22,6 +19,34 @@ const Starred = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
+
+  const user = useSelector((state) => state.user.auth)
+  const userId = user?._id
+
+  const [starredBoards, setStarredBoards] = useState([])
+
+  const boardQuery = useQuery({
+    queryKey: ['boardStarred', userId],
+    queryFn: async () => {
+      if (!userId) return []
+      return await getStarredBoard(userId)
+    }
+  })
+
+  useEffect(() => {
+    if (boardQuery.data) {
+      const boardData = boardQuery.data
+      setStarredBoards(boardData)
+    }
+  }, [boardQuery.data])
+
+  const navigate = useNavigate()
+
+  const handleNavigate = (boardId) => {
+    navigate(`/board/${boardId}`)
+    setAnchorEl(null)
+  }
+
   return (
     <Box>
       <Button
@@ -35,50 +60,61 @@ const Starred = () => {
       >
         Starred
       </Button>
-      <Menu
-        id='basic-menu-starred'
-        anchorEl={anchorEl}
+      <Popover
         open={open}
+        anchorEl={anchorEl}
         onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button-starred'
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left'
         }}
       >
-        <MenuItem>
-          <ListItemIcon>
-            <ContentCut fontSize='small' />
-          </ListItemIcon>
-          <ListItemText>Cut</ListItemText>
-          <Typography variant='body2' color='text.secondary'>
-            ⌘X
-          </Typography>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ContentCopy fontSize='small' />
-          </ListItemIcon>
-          <ListItemText>Copy</ListItemText>
-          <Typography variant='body2' color='text.secondary'>
-            ⌘C
-          </Typography>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ContentPaste fontSize='small' />
-          </ListItemIcon>
-          <ListItemText>Paste</ListItemText>
-          <Typography variant='body2' color='text.secondary'>
-            ⌘V
-          </Typography>
-        </MenuItem>
-        <Divider />
-        <MenuItem>
-          <ListItemIcon>
-            <Cloud fontSize='small' />
-          </ListItemIcon>
-          <ListItemText>Web Clipboard</ListItemText>
-        </MenuItem>
-      </Menu>
+        {!!starredBoards.length ? (
+          <Box sx={{ width: 250, p: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {starredBoards?.map((board) => (
+              <Box
+                key={board._id}
+                onClick={() => handleNavigate(board._id)}
+                sx={{
+                  display: 'flex',
+                  gap: 1,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    bgcolor: '#f5f5f5'
+                  },
+                  p: 0.5
+                }}
+              >
+                <Avatar src={board?.cover} sx={{ width: 50, height: 40 }} variant='rounded' />
+                <Typography variant='body' sx={{ mt: 0.25, fontSize: '16px', fontWeight: 500 }}>
+                  {board?.title}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        ) : (
+          <Box sx={{ p: 1, display: 'flex', flexDirection: 'column', width: 310 }}>
+            <SvgIcon
+              component={noStarred}
+              fontSize='small'
+              inheritViewBox
+              sx={{
+                color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D'),
+                width: 300,
+                height: '100%',
+                p: 1
+              }}
+            />
+            <Typography variant='body' sx={{ fontSize: '16px', textAlign: 'center' }}>
+              Star important boards to access them quickly and easily.
+            </Typography>
+          </Box>
+        )}
+      </Popover>
     </Box>
   )
 }

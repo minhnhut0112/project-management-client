@@ -14,3 +14,8 @@ export const updateColumnAPI = async (id, data) => {
   const res = await http.put(`v1/columns/${id}`, data)
   return res.data
 }
+
+export const archiveAllCardAPI = async (id) => {
+  const res = await http.put(`v1/columns/archive/${id}`)
+  return res.data
+}

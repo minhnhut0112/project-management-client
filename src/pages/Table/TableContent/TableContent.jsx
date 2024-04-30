@@ -69,8 +69,8 @@ export default function BasicTable({ board }) {
   const rows = []
 
   function extractDataFromBoard(board) {
-    board.columns.forEach((column) => {
-      column.cards.forEach((card) => {
+    board?.columns?.forEach((column) => {
+      column?.cards?.forEach((card) => {
         const title = (
           <Box sx={{ cursor: 'pointer' }}>
             <Box onClick={() => setModalOpen(card._id)}> {card?.title}</Box>
@@ -94,7 +94,7 @@ export default function BasicTable({ board }) {
             onMouseEnter={() => setIsHoveringLabel(card._id)}
             onMouseLeave={() => setIsHoveringLabel(null)}
           >
-            {card?.labels.map((label, index) => (
+            {card?.labels?.map((label, index) => (
               <Box
                 key={index}
                 sx={{
@@ -113,7 +113,7 @@ export default function BasicTable({ board }) {
               </Box>
             ))}
 
-            {!card.labels.length ? (
+            {!card.labels?.length ? (
               <Box>
                 {isHoveringLabel !== card._id && '•'}
                 <AddIcon sx={{ display: isHoveringLabel === card._id ? 'block' : 'none' }} />
@@ -131,7 +131,7 @@ export default function BasicTable({ board }) {
             onMouseEnter={() => setIsHoveringMember(card._id)}
             onMouseLeave={() => setIsHoveringMember(null)}
           >
-            {card.members.map((member, index) => (
+            {card?.members?.map((member, index) => (
               <Avatar
                 key={index}
                 sx={{
@@ -144,7 +144,7 @@ export default function BasicTable({ board }) {
                 {member?.username?.charAt(0)?.toUpperCase()}
               </Avatar>
             ))}
-            {!card.members.length && (
+            {!card?.members?.length && (
               <Box>
                 {isHoveringMember !== card._id && '•'}
                 <AddIcon sx={{ display: isHoveringMember === card._id ? 'block' : 'none' }} />
@@ -245,26 +245,26 @@ export default function BasicTable({ board }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {rows?.map((row, index) => (
               <TableRow key={index}>
                 <TableCell width={200} sx={{ '&:hover': { bgcolor: '#f5f5f5' }, p: 1, cursor: 'pointer' }}>
-                  {row.card}
+                  {row?.card}
                 </TableCell>
                 <TableCell width={200} sx={{ '&:hover': { bgcolor: '#f5f5f5' }, p: 1 }}>
-                  {row.list}
+                  {row?.list}
                 </TableCell>
                 <TableCell width={400} sx={{ '&:hover': { bgcolor: '#f5f5f5' }, p: 1, cursor: 'pointer' }}>
-                  {row.labels}
+                  {row?.labels}
                 </TableCell>
                 <TableCell
                   width={200}
                   height='50px'
                   sx={{ '&:hover': { bgcolor: '#f5f5f5' }, p: 1, cursor: 'pointer' }}
                 >
-                  {row.members}
+                  {row?.members}
                 </TableCell>
                 <TableCell width={200} sx={{ '&:hover': { bgcolor: '#f5f5f5' }, p: 1, cursor: 'pointer' }}>
-                  {row.dueDate}
+                  {row?.dueDate}
                 </TableCell>
               </TableRow>
             ))}
