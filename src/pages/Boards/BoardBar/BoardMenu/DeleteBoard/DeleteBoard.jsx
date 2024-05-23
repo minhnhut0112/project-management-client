@@ -1,4 +1,4 @@
-import { updateBoardAPI } from '@/apis/boards.api'
+import { deleteBoardAPI } from '@/apis/boards.api'
 import ConfirmationPopover from '@/components/ConfirmationPopover/ConfirmationPopover'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import { ListItemIcon, ListItemText, MenuItem } from '@mui/material'
@@ -13,20 +13,21 @@ const DeleteBoard = ({ board }) => {
   const navigate = useNavigate()
 
   const mutionDeleteBoard = useMutation({
-    mutationFn: (data) => updateBoardAPI(board._id, data),
+    mutationFn: () => deleteBoardAPI(board._id),
     onSuccess: () => {
+      toast.success('Board deleted successfully!')
       navigate('/')
-      toast.info(`${board.title} is closed. `)
     }
   })
 
   const handleDeleteBoard = () => {
-    mutionDeleteBoard.mutate({ _destroy: true })
+    mutionDeleteBoard.mutate()
   }
 
   return (
     <>
       <MenuItem
+        sx={{ p: '0px 8px 0 8px 0px' }}
         onClick={(event) => {
           setAnchorEl(event.currentTarget)
         }}

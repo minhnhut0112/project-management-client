@@ -90,8 +90,13 @@ const NewIssue = ({ handleChangeIndex, board }) => {
               onClick={handleAddNewIssue}
               sx={{
                 bgcolor: '#4F46E5',
+                boxShadow: 'none',
                 height: '40px',
-                mt: 1
+                mt: 1,
+                '&:hover': {
+                  bgcolor: '#4F46E5',
+                  boxShadow: 'none'
+                }
               }}
               variant='contained'
             >

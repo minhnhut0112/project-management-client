@@ -161,9 +161,10 @@ const LabelPopover = ({ anchorEl, handleClose, card, id, open, onPopoverChange }
                 <ClearOutlinedIcon fontSize='small' />
               </IconButton>
             </Box>
-            <TextField autoFocus size='small' fullWidth placeholder='Search Labels...' />
             <Box sx={{ mt: 0.5 }}>
-              <Typography variant='caption'>Labels</Typography>
+              <Typography sx={{ fontSize: '14px' }} variant='caption'>
+                Labels
+              </Typography>
 
               {labels?.slice(0, visibleLabels).map((label) => (
                 <Box key={label._id} sx={{ display: 'flex', alignItems: 'center' }}>

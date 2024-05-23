@@ -156,6 +156,7 @@ const BoardBar = () => {
 
     socket.on('updatedCard', () => {
       queryClient.invalidateQueries({ queryKey: ['board'] })
+      queryClient.invalidateQueries({ queryKey: ['cardsNoti'] })
     })
 
     socket.on('deletedCard', () => {
@@ -172,14 +173,17 @@ const BoardBar = () => {
 
     socket.on('updateDates', () => {
       queryClient.invalidateQueries({ queryKey: ['board'] })
+      queryClient.invalidateQueries({ queryKey: ['cardsNoti'] })
     })
 
     socket.on('deletedDate', () => {
       queryClient.invalidateQueries({ queryKey: ['board'] })
+      queryClient.invalidateQueries({ queryKey: ['cardsNoti'] })
     })
 
     socket.on('uploadedAttachments', () => {
       queryClient.invalidateQueries({ queryKey: ['board'] })
+      queryClient.invalidateQueries({ queryKey: ['cardsNoti'] })
     })
 
     socket.on('deletedAttachment', () => {
@@ -196,6 +200,7 @@ const BoardBar = () => {
 
     socket.on('createdComment', () => {
       queryClient.invalidateQueries({ queryKey: ['board'] })
+      queryClient.invalidateQueries({ queryKey: ['cardsNoti'] })
     })
 
     socket.on('moveCardToDifferentColunmn', () => {
@@ -227,7 +232,7 @@ const BoardBar = () => {
     })
 
     socket.on('removeFromBoard', () => {
-      queryClient.invalidateQueries({ queryKey: ['board'] })
+      navigate('/')
     })
 
     socket.on('createNewColumn', () => {
@@ -247,7 +252,10 @@ const BoardBar = () => {
     socket.on('createNewIssue', () => {
       queryClient.invalidateQueries({ queryKey: ['board'] })
     })
-  }, [queryClient])
+    socket.on('confirmInviteEmail', () => {
+      queryClient.invalidateQueries({ queryKey: ['board'] })
+    })
+  }, [queryClient, navigate])
 
   return (
     <Box>

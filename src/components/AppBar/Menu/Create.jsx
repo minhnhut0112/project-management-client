@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const itemData = [
   {
@@ -90,6 +91,12 @@ const Create = () => {
       handleClose()
       return
     }
+
+    if (newBoardTitle.length < 5) {
+      toast.error('Board title needs at least 3 characters')
+      return
+    }
+
     mutionCreateBoard.mutate({ title: newBoardTitle, cover: imageSrc, ownerId: user._id })
     handleClose()
   }

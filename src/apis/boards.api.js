@@ -4,6 +4,12 @@ export const fetchAllBoardsAPI = async (userId) => {
   const res = await http.get(`v1/boards/getAll/${userId}`)
   return res.data
 }
+
+export const fetchAllBoardClosesAPI = async (userId) => {
+  const res = await http.get(`v1/boards/getAllClose/${userId}`)
+  return res.data
+}
+
 export const createBoardAPI = async (data) => {
   const res = await http.post('v1/boards/', data)
   return res.data
@@ -11,6 +17,16 @@ export const createBoardAPI = async (data) => {
 
 export const fetchBoardDetailsAPI = async (boardId) => {
   const res = await http.get(`v1/boards/${boardId}`)
+  return res.data
+}
+
+export const deleteBoardAPI = async (boardId) => {
+  const res = await http.delete(`v1/boards/${boardId}`)
+  return res.data
+}
+
+export const fetchBoardArchiveCardAndListAPI = async (boardId) => {
+  const res = await http.get(`v1/boards/${boardId}/archive`)
   return res.data
 }
 

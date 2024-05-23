@@ -47,7 +47,14 @@ const InviteButon = ({ board }) => {
   const sendInviteEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(inviteeEmail)) {
-      toast.error('Please enter a valid email address')
+      toast.error('Please enter a valid email address!')
+      setInviteeEmail('')
+      return
+    }
+
+    if (board?.userInBoard.find((item) => item.email === inviteeEmail)) {
+      toast.error('The member with this email already exists in the board!')
+      setInviteeEmail('')
       return
     }
 
@@ -180,15 +187,27 @@ const InviteButon = ({ board }) => {
                   </Box>
                   <Select
                     onChange={(e) => changePermission(e, member?._id)}
-                    sx={{ height: '32px' }}
+                    sx={{ height: '32px', gap: 0 }}
                     size='small'
                     value={checkPermission(member, board)}
                   >
-                    <MenuItem value={2}>Admin</MenuItem>
-                    <MenuItem value={1}>Member</MenuItem>
-                    <MenuItem onClick={() => removeFromBoard(member?._id)}>
-                      {user?._id === member?._id ? 'Leave board' : 'Remove from board'}
+                    <MenuItem disabled={checkPermission(user, board) === 1} value={2}>
+                      Admin
                     </MenuItem>
+
+                    <MenuItem disabled={checkPermission(user, board) === 1 || user?._id === member?._id} value={1}>
+                      Member
+                    </MenuItem>
+
+                    {user?._id === member?._id && (
+                      <MenuItem disabled={board.admins.length < 1} onClick={() => removeFromBoard(member?._id)}>
+                        {user?._id === member?._id && 'Leave board'}
+                      </MenuItem>
+                    )}
+
+                    {checkPermission(user, board) !== 1 && user?._id !== member?._id && (
+                      <MenuItem onClick={() => removeFromBoard(member?._id)}>Remove from board</MenuItem>
+                    )}
                   </Select>
                 </Box>
               ))}

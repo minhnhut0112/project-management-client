@@ -22,6 +22,7 @@ import DatePopover from '@/components/DatePopover/DatePopover'
 import { useMutation } from '@tanstack/react-query'
 import { updateCardAPI } from '@/apis/cards.api'
 import ModalCardDetails from '@/pages/Boards/BoardContent/ListCards/Card/CardDetails/CardDetails'
+import { useSelector } from 'react-redux'
 
 export default function BasicTable({ board }) {
   const [modalOpen, setModalOpen] = useState('')
@@ -34,6 +35,26 @@ export default function BasicTable({ board }) {
 
   const [anchorElDates, setAnchorElDates] = useState(null)
   const [isHoveringDates, setIsHoveringDates] = useState(false)
+
+  const user = useSelector((state) => state.user.auth)
+
+  const checkPermission = (member, board) => {
+    if (member && board) {
+      if (member._id === board.ownerId) {
+        return 2
+      }
+
+      if (board.admins && board.admins.some((admin) => admin === member._id)) {
+        return 2
+      }
+
+      if (board.members && board.members.some((memberId) => memberId === member._id)) {
+        return 1
+      }
+    }
+
+    return 0
+  }
 
   const handleLabelPopoverOpen = (event, card) => {
     setAnchorElLabel(event.currentTarget)
@@ -125,32 +146,58 @@ export default function BasicTable({ board }) {
         )
 
         const membersAvatars = (
-          <Box
-            sx={{ display: 'flex', gap: 1 }}
-            onClick={(e) => handleMemberPopoverOpen(e, card)}
-            onMouseEnter={() => setIsHoveringMember(card._id)}
-            onMouseLeave={() => setIsHoveringMember(null)}
-          >
-            {card?.members?.map((member, index) => (
-              <Avatar
-                key={index}
-                sx={{
-                  width: 32,
-                  height: 32,
-                  backgroundColor: member?.avatarColor
-                }}
-                src={member?.avatar}
+          <>
+            {checkPermission(user, board) !== 1 ? (
+              <Box
+                sx={{ display: 'flex', gap: 1 }}
+                onClick={(e) => handleMemberPopoverOpen(e, card)}
+                onMouseEnter={() => setIsHoveringMember(card._id)}
+                onMouseLeave={() => setIsHoveringMember(null)}
               >
-                {member?.username?.charAt(0)?.toUpperCase()}
-              </Avatar>
-            ))}
-            {!card?.members?.length && (
-              <Box>
-                {isHoveringMember !== card._id && '•'}
-                <AddIcon sx={{ display: isHoveringMember === card._id ? 'block' : 'none' }} />
+                {card?.members?.map((member, index) => (
+                  <Avatar
+                    key={index}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      backgroundColor: member?.avatarColor
+                    }}
+                    src={member?.avatar}
+                  >
+                    {member?.username?.charAt(0)?.toUpperCase()}
+                  </Avatar>
+                ))}
+                {!card?.members?.length && (
+                  <Box>
+                    {isHoveringMember !== card._id && '•'}
+                    <AddIcon sx={{ display: isHoveringMember === card._id ? 'block' : 'none' }} />
+                  </Box>
+                )}
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                {card?.members?.map((member, index) => (
+                  <Avatar
+                    key={index}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      backgroundColor: member?.avatarColor
+                    }}
+                    src={member?.avatar}
+                  >
+                    {member?.username?.charAt(0)?.toUpperCase()}
+                  </Avatar>
+                ))}
+                {!card?.members?.length && (
+                  <Box>
+                    {isHoveringMember !== card._id && '•'}
+                    <AddIcon sx={{ display: isHoveringMember === card._id ? 'block' : 'none' }} />
+                  </Box>
+                )}
               </Box>
             )}
-          </Box>
+          </>
         )
 
         const currentDateTime = dayjs()
@@ -169,50 +216,86 @@ export default function BasicTable({ board }) {
 
         const dateTime = (
           <>
-            <Box
-              sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
-              onMouseEnter={() => setIsHoveringDates(card._id)}
-              onMouseLeave={() => setIsHoveringDates(null)}
-            >
-              {card.dateTime && (
-                <>
-                  <Checkbox onChange={() => updateCardStatus(card)} checked={card?.completed} sx={{ p: 0 }} />
-                  <Box
-                    onClick={(e) => handleDatesPopoverOpen(e, card)}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      bgcolor: bgColor,
-                      color: color,
-                      borderRadius: '3px',
-                      p: 1,
-                      height: '25px',
-                      fontSize: '12px',
-                      width: 'fit-content'
-                    }}
-                  >
-                    {card.dateTime && (
-                      <>
-                        <AccessTimeOutlinedIcon sx={{ fontSize: '16px', mr: 0.5 }} />
-                        <Box>
-                          {dayjs(card?.dateTime?.startDateTime).format('MMM D')} -{' '}
-                          {dayjs(card?.dateTime?.dueDateTime).format('MMM D')}
-                        </Box>
-                      </>
-                    )}
-                  </Box>
-                </>
-              )}
+            {checkPermission(user, board) !== 1 ? (
+              <Box
+                sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                onMouseEnter={() => setIsHoveringDates(card._id)}
+                onMouseLeave={() => setIsHoveringDates(null)}
+              >
+                {card.dateTime && (
+                  <>
+                    <Checkbox onChange={() => updateCardStatus(card)} checked={card?.completed} sx={{ p: 0 }} />
+                    <Box
+                      onClick={(e) => handleDatesPopoverOpen(e, card)}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        bgcolor: bgColor,
+                        color: color,
+                        borderRadius: '3px',
+                        p: 1,
+                        height: '25px',
+                        fontSize: '12px',
+                        width: 'fit-content'
+                      }}
+                    >
+                      {card.dateTime && (
+                        <>
+                          <AccessTimeOutlinedIcon sx={{ fontSize: '16px', mr: 0.5 }} />
+                          <Box>
+                            {dayjs(card?.dateTime?.startDateTime).format('MMM D')} -{' '}
+                            {dayjs(card?.dateTime?.dueDateTime).format('MMM D')}
+                          </Box>
+                        </>
+                      )}
+                    </Box>
+                  </>
+                )}
 
-              <Box onClick={(e) => handleDatesPopoverOpen(e, card)}>
-                {!card.dateTime && (
-                  <Box>
-                    {isHoveringDates !== card._id && <Box sx={{ ml: 1 }}>•</Box>}
-                    <AddIcon sx={{ display: isHoveringDates === card._id ? 'block' : 'none' }} />
-                  </Box>
+                <Box onClick={(e) => handleDatesPopoverOpen(e, card)}>
+                  {!card.dateTime && (
+                    <Box>
+                      {isHoveringDates !== card._id && <Box sx={{ ml: 1 }}>•</Box>}
+                      <AddIcon sx={{ display: isHoveringDates === card._id ? 'block' : 'none' }} />
+                    </Box>
+                  )}
+                </Box>
+              </Box>
+            ) : (
+              <Box
+                sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+                onMouseEnter={() => setIsHoveringDates(card._id)}
+                onMouseLeave={() => setIsHoveringDates(null)}
+              >
+                {card.dateTime && (
+                  <>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        bgcolor: bgColor,
+                        color: color,
+                        borderRadius: '3px',
+                        p: 1,
+                        height: '25px',
+                        fontSize: '12px',
+                        width: 'fit-content'
+                      }}
+                    >
+                      {card.dateTime && (
+                        <>
+                          <AccessTimeOutlinedIcon sx={{ fontSize: '16px', mr: 0.5 }} />
+                          <Box>
+                            {dayjs(card?.dateTime?.startDateTime).format('MMM D')} -{' '}
+                            {dayjs(card?.dateTime?.dueDateTime).format('MMM D')}
+                          </Box>
+                        </>
+                      )}
+                    </Box>
+                  </>
                 )}
               </Box>
-            </Box>
+            )}
           </>
         )
 
@@ -234,7 +317,7 @@ export default function BasicTable({ board }) {
       }}
     >
       <TableContainer component={Paper} sx={{ borderRadius: 'none', boxShadow: 'none', height: '100%' }}>
-        <Table aria-label='sticky table'>
+        <Table stickyHeader aria-label='sticky table'>
           <TableHead>
             <TableRow>
               <TableCell>Card</TableCell>

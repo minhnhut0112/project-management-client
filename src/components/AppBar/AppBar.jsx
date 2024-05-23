@@ -1,24 +1,37 @@
-import Box from '@mui/material/Box'
 import { ReactComponent as LogoApp } from '@/assets/trello.svg'
-import { SvgIcon, Typography } from '@mui/material'
 import AppsIcon from '@mui/icons-material/Apps'
+import { SvgIcon, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
 import Recent from './Menu/Recent'
 import Starred from './Menu/Starred'
 
 import TextField from '@mui/material/TextField'
 
-import Profile from './Menu/Profile'
-import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
+import InputAdornment from '@mui/material/InputAdornment'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Notification from './Notifications'
 import Create from './Menu/Create'
+import Profile from './Menu/Profile'
+import Notification from './Notifications'
+import SearchPopover from './SearchPopover/SearchPopover'
 
 const AppBar = () => {
   const [searchValue, setSearchValue] = useState('')
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const open = Boolean(anchorEl)
 
   const navigate = useNavigate()
+
   return (
     <Box
       sx={{
@@ -65,6 +78,7 @@ const AppBar = () => {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <TextField
+          onClick={handleClick}
           placeholder='Search...'
           type='search'
           value={searchValue}
@@ -75,7 +89,8 @@ const AppBar = () => {
               <InputAdornment position='start'>
                 <SearchIcon sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }} />
               </InputAdornment>
-            )
+            ),
+            readOnly: true
           }}
           sx={{
             minWidth: 120,
@@ -97,6 +112,8 @@ const AppBar = () => {
             }
           }}
         />
+
+        <SearchPopover open={open} anchorEl={anchorEl} handleClose={handleClose} />
 
         <Notification />
 

@@ -8,7 +8,7 @@ import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
 import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import Attachments from './Attachments/Attachments'
 import AttachmentsPopover from './AttachmentChip/AttachmentChip'
@@ -28,6 +28,7 @@ import JoinChip from './JoinChip/JoinChip'
 import { useSelector } from 'react-redux'
 import Activity from './Activity/Activity'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
+import { fetchBoardDetailsAPI } from '@/apis/boards.api'
 
 const chipStyle = {
   fontSize: '15px',
@@ -43,6 +44,20 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
   const [newCardTitle, setNewCardTitle] = useState('')
 
   const user = useSelector((state) => state.user.auth)
+
+  const [board, setBoard] = useState([])
+
+  const boardQuery = useQuery({
+    queryKey: ['board', card?.boardId],
+    queryFn: async () => await fetchBoardDetailsAPI(card?.boardId)
+  })
+
+  useEffect(() => {
+    if (boardQuery.data) {
+      const boardData = boardQuery.data
+      setBoard(boardData)
+    }
+  }, [boardQuery.data])
 
   useEffect(() => {
     if (card) {
@@ -76,6 +91,7 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
   })
 
   const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorElArchive, setAnchorElArchive] = useState(null)
 
   const handleConfirm = () => {
     mutionDeleteCard.mutate(card._id)
@@ -90,6 +106,24 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
     mutionArchiveCard.mutate({
       _destroy: true
     })
+  }
+
+  const checkPermission = (member, board) => {
+    if (member && board) {
+      if (member._id === board.ownerId) {
+        return 2
+      }
+
+      if (board.admins && board.admins.some((admin) => admin === member._id)) {
+        return 2
+      }
+
+      if (board.members && board.members.some((memberId) => memberId === member._id)) {
+        return 1
+      }
+    }
+
+    return 0
   }
 
   return (
@@ -219,11 +253,11 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     <Typography>In list {columnTitle}</Typography>
                   </Box>
 
-                  {!!card?.members?.length && <Members card={card} />}
+                  {!!card?.members?.length && <Members Permission={checkPermission(user, board)} card={card} />}
 
                   {!!card?.labels.length && <Labels card={card} />}
 
-                  {card?.dateTime && <DateTimes card={card} />}
+                  {card?.dateTime && <DateTimes board={board} card={card} />}
 
                   <Description card={card} />
 
@@ -257,8 +291,10 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
 
                   {!card.members?.some((cardMember) => cardMember._id === user._id) && <JoinChip card={card} />}
 
-                  <DateChip card={card} />
-                  <MemsberChip card={card} />
+                  {checkPermission(user, board) !== 1 && <DateChip card={card} />}
+
+                  {checkPermission(user, board) !== 1 && <MemsberChip card={card} />}
+
                   <LabelChip card={card} />
                   <CoverPopover card={card} />
                   <AttachmentsPopover card={card} />
@@ -266,7 +302,9 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                   <Typography>Actions</Typography>
 
                   <Chip
-                    onClick={handleArchiveCard}
+                    onClick={(event) => {
+                      setAnchorElArchive(event.currentTarget)
+                    }}
                     icon={<ArchiveOutlinedIcon />}
                     sx={{
                       ...chipStyle
@@ -276,24 +314,39 @@ export default function ModalCardDetails({ open, onClose, card, columnTitle }) {
                     variant='outlined'
                   />
 
-                  <Chip
-                    onClick={(event) => {
-                      setAnchorEl(event.currentTarget)
+                  <ConfirmationPopover
+                    title='Archive card?'
+                    description='This will remove the card from the board. To view archived card and bring them back to the board, click “Menu” > “Archived Items.”'
+                    open={Boolean(anchorElArchive)}
+                    anchorEl={anchorElArchive}
+                    handleClose={() => {
+                      setAnchorElArchive(null)
                     }}
-                    icon={<DeleteOutlineOutlinedIcon />}
-                    sx={{
-                      ...chipStyle,
-                      '&:hover': {
-                        color: 'error.light',
-                        '& .MuiChip-iconColorDefault': {
-                          color: 'error.light'
-                        }
-                      }
-                    }}
-                    label='Delete'
-                    clickable
-                    variant='outlined'
+                    onConfirm={handleArchiveCard}
+                    button='Archive card'
                   />
+
+                  {checkPermission(user, board) !== 1 && (
+                    <Chip
+                      onClick={(event) => {
+                        setAnchorEl(event.currentTarget)
+                      }}
+                      icon={<DeleteOutlineOutlinedIcon />}
+                      sx={{
+                        ...chipStyle,
+                        '&:hover': {
+                          color: 'error.light',
+                          '& .MuiChip-iconColorDefault': {
+                            color: 'error.light'
+                          }
+                        }
+                      }}
+                      label='Delete'
+                      clickable
+                      variant='outlined'
+                    />
+                  )}
+
                   <ConfirmationPopover
                     id={Boolean(anchorEl) ? 'attachments-popover' : undefined}
                     title='Delete card?'

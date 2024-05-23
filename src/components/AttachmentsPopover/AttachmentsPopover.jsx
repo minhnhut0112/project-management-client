@@ -32,11 +32,15 @@ const AttachmentsPopover = ({ anchorEl, handleClose, card, id, open }) => {
     const formData = new FormData()
     formData.append('file', newFile)
 
-    if (!newFile) return
+    if (!newFile) {
+      handleClose()
+      return
+    }
 
     const res = await uploadAttachmentsAPI(card._id, formData, user.accessToken)
 
     if (res) {
+      handleClose()
       toast.success('Upload attachment is successfully!')
       queryClient.invalidateQueries({ queryKey: ['board'] })
     }

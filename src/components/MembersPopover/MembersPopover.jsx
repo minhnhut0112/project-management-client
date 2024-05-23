@@ -10,10 +10,18 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchBoardDetailsAPI } from '@/apis/boards.api'
 import { useEffect, useState } from 'react'
 import { updateCardAPI } from '@/apis/cards.api'
+import { useSelector } from 'react-redux'
 
 const MembersPopover = ({ anchorEl, handleClose, card, id, open }) => {
   const [boardMembers, setBoardMembers] = useState([])
   const [cardmembers, setCardMembers] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const user = useSelector((state) => state.user.auth)
+
+  const filteredMembers = boardMembers.filter((member) =>
+    member.fullname.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   useEffect(() => {
     setCardMembers(card?.members || [])
@@ -38,12 +46,33 @@ const MembersPopover = ({ anchorEl, handleClose, card, id, open }) => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
   })
 
+  const mutionNotificationAddMember = useMutation({
+    mutationFn: (memberId) =>
+      updateCardAPI(card?._id, {
+        notifications: [
+          ...card.notifications,
+          {
+            avatar: user.avatar,
+            username: user.username,
+            fullname: user.fullname,
+            type: 'add',
+            cardname: `${card?.title}`,
+            action: memberId,
+            is_read: false,
+            timestamp: new Date().valueOf()
+          }
+        ]
+      }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['board'] })
+  })
+
   const addMemberToCard = (member) => {
     if (card.members && card.members.some((cardMember) => cardMember._id === member._id)) {
       const updatedMembers = cardmembers.filter((existingMember) => existingMember?._id !== member._id)
       setCardMembers(updatedMembers)
     } else {
       setCardMembers((prevMembers) => [...prevMembers, member])
+      mutionNotificationAddMember.mutate(member._id)
     }
 
     mutionAddMember.mutate()
@@ -55,7 +84,10 @@ const MembersPopover = ({ anchorEl, handleClose, card, id, open }) => {
       id={id}
       open={open}
       anchorEl={anchorEl}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose()
+        setSearchQuery('')
+      }}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'left'
@@ -78,24 +110,33 @@ const MembersPopover = ({ anchorEl, handleClose, card, id, open }) => {
           <Typography sx={{ fontSize: '16px' }} variant='h6'>
             Members
           </Typography>
-          <IconButton sx={{ p: 0 }} onClick={handleClose} aria-label='delete'>
+          <IconButton
+            sx={{ p: 0 }}
+            onClick={() => {
+              handleClose()
+              setSearchQuery('')
+            }}
+            aria-label='delete'
+          >
             <ClearOutlinedIcon fontSize='small' />
           </IconButton>
         </Box>
 
         <TextField
+          autoFocus
           fullWidth
           size='small'
           sx={{ mb: 1 }}
           placeholder='Search member...'
-          id='outlined-basic'
-          variant='outlined'
+          type='search'
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
 
         <Typography variant='body'>Board members</Typography>
 
         <List>
-          {boardMembers?.map((member) => (
+          {filteredMembers?.map((member) => (
             <ListItem disablePadding key={member._id}>
               <ListItemButton
                 onClick={() => addMemberToCard(member)}
@@ -105,7 +146,7 @@ const MembersPopover = ({ anchorEl, handleClose, card, id, open }) => {
                   <Avatar size='small' sx={{ backgroundColor: member?.avatarColor }} src={member?.avatar}>
                     {member?.username?.charAt(0)?.toUpperCase()}
                   </Avatar>
-                  <Typography>{member?.username}</Typography>
+                  <Typography>{member?.fullname}</Typography>
                 </Box>
                 {cardmembers.some((cardMember) => String(cardMember._id) === String(member._id)) && (
                   <CheckIcon fontSize='small' />

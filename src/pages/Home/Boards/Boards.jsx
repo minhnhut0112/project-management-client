@@ -14,6 +14,9 @@ import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserAPI, removeStarredBoardAPI, updateRecentBoardAPI, updateStarredBoardAPI } from '@/apis/users.api'
 import { loginUser } from '@/redux/userSile'
+import { toast } from 'react-toastify'
+import StarredBoard from './StarredBoard/StarredBoard'
+import CloseBoard from './CloseBoard/CloseBoard'
 
 const itemData = [
   {
@@ -47,6 +50,10 @@ const itemData = [
   {
     img: 'http://localhost:8017/uploads/bg8.jpg',
     title: 'bg8'
+  },
+  {
+    img: 'http://localhost:8017/uploads/bg9.jpg',
+    title: 'bg9'
   }
 ]
 
@@ -61,12 +68,6 @@ const Boards = () => {
   useEffect(() => {
     setStarredIds(user?.starredIds)
   }, [user])
-
-  // useEffect(() => {
-  //   if (!user) {
-  //     navigate('/sign-in')
-  //   }
-  // }, [navigate, user])
 
   const boardsQuery = useQuery({
     queryKey: ['boards', user?._id],
@@ -120,6 +121,12 @@ const Boards = () => {
       handleClose()
       return
     }
+
+    if (newBoardTitle.length < 5) {
+      toast.error('Board title needs at least 3 characters')
+      return
+    }
+
     mutionCreateBoard.mutate({ title: newBoardTitle, cover: imageSrc, ownerId: user._id })
     handleClose()
   }
@@ -174,7 +181,9 @@ const Boards = () => {
   }
 
   return (
-    <Box sx={{ width: { xs: 250, md: 1200 } }}>
+    <Box sx={{ width: { xs: 250, md: 1140 } }}>
+      <StarredBoard />
+
       <Typography variant='h6'>Your Boards</Typography>
 
       <Grid container sx={{ gap: 2, mt: 1, mb: 3 }}>
@@ -209,7 +218,7 @@ const Boards = () => {
             <Box sx={{ display: 'flex', justifyContent: 'end' }}>
               <Checkbox
                 onChange={() => updateStarredBoard(board?._id)}
-                sx={{ color: 'white' }}
+                sx={{ color: 'white', mb: 2 }}
                 icon={<StarBorderIcon />}
                 checked={starredIds?.includes(board._id)}
                 checkedIcon={<StarRateIcon sx={{ color: '#f9ca24' }} />}
@@ -310,19 +319,21 @@ const Boards = () => {
                   autoFocus
                   value={newBoardTitle}
                   onChange={(e) => setNewBoardTitle(e.target.value)}
-                  sx={{ width: '100%', mt: 2 }}
+                  sx={{ width: '100%', mt: 2, mb: 2 }}
                   label='Enter board title'
                   size='small'
                 ></TextField>
-                <Box sx={{ width: '100%' }}>
-                  <Button
-                    disabled={!imageSrc || !newBoardTitle}
-                    sx={{ width: '100%', mt: 2 }}
-                    type='submit'
-                    variant='outlined'
-                  >
-                    Create
-                  </Button>
+                <Box sx={{ width: '100%', cursor: 'not-allowed' }}>
+                  <span style={{}}>
+                    <Button
+                      disabled={!imageSrc || !newBoardTitle}
+                      sx={{ width: '100%' }}
+                      type='submit'
+                      variant='outlined'
+                    >
+                      Create
+                    </Button>
+                  </span>
                 </Box>
               </Box>
             </Popover>
@@ -376,6 +387,8 @@ const Boards = () => {
           </Grid>
         </Box>
       )}
+
+      <CloseBoard />
     </Box>
   )
 }

@@ -1,5 +1,4 @@
 import { ReactComponent as LogoApp } from '@/assets/trello.svg'
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import { Grid, SvgIcon, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
@@ -47,6 +46,7 @@ const Home = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
+
   return (
     <Grid container sx={{ borderTop: 1, borderColor: '#b2bec3' }}>
       <Grid item md={3} sx={{ padding: { xs: 1, md: '40px 0px 0px 40px' } }}>
@@ -86,7 +86,7 @@ const Home = () => {
             }
             {...a11yProps(0)}
           />
-          <Tab
+          {/* <Tab
             sx={{
               display: 'flex',
               flexDirection: 'row',
@@ -111,7 +111,7 @@ const Home = () => {
               </Box>
             }
             {...a11yProps(0)}
-          />
+          /> */}
           <hr style={{ width: '100%' }} />
         </Tabs>
       </Grid>
@@ -119,9 +119,9 @@ const Home = () => {
         <TabPanel value={value} index={0}>
           <Boards />
         </TabPanel>
-        <TabPanel value={value} index={1}>
-          Item Two
-        </TabPanel>
+        {/* <TabPanel value={value} index={1}>
+          <HomeNoti />
+        </TabPanel> */}
       </Grid>
     </Grid>
   )

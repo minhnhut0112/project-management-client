@@ -9,9 +9,9 @@ export default function BasicBars({ board }) {
   const columnsTitle = []
 
   const renderCardPerList = () => {
-    board.columns.map((column) => {
-      columnsTitle.push(column.title)
-      cardPerList.push(column.cards.length)
+    board.columns?.map((column) => {
+      columnsTitle?.push(column.title)
+      cardPerList?.push(column.cards.length)
     })
   }
 
@@ -21,8 +21,8 @@ export default function BasicBars({ board }) {
   const dueDateStatus = ['Complete', 'Due later', 'Overdue', 'No due date']
 
   const rendercardPerDueDate = () => {
-    board.columns.forEach((column) => {
-      column.cards.forEach((card) => {
+    board.columns?.forEach((column) => {
+      column.cards?.forEach((card) => {
         const dueDateTime = dayjs(card?.dateTime?.dueDateTime)
         const currentDateTime = dayjs()
         const isOverdue = currentDateTime.isAfter(dueDateTime)
@@ -47,23 +47,23 @@ export default function BasicBars({ board }) {
   const memberUsername = []
 
   const renderCardPerMember = () => {
-    board.userInBoard.forEach((user) => {
+    board.userInBoard?.forEach((user) => {
       memberUsername.push(user.username)
     })
 
     memberUsername.push('Unassigned')
 
-    memberUsername.forEach((username) => {
-      cardPerMember.push({ username: username, count: 0 })
+    memberUsername?.forEach((username) => {
+      cardPerMember?.push({ username: username, count: 0 })
     })
 
-    board.columns.forEach((column) => {
-      column.cards.forEach((card) => {
-        if (card.members.length === 0) {
+    board.columns?.forEach((column) => {
+      column.cards?.forEach((card) => {
+        if (card.members?.length === 0) {
           const unassignedIndex = cardPerMember.findIndex((item) => item.username === 'Unassigned')
           cardPerMember[unassignedIndex].count++
         } else {
-          card.members.forEach((member) => {
+          card.members?.forEach((member) => {
             const memberIndex = cardPerMember.findIndex((item) => item.username === member.username)
             if (memberIndex !== -1) {
               cardPerMember[memberIndex].count++
@@ -81,19 +81,19 @@ export default function BasicBars({ board }) {
     return user ? user.fullname : username
   }
 
-  const cardPerLabel = []
+  let cardPerLabel = []
   let labelIds = []
 
   const renderCardPerLabel = () => {
-    board.labels.forEach((label) => {
+    board.labels?.forEach((label) => {
       const labelId = label._id
       labelIds.push(labelId)
       cardPerLabel.push({ labelId: labelId, count: 0 })
     })
 
-    board.columns.forEach((column) => {
-      column.cards.forEach((card) => {
-        card.labels.forEach((label) => {
+    board.columns?.forEach((column) => {
+      column.cards?.forEach((card) => {
+        card?.labels?.forEach((label) => {
           const labelIndex = cardPerLabel.findIndex((item) => item.labelId === label._id)
           if (labelIndex !== -1) {
             cardPerLabel[labelIndex].count++
@@ -102,15 +102,15 @@ export default function BasicBars({ board }) {
       })
     })
 
-    labelIds = labelIds.filter((labelId) => {
-      return cardPerLabel.some((item) => item.labelId === labelId && item.count > 0)
-    })
+    cardPerLabel = cardPerLabel.filter((item) => item.count > 0)
+    labelIds = cardPerLabel.map((item) => item.labelId)
   }
+
   renderCardPerLabel()
 
   const getLabelNameById = (labelId) => {
     const label = board.labels.find((label) => label._id === labelId)
-    return label.labelTitle ? label.labelTitle : getColorName(label.bgColor)
+    return label?.labelTitle ? label?.labelTitle : getColorName(label?.bgColor)
   }
 
   function getColorName(hexColor) {
@@ -135,7 +135,7 @@ export default function BasicBars({ board }) {
             <Typography variant='h6' sx={{ fontSize: '18px' }}>
               Card per list
             </Typography>
-            {!!cardPerList.length && !!columnsTitle.length ? (
+            {!!cardPerList?.length && !!columnsTitle?.length ? (
               <BarChart
                 height={490}
                 series={[{ data: cardPerList, color: '#54a0ff' }]}
@@ -151,7 +151,7 @@ export default function BasicBars({ board }) {
             <Typography variant='h6' sx={{ fontSize: '18px' }}>
               Card per due date
             </Typography>
-            {!!cardPerDueDate.length && !!dueDateStatus.length ? (
+            {!!cardPerDueDate?.length && !!dueDateStatus?.length ? (
               <BarChart
                 height={490}
                 series={[{ data: cardPerDueDate }]}
@@ -167,7 +167,7 @@ export default function BasicBars({ board }) {
             <Typography variant='h6' sx={{ fontSize: '18px' }}>
               Card per member
             </Typography>
-            {!!cardPerMember.length && !!memberUsername.length ? (
+            {!!cardPerMember?.length && !!memberUsername?.length ? (
               <BarChart
                 height={490}
                 series={[{ data: cardPerMember.map((s) => s.count), color: '#273c75' }]}
@@ -183,7 +183,7 @@ export default function BasicBars({ board }) {
             <Typography variant='h6' sx={{ fontSize: '18px' }}>
               Card per label
             </Typography>
-            {!!cardPerLabel.length && !!labelIds.length ? (
+            {!!cardPerLabel?.length && !!labelIds?.length ? (
               <BarChart
                 height={490}
                 series={[{ data: cardPerLabel.map((s) => s.count), color: '#81ecec' }]}

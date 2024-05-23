@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { useState } from 'react'
 import MembersPopover from '@/components/MembersPopover/MembersPopover'
 
-const Members = ({ card }) => {
+const Members = ({ card, Permission }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   return (
@@ -29,20 +29,22 @@ const Members = ({ card }) => {
               </Avatar>
             </Tooltip>
           ))}
-          <Box
-            onClick={(event) => {
-              setAnchorEl(event.currentTarget)
-            }}
-            sx={{
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              bgcolor: '#a1bdd914',
-              p: 1
-            }}
-          >
-            <AddIcon />
-          </Box>
+          {Permission !== 1 && (
+            <Box
+              onClick={(event) => {
+                setAnchorEl(event.currentTarget)
+              }}
+              sx={{
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                bgcolor: '#a1bdd914',
+                p: 1
+              }}
+            >
+              <AddIcon />
+            </Box>
+          )}
         </Box>
       </Box>
       <MembersPopover

@@ -49,3 +49,15 @@ export const getRecentBoard = async (userId) => {
   const res = await http.get(`v1/users/recent/${userId}`)
   return res.data
 }
+
+export const updateUserAPI = async (id, data) => {
+  const res = await http.put(`v1/users/${id}`, data)
+  return res.data
+}
+
+export const updateAvaterUserAPI = async (id, data) => {
+  const res = await http.post(`v1/users/${id}`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+  return res.data
+}

@@ -58,8 +58,10 @@ const Profile = () => {
         sx={{ mt: 1 }}
       >
         <NavLink to='/profile' style={{ textDecoration: 'none', color: 'black' }} onClick={handleClose}>
-          <MenuItem sx={{ gap: 1 }}>
-            <AssignmentIndOutlinedIcon />
+          <MenuItem>
+            <ListItemIcon>
+              <AssignmentIndOutlinedIcon fontSize='small' />
+            </ListItemIcon>
             My Profile
           </MenuItem>
         </NavLink>

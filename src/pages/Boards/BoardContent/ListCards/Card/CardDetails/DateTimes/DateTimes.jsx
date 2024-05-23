@@ -8,8 +8,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { Checkbox } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { updateCardAPI } from '@/apis/cards.api'
+import { useSelector } from 'react-redux'
 
-const DateTimes = ({ card }) => {
+const DateTimes = ({ card, board }) => {
   const startDateTime = dayjs(card?.dateTime?.startDateTime)
   const dueDateTime = dayjs(card?.dateTime?.dueDateTime)
 
@@ -52,6 +53,26 @@ const DateTimes = ({ card }) => {
     mutionUpdateCardStatus.mutate({ completed: !card?.completed })
   }
 
+  const user = useSelector((state) => state.user.auth)
+
+  const checkPermission = (member, board) => {
+    if (member && board) {
+      if (member._id === board.ownerId) {
+        return 2
+      }
+
+      if (board.admins && board.admins.some((admin) => admin === member._id)) {
+        return 2
+      }
+
+      if (board.members && board.members.some((memberId) => memberId === member._id)) {
+        return 1
+      }
+    }
+
+    return 0
+  }
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
       <SubtitlesOutlinedIcon sx={{ color: 'transparent' }} />
@@ -64,9 +85,10 @@ const DateTimes = ({ card }) => {
             display: 'flex'
           }}
         >
-          <Checkbox checked={card?.completed} onChange={updateCardStatus} />
+          {checkPermission(user, board) !== 1 && <Checkbox checked={card?.completed} onChange={updateCardStatus} />}
+
           <Box
-            onClick={handleClick}
+            onClick={checkPermission(user, board) !== 1 && handleClick}
             sx={{
               bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#353b48' : '#dfe6e9'),
               p: 0.5,

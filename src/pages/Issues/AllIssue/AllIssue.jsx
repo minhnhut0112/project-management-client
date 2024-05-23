@@ -18,7 +18,7 @@ import HighlightOffOutlinedIcon from '@mui/icons-material/HighlightOffOutlined'
 
 const AllIssue = ({ handleChangeIndex, board, handleClickDetails }) => {
   const [searchKeyword, setSearchKeyword] = React.useState('')
-  const [filterType, setFilterType] = React.useState('all')
+  const [filterType, setFilterType] = React.useState('open')
 
   const user = useSelector((state) => state.user.auth)
 
@@ -41,9 +41,9 @@ const AllIssue = ({ handleChangeIndex, board, handleClickDetails }) => {
     setSearchKeyword(event.target.value)
   }
 
-  let filteredIssues = board.issues
+  let filteredIssues = board?.issues
 
-  filteredIssues = board.issues.filter((issue) => {
+  filteredIssues = board?.issues.filter((issue) => {
     if (filterType === 'open') {
       return issue.opened === true
     } else if (filterType === 'closed') {
@@ -56,6 +56,7 @@ const AllIssue = ({ handleChangeIndex, board, handleClickDetails }) => {
   })
 
   if (searchKeyword) {
+    filteredIssues = board?.issues
     filteredIssues = filteredIssues.filter((issue) => issue.title.toLowerCase().includes(searchKeyword.toLowerCase()))
   }
 
@@ -85,7 +86,7 @@ const AllIssue = ({ handleChangeIndex, board, handleClickDetails }) => {
 
   const clearSearchAndFilter = () => {
     setSearchKeyword('')
-    setFilterType('all')
+    setFilterType('open')
   }
 
   return (
@@ -129,7 +130,12 @@ const AllIssue = ({ handleChangeIndex, board, handleClickDetails }) => {
           onClick={() => handleChangeIndex(1)}
           sx={{
             bgcolor: '#4F46E5',
-            height: '40px'
+            boxShadow: 'none',
+            height: '40px',
+            '&:hover': {
+              bgcolor: '#4F46E5',
+              boxShadow: 'none'
+            }
           }}
           variant='contained'
         >
@@ -137,7 +143,7 @@ const AllIssue = ({ handleChangeIndex, board, handleClickDetails }) => {
         </Button>
       </Box>
 
-      {(searchKeyword || filterType !== 'all') && (
+      {(searchKeyword || filterType !== 'open') && (
         <Box
           onClick={clearSearchAndFilter}
           sx={{
@@ -152,7 +158,7 @@ const AllIssue = ({ handleChangeIndex, board, handleClickDetails }) => {
         >
           <HighlightOffOutlinedIcon />{' '}
           <Typography variant='body' sx={{ fontSize: 16, fontWeight: 400 }}>
-            Clear current search query and filters: {filterType === 'open' && 'is:open'}{' '}
+            Clear current search query and filters: {filterType === 'all' && 'is:all'}{' '}
             {filterType === 'closed' && 'is:closed'} {filterType === 'your' && 'author:@me'}{' '}
             {searchKeyword && `keyword:${searchKeyword}`}
           </Typography>

@@ -86,7 +86,7 @@ const ChangeBackground = ({ handleChangeContent, handleClose, board }) => {
     }
   }
   return (
-    <Box sx={{ width: 280, p: 1, height: 'fit-content', mb: 1 }}>
+    <Box sx={{ width: 340, p: 1, height: 'fit-content', mb: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
         <IconButton
           onClick={() => {

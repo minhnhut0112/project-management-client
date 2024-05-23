@@ -6,9 +6,11 @@ import { Box } from '@mui/material'
 
 const Notification = () => {
   const [anchorEl, setAnchorEl] = useState(null)
+  const [showtoti, setshowtoti] = useState(true)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
+    setshowtoti(false)
   }
 
   const handleClose = () => {
@@ -20,7 +22,7 @@ const Notification = () => {
 
   return (
     <Box>
-      <Badge color='warning' variant='dot'>
+      <Badge color='warning' variant={showtoti ? 'dot' : ''}>
         <NotificationsNoneOutlinedIcon
           onClick={handleClick}
           sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#172B4D') }}

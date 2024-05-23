@@ -2,11 +2,7 @@ import { removeDatesAPI, updateDatesAPI } from '@/apis/cards.api'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
 import { Button, IconButton, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
 import Popover from '@mui/material/Popover'
-import Select from '@mui/material/Select'
 import { DateTimePicker } from '@mui/x-date-pickers'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
@@ -44,8 +40,6 @@ const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
 
     setDueDateTime(date)
   }
-
-  const [dueDateReminder, setDueDateReminder] = useState(10)
 
   const queryClient = useQueryClient()
 
@@ -118,31 +112,11 @@ const DatePopover = ({ anchorEl, handleClose, card, id, open }) => {
           <Typography variant='caption'>Due Date</Typography>
           <DateTimePicker sx={{ mt: 0.5, mb: 0.5 }} value={dueDateTime} onChange={handleChangeDueDateTime} />
         </Box>
-        <Box>
-          <Typography variant='caption'>Set due date reminder</Typography>
-          <Box sx={{ mt: 0.5 }}>
-            <FormControl fullWidth size='small'>
-              <InputLabel id='demo-simple-select-label'></InputLabel>
-              <Select
-                sx={{ mb: 1 }}
-                labelId='demo-simple-select-label'
-                id='demo-simple-select'
-                value={dueDateReminder}
-                onChange={(e) => setDueDateReminder(e.target.value)}
-              >
-                <MenuItem value={10} selected>
-                  1 Day before
-                </MenuItem>
-                <MenuItem value={20}> 2 Day before</MenuItem>
-                <MenuItem value={30}> 3 Day before</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </Box>
         <Button
           sx={{
             bgcolor: '#4F46E5',
-            width: '100%'
+            width: '100%',
+            mt: 0.5
           }}
           variant='contained'
           disableElevation

@@ -99,8 +99,7 @@ const Labels = ({ handleChangeContent, handleClose, board }) => {
       <Divider sx={{ m: 1 }} />
 
       {mode === 'select' && (
-        <Box sx={{ p: 1 }}>
-          <TextField autoFocus size='small' fullWidth placeholder='Search Labels...' />
+        <Box>
           <Box sx={{ mt: 1 }}>
             <Typography variant='caption' sx={{ fontSize: '16px' }}>
               Labels

@@ -73,14 +73,22 @@ const CheckList = ({ checklist, cardId }) => {
   }
 
   const handleAddItem = (listIndex) => {
+    if (!newItemTitle) {
+      setNewItemTitle('')
+      setShowAddItemInput(null)
+      return
+    }
+
     const updatedChecklist = [...checkListState]
     updatedChecklist[listIndex]?.items?.push({
       title: newItemTitle,
       checked: false
     })
-    setCheckListState(updatedChecklist)
+
     setNewItemTitle('')
     setShowAddItemInput(null)
+
+    setCheckListState(updatedChecklist)
     mutionUpdateCheckList.mutate({ checklist: updatedChecklist[listIndex] })
   }
 
@@ -353,7 +361,13 @@ const CheckList = ({ checklist, cardId }) => {
                   <Button type='submit' sx={{ width: 'fit-content' }} variant='contained'>
                     Add
                   </Button>
-                  <IconButton onClick={() => setShowAddItemInput(null)} aria-label='delete'>
+                  <IconButton
+                    onClick={() => {
+                      setShowAddItemInput(null)
+                      setNewItemTitle('')
+                    }}
+                    aria-label='delete'
+                  >
                     <CloseIcon fontSize='small' />
                   </IconButton>
                 </Box>

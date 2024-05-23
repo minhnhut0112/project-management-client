@@ -26,6 +26,11 @@ const CheckListPopover = ({ anchorEl, handleClose, card, id, open }) => {
   })
 
   const handleCreateCheclist = () => {
+    if (!checklistTitle) {
+      handleClose()
+      return
+    }
+
     mutionCreateCheckList.mutate({
       checklistTitle: checklistTitle
     })
@@ -37,7 +42,10 @@ const CheckListPopover = ({ anchorEl, handleClose, card, id, open }) => {
       id={id}
       open={open}
       anchorEl={anchorEl}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose()
+        setCheckListTitle('')
+      }}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'left'
@@ -58,9 +66,16 @@ const CheckListPopover = ({ anchorEl, handleClose, card, id, open }) => {
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
           <Box sx={{ marginLeft: '15px' }}></Box>
           <Typography sx={{ fontSize: '16px' }} variant='h6'>
-            CheckList
+            Add checklist
           </Typography>
-          <IconButton sx={{ p: 0 }} onClick={handleClose} aria-label='delete'>
+          <IconButton
+            sx={{ p: 0 }}
+            onClick={() => {
+              handleClose()
+              setCheckListTitle('')
+            }}
+            aria-label='delete'
+          >
             <ClearOutlinedIcon fontSize='small' />
           </IconButton>
         </Box>
@@ -78,17 +93,18 @@ const CheckListPopover = ({ anchorEl, handleClose, card, id, open }) => {
             fullWidth
             size='small'
             autoFocus
+            value={checklistTitle}
             onChange={(e) => setCheckListTitle(e.target.value)}
           />
 
           <Button
+            disabled={!checklistTitle}
             type='submit'
             sx={{
               bgcolor: '#4F46E5',
               width: '100%'
             }}
             variant='contained'
-            disableElevation
           >
             Add
           </Button>

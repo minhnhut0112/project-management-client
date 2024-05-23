@@ -57,7 +57,8 @@ const ConfirmSignUp = () => {
       if (invited) {
         navigate(`/board/${invited?.boardId}`)
       }
-    }
+    },
+    onError: () => {}
   })
 
   const handleSignUp = () => {

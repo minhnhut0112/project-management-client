@@ -14,6 +14,11 @@ export const updateCardAPI = async (id, data) => {
   return res.data
 }
 
+export const fetchAllNotifications = async (userId) => {
+  const res = await http.get(`v1/cards/${userId}/notifications`)
+  return res.data
+}
+
 export const deleteCardAPI = async (id, access_token) => {
   const res = await http.delete(`v1/cards/${id}`, {
     headers: {

@@ -117,7 +117,7 @@ const Description = ({ card }) => {
             )}
           </Box>
         ) : (
-          <Typography onClick={() => setOpenDescriptionForm(true)} sx={{ fontSize: '16px' }}>
+          <Typography onClick={() => setOpenDescriptionForm(true)} sx={{ fontSize: '16px', whiteSpace: 'pre-line' }}>
             {description}
           </Typography>
         )}

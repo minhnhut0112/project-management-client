@@ -1,11 +1,8 @@
 import { ReactComponent as ActivitySVG } from '@/assets/activity-svg.svg'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined'
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
-import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
-import RemoveIcon from '@mui/icons-material/Remove'
 import { SvgIcon, Typography } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -25,7 +22,7 @@ import ChangeBackground from './ChangeBG/ChangeBG'
 import Labels from './Labels/Labels'
 import CloseBoard from './CloseBoard/CloseBoard'
 import DeleteBoard from './DeleteBoard/DeleteBoard'
-import LeaveBoard from './LeaveBoard/LeaveBoard'
+import { useSelector } from 'react-redux'
 
 const BoardMenu = ({ board }) => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -43,6 +40,26 @@ const BoardMenu = ({ board }) => {
 
   const handleChangeContent = (content) => {
     setContent(content)
+  }
+
+  const user = useSelector((state) => state.user.auth)
+
+  const checkPermission = (member, board) => {
+    if (member && board) {
+      if (member._id === board.ownerId) {
+        return 2
+      }
+
+      if (board.admins && board.admins.some((admin) => admin === member._id)) {
+        return 2
+      }
+
+      if (board.members && board.members.some((memberId) => memberId === member._id)) {
+        return 1
+      }
+    }
+
+    return 0
   }
 
   return (
@@ -68,7 +85,7 @@ const BoardMenu = ({ board }) => {
           sx={{ mx: 2 }}
         >
           {content === 'menu' && (
-            <Box sx={{ width: 280, p: 1 }}>
+            <Box sx={{ width: 340, p: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                 <Box sx={{ marginLeft: '35px' }}></Box>
                 <Typography sx={{ fontSize: '16px' }} variant='h6'>
@@ -118,15 +135,18 @@ const BoardMenu = ({ board }) => {
                   <ListItemText>Labels</ListItemText>
                 </MenuItem>
 
-                <Divider />
+                {checkPermission(user, board) !== 1 && (
+                  <>
+                    <Divider />
+                    <CloseBoard board={board} />
+                  </>
+                )}
 
-                <CloseBoard board={board} />
-
-                <LeaveBoard board={board} />
-
-                <Divider />
-
-                <DeleteBoard board={board} />
+                {checkPermission(user, board) !== 1 && (
+                  <>
+                    <DeleteBoard board={board} />
+                  </>
+                )}
               </MenuList>
             </Box>
           )}

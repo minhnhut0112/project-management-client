@@ -244,9 +244,6 @@ const Attachments = ({ card }) => {
                             confirmArgs={att}
                           />
                         )}
-                        <Typography variant='caption' sx={{ fontSize: '14px' }}>
-                          • Edit
-                        </Typography>
                       </Box>
 
                       {card?.cover === att.path ? (
@@ -338,9 +335,6 @@ const Attachments = ({ card }) => {
                             confirmArgs={att}
                           />
                         )}
-                        <Typography variant='caption' sx={{ fontSize: '14px' }}>
-                          • Edit
-                        </Typography>
                       </Box>
                     </Box>
                   </Box>
