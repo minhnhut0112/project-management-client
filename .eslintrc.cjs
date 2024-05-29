@@ -16,7 +16,6 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     'react/prop-types': 0,
     'react/display-name': 0,
-
     //MUI
     'no-restricted-imports': [
       'error',
@@ -24,7 +23,6 @@ module.exports = {
         patterns: ['@mui/*/*/*']
       }
     ],
-
     //Common
     'no-console': 1,
     'no-extra-boolean-cast': 0,
