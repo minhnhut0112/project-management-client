@@ -1,3 +1,3 @@
 # React + Vite
 
-Todo List App
+A project management web applicaton
